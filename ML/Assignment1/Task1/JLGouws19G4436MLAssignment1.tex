@@ -1,0 +1,160 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage{amsmath,amsfonts,amsthm,amssymb, mathtools,steinmetz, gensymb, siunitx}	% LOADS USEFUL MATH STUFF
+\usepackage{xcolor,graphicx}
+\usepackage[margin=0.5in,a4paper]{geometry} 				% ADJUSTS PAGE
+\usepackage{setspace}
+\usepackage{caption}
+\usepackage{tikz}
+\usepackage{pgf,tikz,pgfplots}
+\usepackage{mathrsfs}
+\usepackage{fancyhdr}
+\usepackage{float}
+\usepackage{array}
+\usepackage{unicode-math}
+\setmathfont{Libertinus Math}
+
+\usetikzlibrary{decorations.pathreplacing,decorations.markings}
+\usepgfplotslibrary{fillbetween}
+
+\newcommand{\defeq}{\vcentcolon=}
+\newcommand\block[1]{\hspace*{#1}}
+\newcommand{\rpm}{\sbox0{$1$}\sbox2{$\scriptstyle\pm$}
+	  \raise\dimexpr(\ht0-\ht2)/2\relax\box2 }
+\pgfplotsset{compat=1.11}
+	  
+\newlength{\QNo}
+\settowidth{\QNo}{2.}
+
+\newlength{\QLetter}
+\settowidth{\QLetter}{(a)}
+
+\pagestyle{fancy}
+\rhead{CS 301 Programming Language Translation}
+\lhead{J L Gouws}
+
+\begin{document}
+\fontencoding{T1}
+\fontfamily{ppl}\selectfont
+\thispagestyle{empty}
+
+\begin{minipage}{0.25\dimexpr\textwidth}
+  \includegraphics[scale = 0.2]{RhodesLogo.jpg} 
+\end{minipage}
+\hfill {Computer Science 301}\\
+
+{\Large \textbf{PLT Practical 4 Handin}} \hfill {\Large \textbf{J L Gouws}}\\
+\block{1.0cm} {\large \textbf{\today}} \hfill {\large \textbf{19G4436}}\\
+
+2. 
+\begin{minipage}[t]{0.95\dimexpr\textwidth}
+  Grammar 1:\\
+  \begin{minipage}[t]{0.9\dimexpr\textwidth}
+    \begin{itemize}
+    \item
+    No -- This grammar does not generate palindromes. The grammar cannot derive a string made of terminal characters. Use of the productions results in an infinite recursion.
+    \item
+    No -- The grammar is not LL(1) -- it is not even a legitimate grammar\\
+    \end{itemize}
+  \end{minipage}
+
+  Grammar 2:\\
+  \begin{minipage}[t]{0.9\dimexpr\textwidth-\QNo}
+    \begin{itemize}
+    \item
+    Yes -- This grammar looks like it will work.
+    \item
+    No -- This grammar, however, is not LL(1).\\
+    FIRST(``a" Palindrome "a:) $\bigcap$ FIRST("a"): = \{"a"\} $\neq \emptyset$.
+    This disobeys rule 1 of an LL(1) grammar.\\
+    \end{itemize}
+  \end{minipage}
+
+  Grammar 3:\\
+  \begin{minipage}[t]{0.9\dimexpr\textwidth-\QNo}
+    \begin{itemize}
+    \item
+    No -- This will is not able to describe the palindrome "a" or "b". It only checks palindromes with even length.
+    \item
+    No -- This grammar is not LL(1). 
+    Look at the construct [ Palindrome ], it is nullable.\\
+    FIRST([ Palindrome ]) = FIRST(Palindrome) = \{"a", "b"\}\\
+    And:\\
+    FOLLOW([ Palindrome ]) = FOLLOW(Palindrome) = \{"a", "b"\}\\
+    The intersection of these two sets is not empty, thus the grammar is not LL(1), it breaks "rule 2".\\
+    \end{itemize}
+  \end{minipage}
+
+  Grammar 4:\\
+  \begin{minipage}[t]{0.9\dimexpr\textwidth-\QNo}
+    \begin{itemize}
+    \item
+    Yes -- This looks like it will work, but it does allow for the empty string to be parsed. This is different in behaviour to 2). Arguably the empty string is a palindrome, so it still describes palindromes. The decision really comes down to the language designer.
+    \item
+    No -- This grammar is not LL(1)\\
+    FIRST("a" Palindrome "a:) $\bigcap$ FIRST("a"): = \{"a"\} $\neq \emptyset$.
+    This disobeys rule 1 of an LL(1) grammar.\\
+    \end{itemize}
+  \end{minipage}
+
+  I do not think that it is possible to find an LL(1) grammar to generate palindromes. Take, for example, the palindrome "aaa"--it cannot be parsed by an LL(1) parser. The parser can only see one "a" at a time, and so will not be able to find the midpoint of the string from which it can match the other "a"s.\\
+
+\end{minipage}
+
+3. 
+\begin{minipage}[t]{0.95\dimexpr\textwidth}
+  a)
+  \begin{minipage}[t]{0.9\dimexpr\textwidth}
+This is true. If the grammar is LL(1), we can determine the exact parse tree by always looking at the next terminal. 
+Since our expansion of non-terminals is always determined by the current terminal, there is only one option to parse, and so there can be no other parse tree/ambiguity.\\
+  \end{minipage}
+
+  b)
+  \begin{minipage}[t]{0.9\dimexpr\textwidth-\QNo}
+This is not true. A grammar might be LL(2) or LL(3) and so on, and if it is LL(x), x> 1, then the grammar will be unambiguous.\\
+  \end{minipage}
+
+  c)
+  \begin{minipage}[t]{0.9\dimexpr\textwidth-\QNo}
+    This is true, if the language is ambiguous then it might not have a unique left parse tree for all sentences.
+    An LL(1) grammar requires that at every step, it can determine which left most derivative to expand.
+    This being said an LL(1) grammar might be able to generate the same language as the ambiguous grammar, but it will not be able to associate multiple meanings with a given sentence, that an ambiguous grammar can do.
+    It is impossible for an LL(1) grammar to describe all the semantics of an ambiguous grammar.\\
+  \end{minipage}
+
+  d)
+  \begin{minipage}[t]{0.9\dimexpr\textwidth-\QNo}
+    Take the palindrome grammar:\\
+    \block{1cm}	Palindrome = "a" Palindrome "a" | "b" Palindrome "b" | "a" | "b" .\\
+   There is nothing ambiguous about this grammar. This grammar cannot, however, be replaced by an LL(1) grammar.\\
+  \end{minipage}
+\end{minipage}
+
+4.
+\begin{minipage}[t]{0.95\dimexpr\textwidth}
+  This is not an LL(1) grammar.\\
+  Take the production "StartI" for example:\\
+
+  \block{1cm} StartI = "I" [ ["I"] ["I"] | "V" | "X" ] .\\
+    
+  This can be written in a clearer form:\\
+
+  \block{1cm} StartI = "I" Rest\\
+  \block{1cm} Rest = "I" | "I" "I" |"V" | "X"  .\\
+
+  We can see: FIRST(Rest$_{\text{"I"}}$) = \{"I"\} and FIRST(Rest$_{\text{"I" "I"}}$) = \{"I"\}\\
+  These sets are not disjoint, and so the grammar is not LL(1), it breaks rule 1.\\
+  "StartI" also breaks rule 2, well actually its first subproduction: [ "I" ] , breaks rule 2--its follow set contains "I".
+  StartV also breaks rule 1 of checking if the grammar is LL(1).\\
+
+  The grammar is also ambiguous.
+  Take the string: "V I ", for example. This is a perfectly valid string of the grammar.\\
+  The string can be derived from the grammar in the following ways:
+  \begin{itemize}
+    \item V I $\varepsilon$ $\varepsilon$
+    \item V $\varepsilon$ I$\varepsilon$
+    \item V$\varepsilon\varepsilon$ I
+  \end{itemize} 
+  These have different parse trees, and so have potentially different meanings.
+  The grammar is thus ambiguous.
+\end{minipage}
+\end{document}

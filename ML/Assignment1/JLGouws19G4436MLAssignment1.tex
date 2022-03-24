@@ -1,0 +1,210 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage{amsmath,amsfonts,amsthm,amssymb, mathtools,steinmetz, gensymb, siunitx}	% LOADS USEFUL MATH STUFF
+\usepackage{xcolor,graphicx}
+\usepackage[left=1cm, top=2cm, right=1cm, bottom=1cm ,a4paper]{geometry} 				% ADJUSTS PAGE
+\usepackage{setspace}
+\usepackage{caption}
+\usepackage{tikz}
+\usepackage{pgf,tikz,pgfplots}
+\usepackage{mathrsfs}
+\usepackage{fancyhdr}
+\usepackage{float}
+\usepackage{array}
+\usepackage{unicode-math}
+\usepackage{booktabs}
+\setmathfont{Libertinus Math}
+
+\usetikzlibrary{decorations.pathreplacing,decorations.markings}
+\usepgfplotslibrary{fillbetween}
+
+\newcommand{\defeq}{\vcentcolon=}
+\newcommand\block[1]{\hspace*{#1}}
+\newcommand{\rpm}{\sbox0{$1$}\sbox2{$\scriptstyle\pm$}
+	  \raise\dimexpr(\ht0-\ht2)/2\relax\box2 }
+\pgfplotsset{compat=1.11}
+	  
+\newlength{\QNo}
+\settowidth{\QNo}{2.}
+
+\newlength{\QLetter}
+\settowidth{\QLetter}{(a)}
+
+\pagestyle{fancy}
+\rhead{CS Honours Machine Learning}
+\lhead{J L Gouws}
+
+\begin{document}
+\fontencoding{T1}
+\fontfamily{ppl}\selectfont
+\thispagestyle{empty}
+
+{\Large \textbf{Assignment 1 ML}} \hfill {\Large \textbf{J L Gouws}}\\
+\block{1.0cm} {\large \textbf{\today}} \hfill {\large \textbf{19G4436}}\\
+
+1. See script file for details.
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale = 0.4]{Task1/RMvsMEV.pdf}
+  \caption{The relation between RM and MEDV with a fitted regression line.}
+\end{figure}
+
+2. 
+\begin{minipage}[t]{0.90\dimexpr\textwidth}
+  a)
+  \begin{minipage}[t]{\dimexpr\textwidth}
+    See script file.\\
+  \end{minipage}
+
+  b)
+  \begin{minipage}[t]{\dimexpr\textwidth-\QNo}
+    It is pretty much the same, the testing errors are the same to the first four significant figures.\\
+    This can be seen by looking at the $MSE$(on test data) in Table~\ref{tab:models}.\\
+  \end{minipage}
+
+  c)
+  \begin{minipage}[t]{\dimexpr\textwidth-\QNo}
+    The plot of the two graphs is also more or less the same.\\
+    The plot for Lasso regression is significantly different, however.\\
+    We can see the values of the parametes of the two variables in Table~\ref{tab:modelsParams}.
+    We can see the difference in the training methods for the Bivariate case in Figure~\ref{fig:bivModels}.\\
+  \end{minipage}
+
+  d)
+  \begin{minipage}[t]{\dimexpr\textwidth-\QNo}
+    The normal linear model seemed to train faster, but the Ridge model's test went faster.
+    That being said, the difference in testing speed could be down to random error.
+    There are other processes running on my computer which might interfere with accurate timing\\
+  \end{minipage}
+
+  e)
+  \begin{minipage}[t]{\dimexpr\textwidth-\QNo}
+    Yes, the Lasso method has a significantly larger MSE, and the model also trained a lot slower.\\
+  \end{minipage}
+
+  f)
+  \begin{minipage}[t]{\dimexpr\textwidth-\QNo}
+    We can see in Table~\ref{tab:models}, Table~\ref{tab:modelsA2} and Table~\ref{tab:modelsA3} that the $MSE$ does change as Lasso and Ridge parameter changes.
+    The generalization error actually increases as we change the parameters.
+    The training and testing times do not change, however.\\
+  \end{minipage}
+
+  g)
+  \begin{minipage}[t]{\dimexpr\textwidth-\QNo}
+    The mean absolute error:\\
+    \begin{equation*}
+      MAE = \frac{1}{n}\sum_{i=1}^n|y_i -\hat y_i|
+    \end{equation*}
+    This is very similar to the MSE. Only the errors are not squared.
+    For MSE, squaring a large absolute error makes the error disproportionately large, which punishes an outliers.
+    Since large errors are not squared for MAE, the outliers are punished but not over excessively.\\
+  \end{minipage}
+
+  h)
+  \begin{minipage}[t]{\dimexpr\textwidth-\QNo}
+    The adjusted $R^2$ metric tries to deal with this problem, the formula is:
+    \begin{equation*}
+      R^2_{\text{adj}} = 1 - \frac{(1 - R^2)(N - 1)}{N - p - 1}
+    \end{equation*}
+    Where $N$ is the total sample size, and $p$ is the number of features of the model.\\
+  \end{minipage}
+
+  i)
+  \begin{minipage}[t]{\dimexpr\textwidth-\QNo}
+    We cannot compare this to the results of Task 1.
+    Task 1 is a bivariate linear regression and does not depend on B.\\
+
+    We can compare this to part a) for the multi-linear case.
+    We can see the difference in the parameters when `B' is dropped by comparing Table~\ref{tab:modelsParams} and Table~\ref{tab:modelsParamsExcB}.
+    We can see that the multidimensional plot changes for the multilinear case, MEDV depends differently on RM.
+  \end{minipage}
+\end{minipage}
+\input{Task2/tables/linRegModels.tex}
+\input{Task2/tables/linRegModelsParams.tex}
+\input{Task2/tables/linRegModelsBExc.tex}
+\input{Task2/tables/linRegModelsParamsExcB.tex}
+\input{Task2/tables/linRegModelsA2.tex}
+\input{Task2/tables/linRegModelsA3.tex}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale = 0.4]{Task2/RMvsMEVBivariate.pdf}
+  \caption{The relation between RM and MEDV for different regression methods.}
+  \label{fig:bivModels}
+\end{figure}
+
+3 and 4. 
+\begin{minipage}[t]{0.8\dimexpr\textwidth}
+  A quick note on the results.
+  The classifier for task 3 and task 4 has an accuracy of $100\%$.
+  This makes sense because if we look at plots of features, the type of plant can be discerned by eye, so the computer will definitely be able to do it.\\
+\end{minipage}
+
+5. 
+\begin{minipage}[t]{0.95\dimexpr\textwidth}
+  a)
+  \begin{minipage}[t]{0.9\dimexpr\textwidth}
+      See Figure~\ref{fig:perimVArea}\\
+  \end{minipage}
+
+  b)
+  \begin{minipage}[t]{0.9\dimexpr\textwidth-\QNo}
+    We probably could use them to make a semi-fine classifier.
+    There is not too much overlap between malignant and benign cases.\\
+  \end{minipage}
+
+  c)
+  \begin{minipage}[t]{0.9\dimexpr\textwidth-\QNo}
+      See Figure~\ref{fig:smoothnessVArea}.\\
+  \end{minipage}
+
+  d)
+  \begin{minipage}[t]{0.9\dimexpr\textwidth-\QNo}
+    We probably could use these to make a semi-fine classifier aswell.
+    There is not too much overlap between malignant and benign cases.
+    That being said, medical things have to be pretty accurate, so I am not sure if these will suffice.\\
+  \end{minipage}
+
+  e)
+  \begin{minipage}[t]{0.9\dimexpr\textwidth-\QNo}
+    I chose area and perimeter, the data looked more separate for these two.\\
+    The F1 score seemed better for for these features than other features, when I trained models on other features.\\
+  \end{minipage}
+
+  f)
+  \begin{minipage}[t]{0.9\dimexpr\textwidth-\QNo}
+    See Figure~\ref{fig:confM} for the values.\\
+    Accuracy: \input{Task5/accuracy.tex}\\
+    Precision: \input{Task5/precision.tex}\\
+    Recall: \input{Task5/Recall.tex}\\
+    F1: \input{Task5/f1.tex}\\
+  \end{minipage}
+
+  g)
+  \begin{minipage}[t]{0.9\dimexpr\textwidth-\QNo}
+    I would say recall.
+    Recall measures how many of the cases are detected as malignant.
+    In the case of something that is life threatening, it is much better to detect all the cases,
+    even if some benign tumors are labeled as malignant.\\
+  \end{minipage}
+\end{minipage}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale = 0.5]{Task5/perimeterVArea.pdf}
+  \caption{Perimeter Vs Area of Tumor}
+  \label{fig:perimVArea}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale = 0.5]{Task5/smoothVArea.pdf}
+  \caption{Smoothness Vs Area of Tumor}
+  \label{fig:smoothnessVArea}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale = 0.5]{Task5/confM.pdf}
+  \caption{Confusion Matrix for the Breast Cancer classifier}
+  \label{fig:confM}
+\end{figure}
+\end{document}
