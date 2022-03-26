@@ -70,7 +70,7 @@ MAIN_LOOP:
 	NOP
 	RJMP MAIN_LOOP
 Initt5:
-  LDI XL,low(flashylights)
+    LDI XL,low(flashylights)
     LDI XH,high(flashylights)
     ldi tmp1, 0x01
     st x+, tmp1
@@ -96,7 +96,7 @@ Initt5:
     st x+, tmp1
     ldi tmp1, 0x02
     st x+, tmp1
-        ldi tmp1, 0x01
+    ldi tmp1, 0x01
     st x+, tmp1
     ldi tmp1, 0x00
     st x+, tmp1
