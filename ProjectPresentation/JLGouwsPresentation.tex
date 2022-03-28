@@ -12,6 +12,7 @@
 \usepackage{amsmath}
 \usepackage{lastpage}
 \usepackage{booktabs}
+\usepackage{multirow}
 \usepackage{fontspec}%font
 
 \usepackage{hyperref}
@@ -80,7 +81,7 @@
 
 \setbeamercolor{itemize item}{fg=darkbrown}
 \setbeamertemplate{itemize item}{\maltese}
-\setbeamercolor{itemize subitem}{fg=dakrbrown}
+\setbeamercolor{itemize subitem}{fg=darkbrown}
 \setbeamertemplate{itemize subitem}{\begin{rotate}{90}$\diamondsuit$\end{rotate}}
 
 \usepackage{fontspec}
@@ -97,9 +98,10 @@
 % title
 \title{Real Time Identifiction in Crowds}
 \subtitle{}
-\author[Gouws]{Jonathan Gouws}
-\institute[RU]{Rhodes University}
-\date{February 19th 2013}
+
+\author[Gouws]{J L Gouws\inst{1}\\[1ex]  \and {\small Supervisor: Mr. J Connan\inst{1}}}
+\date{28 March 2022}
+\institute[RU]{\inst{1} Rhodes University}
 \tikzset{
    invisible/.style={opacity=0},
    visible on/.style={alt=#1{}{invisible}},
@@ -122,12 +124,12 @@
 \end{frame}
 \begin{frame}{Predator \cite{PredatorVid}}
 \centering
-  \embedvideo*{\includegraphics[width=1.0\textwidth]{predatorcutThumb.png}
-	}{predatorcut.mp4}
+  \embedvideo*{	}{predatorcut.mp4}
 \end{frame}
 
 \begin{frame}{Why the TLD approach?}
     \begin{itemize}
+      \setlength\itemsep{1em}
        \item \hspace{0pt}
           \pause Fast and Lightweight
        \item \hspace{0pt}
@@ -142,6 +144,65 @@
 
 %   \end{columns}
 \end{frame}
+
+\begin{frame}{TLD Approach\cite{Kalal2011}}
+
+   \centering
+   \begin{tikzpicture}[approach/.style={draw,very thick, fill=blue!20, text width=5em,
+            text centered, minimum height=2em,rounded corners=3ex},
+         idea/.style={draw, very thick,fill=blue!40, circle,text width=6em,
+            text centered, minimum height=2.5em},
+         connections/.style={->,draw=black!30,line width=3pt,shorten <=5pt,shorten >=5pt},
+         reverseConnections/.style={<-,draw=black!30,line width=3pt,shorten <=5pt,shorten >=5pt},
+      ]
+
+      % Draw diagram elements
+      \node[draw] at (0,0) (tracking) [idea,draw=blue,fill=blue!20]  {Tracking};
+      \pause
+        \node[draw] at (3.464101615,4) (learning) [idea,draw=blue,fill=blue!20]  {Learning};
+      \pause
+        %\def\shiftup#1{\raisebox{1ex}}
+        \draw[connections, postaction={decorate, decoration={raise=1ex, text along path, text align=center, text={|\small|Fragments of trajectory}}}] (tracking.north)to[out=90,in=180] (learning.west) ;
+      \pause
+        \node[draw] at (6.92820323,0) (detection) [idea,draw=blue,fill=blue!20]  {Detection};
+      \pause
+         \draw[connections, postaction={decorate, decoration={raise=-2.5ex, text along path, text align=center, text={|\small|Training data}}}] (learning.south) to[out=270,in=180] (detection.west) ;
+      \pause
+         \draw[reverseConnections, postaction={decorate, decoration={raise=1ex, text along path, text align=center, text={|\small|Detections}}}] (learning.east) to[out=0,in=90] (detection.north) ;
+      \pause
+         \draw[reverseConnections, postaction={decorate, decoration={raise=-2.5ex, text along path, text align=center, text={|\small|re-initialization}}}] (tracking.south east) to[out=-45,in=225] (detection.south west) ;
+   \end{tikzpicture}
+\end{frame}
+
+\bgroup
+\let\oldfootnoterule\footnoterule
+\def\footnoterule{\only<3->\oldfootnoterule}
+\begin{frame}{Improvements to Predator}
+    \begin{itemize}
+      \setlength\itemsep{.5em}
+       \item \hspace{0pt}
+          \pause Relatively bad tracking algorithm
+       \item \hspace{0pt}
+         \pause Kernelized Correlation Filters \cite{Enriques2014}
+       \item \hspace{0pt}
+          \pause
+            \begin{tabular}[t]{cccc}
+              \toprule
+              Algorithm & feature & Mean precision & Mean FPS \\
+              \midrule
+              KCF       & HOG \footnote<4->{Histogram of Oriented Gradients}       & 73.2\%         & 172      \\
+              \midrule
+              KCF       & Raw pixels & 56.0\%      & 154      \\
+              \midrule
+              \multicolumn{2}{c}{TLD}   & 60.8\%      &  28      \\
+              \bottomrule
+            \end{tabular}
+       \item \hspace{0pt}
+         \pause Better Learning Models
+    \end{itemize}
+
+\end{frame}
+\egroup
 
 \begin{frame}[label=furtherApps]{Further applications}
 
@@ -162,7 +223,65 @@
 
 \end{frame}
 
+\begin{frame}[label=deliverables]{Deliverables}
+  \begin{itemize}[<+->]
+    \setlength\itemsep{.5em}
+     \item \hspace{0pt}
+        \pause Full Implementation of Predator in C++
+          %\pause 
+          \begin{itemize}
+            \item<.-> 3\textsuperscript{rd} week of 2\textsuperscript{nd} term
+          \end{itemize}
+      \pause \item Integrating KCF into Predator
+          %\pause 
+          \begin{itemize}
+            \item<.-> End of 2\textsuperscript{nd} term
+          \end{itemize}
+        \pause \item Reviewing Implementation
+          %\pause
+          \begin{itemize}
+             \item<.-> 1\textsuperscript{st} week of 2\textsuperscript{nd} Semester
+          \end{itemize}
+            \pause \item Improving Implementation
+          %  \pause 
+          \begin{itemize}
+            \item<.-> 2\textsuperscript{nd} week of 2\textsuperscript{nd} Semester
+          \end{itemize}
+            \pause \item Extension to Multiple Object Tracking
+          %  \pause
+          \begin{itemize}
+             \item<.-> Beginning of 4\textsuperscript{th} Term
+          \end{itemize}
+  \end{itemize}
 
+\end{frame}
+
+\begin{frame}{References}
+    \printbibliography
+    \blfootnote{Powered by \LaTeX}
+\end{frame}
+
+\end{document}
+
+
+%\iffalse
+ %  \begin{columns}
+ %     \begin{column}[t]{.65\textwidth}
+ %        What tools do faculty use?
+ %
+ %        \begin{tikzpicture}[every node/.append style={align=center}]
+ %           \begin{pgfonlayer}{background}
+ %              \node[circle,fill=red!30,draw=black,thick,minimum size=5cm](0,0){Microsoft Word\\ 86\%};
+ %           \end{pgfonlayer}{background}
+ %           \pause
+ %              \visible<2->{\filldraw[gray,opacity=0.5] (2.5,0) arc (0:-190:2.5cm) -- (0,0)node[black,opacity=1,anchor=north east,scale=1,inner sep=.5cm] {MathType \\ 60\%};}
+ %           \pause
+ %              \visible<3->{\node[circle,fill=blue!40,draw=black,scale=1.15] at (2.3,-1){\LaTeX\\16\%};}
+ %           \pause
+ %              \visible<4->{\node[circle,fill=orange!40,draw=black,scale=0.65] at (2.3,1){Open Office\\12\%};}
+ %        \end{tikzpicture}
+ %     \end{column}%
+ %\fi
 
 \begin{frame}{Rule of four}
 
@@ -350,36 +469,3 @@
       \end{tikzpicture}
    }
 \end{frame}
-
-\begin{frame}{References}
-   \begin{columns}
-      \begin{column}[c]{.60\textwidth}
-        \printbibliography
-      \end{column}
-      \begin{column}[c]{.40\textwidth}
-      \end{column}
-    \end{columns}
-    \blfootnote{Powered by \LaTeX}
-\end{frame}
-
-\end{document}
-
-
-%\iffalse
- %  \begin{columns}
- %     \begin{column}[t]{.65\textwidth}
- %        What tools do faculty use?
- %
- %        \begin{tikzpicture}[every node/.append style={align=center}]
- %           \begin{pgfonlayer}{background}
- %              \node[circle,fill=red!30,draw=black,thick,minimum size=5cm](0,0){Microsoft Word\\ 86\%};
- %           \end{pgfonlayer}{background}
- %           \pause
- %              \visible<2->{\filldraw[gray,opacity=0.5] (2.5,0) arc (0:-190:2.5cm) -- (0,0)node[black,opacity=1,anchor=north east,scale=1,inner sep=.5cm] {MathType \\ 60\%};}
- %           \pause
- %              \visible<3->{\node[circle,fill=blue!40,draw=black,scale=1.15] at (2.3,-1){\LaTeX\\16\%};}
- %           \pause
- %              \visible<4->{\node[circle,fill=orange!40,draw=black,scale=0.65] at (2.3,1){Open Office\\12\%};}
- %        \end{tikzpicture}
- %     \end{column}%
- %\fi
