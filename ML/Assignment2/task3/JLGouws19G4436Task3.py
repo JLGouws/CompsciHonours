@@ -10,6 +10,7 @@ import sklearn.preprocessing as prep
 from sklearn import metrics
 from sklearn.metrics import f1_score, confusion_matrix, accuracy_score
 from sklearn.neighbors import KNeighborsClassifier as knn
+from sklearn.tree import DecisionTreeClassifier as dtc
 from sklearn.ensemble import RandomForestClassifier
 
 import matplotlib.pyplot as plt
@@ -57,9 +58,9 @@ trainDf['malignancy'] = y_train
 #        palette='deep', hue = 'malignancy')
 #plt.savefig("smoothVArea.pdf")
 
-plt.figure(figsize = (30, 30), tight_layout = True)
-sns.heatmap(trainDf.corr(), square = True, cbar = True, annot = True, annot_kws={'size' : 10})
-plt.savefig("correlationMap.pdf")
+#plt.figure(figsize = (30, 30), tight_layout = True)
+#sns.heatmap(trainDf.corr(), square = True, cbar = True, annot = True, annot_kws={'size' : 10})
+#plt.savefig("correlationMap.pdf")
 
 scaler = prep.MinMaxScaler()
 transformer = scaler.fit(X_train)
@@ -97,28 +98,61 @@ for i, features in enumerate(np.array_split(bcdata.feature_names,3)):
 
     plt.xticks(rotation=30)
 
-    plt.savefig(f"swarmPlot{i}.pdf")
+    plt.savefig(f"stripPlot{i}.pdf")
 
 
 # got this from https://www.kaggle.com/code/alibaris/feature-selection-and-random-forest-breast-cancer
 corr = scaledTrainDf.drop("malignancy", axis = 1).corr()
 mask = np.triu(np.ones_like(corr, dtype=bool))
-f, ax = plt.subplots(figsize=(20, 15))
+f, ax = plt.subplots(figsize=(22, 19))
 cmap = sns.diverging_palette(220, 10, as_cmap=True)
 sns.heatmap(corr, annot=True,fmt='.2f',mask=mask, cmap=cmap, ax=ax);
 plt.savefig("correlationMap.pdf")
 
-bcdFeatureDropList = ['mean perimeter','mean radius','mean compactness',
-                        'mean concave points','radius error','perimeter error',
-                        'worst radius','worst perimeter','worst compactness',
-                        'worst concave points','compactness error',
-                        'concave points error','worst texture','worst area']
-selectedTrain = scaledTrainDf.drop(bcdFeatureDropList, axis = 1 )       
+#bcdFeatureKeepList = ['mean radius', 'mean texture', 'mean perimeter', 'mean area'
+#                        'mean smoothness', 'mean compactness', 'mean concavity'
+#                        'mean concave points', 'mean symmetry', 'mean fractal dimension'
+#                        'radius error', 'texture error', 'perimeter error', 'area error'
+#                        'smoothness error', 'compactness error', 'concavity error',
+#                        'concave points error', 'symmetry error', 'fractal dimension error',
+#                        'worst radius', 'worst texture', 'worst perimeter', 'worst area',
+#                        'worst smoothness', 'worst compactness', 'worst concavity',
+#                        'worst concave points', 'worst symmetry', 'worst fractal dimension'
+#                        , 'malignancy']
+
+#worst perimeter corelated with mean area perimeter and radius I get rid of that
+# mean perimeter and mean radius are highly correlated, mean perimeter looks more spread out
+# mean area and perimeter are highly correlated, I will keep area, looks more spread out
+# mean concave points and mean concavity are highly correlated, I get rid of mean concavity
+# perimeter error and radius error are highly correlated perimeter error looks slightly better
+# perimeter error and area error are highly correlated, perimeter error looks better on the strip plot, and it looks less correlated with other features
+# worst perimeter and worst radius are highly correlated, worst perimeter looks better, worst radius has some high correlations with other features
+# worst texture and mean texture are highly correlated, but both look like bad features, I get rid of both
+# worst area is strongly correlated with both mean area and worst perimeter, I drop it
+# mean concave points is strongly correlated with other features, I will drop it
+# mean compactness and worst compactness are highly correlated, I will remove it
+# compactness error is also highly correlated
+# worst concavity and worst concave points are highly correlated, worst concave points looks like the better feature
+# mean smoothness is highly correlated
+# fractal dimension error looks like a bad feature
+
+bcdFeatureKeepList = [   'mean texture', 'mean area', 
+                         'mean symmetry','mean concavity' ,'mean fractal dimension',
+                         'texture error', 'perimeter error',
+                         'smoothness error', 'concavity error',
+                         'symmetry error',
+                         'worst smoothness', 
+                         'worst symmetry' 
+                         , 'malignancy']
+
+print("number of features", len(bcdFeatureKeepList) - 1)
+
+selectedTrain = scaledTrainDf[bcdFeatureKeepList]       
 
 
 corr = selectedTrain.corr()
 mask = np.triu(np.ones_like(corr, dtype=bool))
-f, ax = plt.subplots(figsize=(12, 6))
+f, ax = plt.subplots(figsize=(17, 16))
 cmap = sns.diverging_palette(220, 10, as_cmap=True)
 sns.heatmap(corr, annot=True,fmt='.2f',mask=mask, cmap=cmap, ax=ax);
 plt.savefig("correlationMapSelected.pdf")
@@ -131,23 +165,56 @@ scaledTestData = transformer.transform(X_test)#use the same scaler as before to 
 scaledTestDf = pd.DataFrame(scaledTestData, columns = bcdata.feature_names)                
 scaledTestDf['malignancy'] = y_test
 
-selectedTest = scaledTestDf.drop(bcdFeatureDropList, axis = 1 )       
+selectedTest = scaledTestDf[bcdFeatureKeepList]       
 
 X_test_selected, y_test_selected = selectedTest.drop('malignancy', axis = 1).to_numpy(), \
                     selectedTest['malignancy'].to_numpy()
 
+clf_knn = knn(n_neighbors = 5).fit(X_train_selected, y_train_selected)
+
+clf_dt = dtc().fit(X_train_selected, y_train_selected)
+
 #n_estimators=10 (default)
-clf_rf = RandomForestClassifier(random_state=42)      
-clr_rf = clf_rf.fit(X_train_selected, y_train_selected)
+clf_rf = RandomForestClassifier(random_state=42).fit(X_train_selected, y_train_selected)
 
-ac_score = accuracy_score(y_test_selected,clf_rf.predict(X_test_selected))
-print('Accuracy is: ',ac_score)
+ac_score = accuracy_score(y_test_selected, clf_knn.predict(X_test_selected))
+f_score = f1_score(y_test_selected, clf_knn.predict(X_test_selected), pos_label = 'malignant')
+print('Accuracy for knn is: ', ac_score)
+print('f1 for knn is: ', f_score)
 
-cnf_m = confusion_matrix(y_test_selected,clf_rf.predict(X_test_selected))
+cnf_m = confusion_matrix(y_test_selected, clf_knn.predict(X_test_selected))
 
-plt.figure(figsize=(3,3))
+plt.figure(figsize=(5,5))
 sns.heatmap(cnf_m, annot=True, annot_kws={"fontsize":20}, fmt='d', cbar=False, cmap='PuBu')
 plt.xlabel('Predicted Values')
 plt.ylabel('Actual Values')
 plt.title('Base Model', color='navy', fontsize=15)
-plt.show()
+plt.savefig("knnConfusionMatrix.pdf")
+
+ac_score = accuracy_score(y_test_selected, clf_dt.predict(X_test_selected))
+f_score = f1_score(y_test_selected, clf_dt.predict(X_test_selected), pos_label = 'malignant')
+print('Accuracy for decision tree is: ', ac_score)
+print('f1 for decision tree is: ', f_score)
+
+cnf_m = confusion_matrix(y_test_selected, clf_dt.predict(X_test_selected))
+
+plt.figure(figsize=(5,5))
+sns.heatmap(cnf_m, annot=True, annot_kws={"fontsize":20}, fmt='d', cbar=False, cmap='PuBu')
+plt.xlabel('Predicted Values')
+plt.ylabel('Actual Values')
+plt.title('Base Model', color='navy', fontsize=15)
+plt.savefig("dtConfusionMatrix.pdf")
+
+ac_score = accuracy_score(y_test_selected,clf_rf.predict(X_test_selected))
+f_score = f1_score(y_test_selected, clf_rf.predict(X_test_selected), pos_label = 'malignant')
+print('Accuracy for random forest is: ', ac_score)
+print('f1 for random forest is: ', f_score)
+
+cnf_m = confusion_matrix(y_test_selected,clf_rf.predict(X_test_selected))
+
+plt.figure(figsize=(5,5))
+sns.heatmap(cnf_m, annot=True, annot_kws={"fontsize":20}, fmt='d', cbar=False, cmap='PuBu')
+plt.xlabel('Predicted Values')
+plt.ylabel('Actual Values')
+plt.title('Base Model', color='navy', fontsize=15)
+plt.savefig("rfConfusionMatrix.pdf")
