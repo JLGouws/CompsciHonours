@@ -33,6 +33,7 @@ bcdata = datasets.load_breast_cancer()
 
 data = pd.DataFrame(bcdata.data, columns = bcdata.feature_names)
 data['malignancy'] = bcdata.target_names[bcdata.target]
+print(data.head(20))
 
 plt.figure(figsize = (10, 10), tight_layout = True)
 ax = sns.scatterplot(data=data, x='mean perimeter', y='mean area', 

@@ -15,7 +15,7 @@
 \usepackage{fontspec}%font
 
 \usepackage{hyperref}
-\usepackage[style=ieee,maxnames=10]{biblatex}
+\usepackage[style=ieee]{biblatex}
 \addbibresource{references.bib}
 
 \usetikzlibrary{positioning}
@@ -27,6 +27,14 @@
 \usetikzlibrary{decorations.text}
 \pgfplotsset{compat=1.7}
 \usepackage{tikz}
+
+\newcommand\blfootnote[1]{
+  \begingroup
+  \renewcommand\thefootnote{}\footnote{#1}
+  \addtocounter{footnote}{-1}
+  \endgroup
+}
+\renewcommand*{\bibfont}{\footnotesize}
 
 \newcommand{\topline}{%
   \tikz[remember picture,overlay] {%
@@ -44,12 +52,25 @@
 % tikzmark command, for shading over items
 \newcommand{\tikzmark}[1]{\tikz[overlay,remember picture] \node (#1) {};}
 
+\setbeamercolor{frametitle}{fg=black}
+
+% title color
+\setbeamercolor{title}{fg=black}
 
 % standard enumeration
 \setbeamertemplate{enumerate items}{(\arabic{enumi})}
 
 % color of slides
 \setbeamercolor{background canvas}{bg=pastelBlue}
+
+% color of references
+\setbeamercolor{bibliography item}{fg=black}
+\setbeamercolor{bibliography entry title}{fg=black}
+\setbeamercolor{bibliography entry author}{fg=black}
+\setbeamercolor{bibliography entry date}{fg=black}
+\setbeamercolor{bibliography entry note}{fg=black}
+\setbeamercolor{bibliography entry url}{fg=black}
+\setbeamercolor{bibliography entry organiation}{fg=black}
 
 % default itemize
 \setbeamertemplate{itemize items}[circle]
@@ -330,11 +351,19 @@
    }
 \end{frame}
 
+\begin{frame}{References}
+   \begin{columns}
+      \begin{column}[c]{.60\textwidth}
+        \printbibliography
+      \end{column}
+      \begin{column}[c]{.40\textwidth}
+      \end{column}
+    \end{columns}
+    \blfootnote{Powered by \LaTeX}
+\end{frame}
+
 \end{document}
 
-\begin{frame}[References]{References}
-  \printbibliography
-\end{frame}
 
 %\iffalse
  %  \begin{columns}
