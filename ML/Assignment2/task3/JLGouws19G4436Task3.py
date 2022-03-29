@@ -40,6 +40,7 @@ data['malignancy'] = bcdata.target_names[bcdata.target]
 
 
 # Split the data into training and test sets
+#I chose a 20% test size
 X_train, X_test, y_train, y_test = model_selection.train_test_split(
     data.drop('malignancy', axis = 1).to_numpy(), 
     data['malignancy'].to_numpy(), test_size=0.2, random_state=42
@@ -62,24 +63,28 @@ trainDf['malignancy'] = y_train
 #sns.heatmap(trainDf.corr(), square = True, cbar = True, annot = True, annot_kws={'size' : 10})
 #plt.savefig("correlationMap.pdf")
 
-scaler = prep.MinMaxScaler()
+scaler = prep.MinMaxScaler() 
 transformer = scaler.fit(X_train)
 scaledData = transformer.transform(X_train) #scale data for further comparison
                                             #I used min max scaler to avoid distribution changes
 
+#make a df for easier manipulation of data
 scaledTrainDf = pd.DataFrame(scaledData, columns = bcdata.feature_names)                
 scaledTrainDf['malignancy'] = y_train
+#melt the data for analysis
 scaledTrainDfMelted = pd.melt(scaledTrainDf, id_vars="malignancy", 
                                         var_name = "features", value_name = 'value')
 
+#violin plot of all the variables we can see that some variables like 
+#mean area and mean concave points have little overlap -> easier to classify
 plt.figure(figsize=(40,14))
 sns.violinplot(x="features", y="value", hue="malignancy", data=scaledTrainDfMelted,split=True, inner="quart")
 plt.xticks(rotation=30)
 plt.savefig("ViolinPlot.pdf")
 
+#violin plots but for groups of 10 variables for easier analysis
 for i, features in enumerate(np.array_split(bcdata.feature_names,3)):
     plt.figure(figsize=(30,12))
-#sns.swarmplot(x="features", y="value", hue="malignancy", data=scaledTrainDfMelted, alpha = 0.5) #
     sns.violinplot(x="features", y="value", hue="malignancy",
             data=scaledTrainDfMelted[scaledTrainDfMelted["features"].isin(features)]) #
 
@@ -103,12 +108,28 @@ for i, features in enumerate(np.array_split(bcdata.feature_names,3)):
 
 # got this from https://www.kaggle.com/code/alibaris/feature-selection-and-random-forest-breast-cancer
 corr = scaledTrainDf.drop("malignancy", axis = 1).corr()
-mask = np.triu(np.ones_like(corr, dtype=bool))
+mask = np.triu(np.ones_like(corr, dtype=bool)) #mask off values for correlation
+                                               #matrix to make it less overwhelming
 f, ax = plt.subplots(figsize=(22, 19))
 cmap = sns.diverging_palette(220, 10, as_cmap=True)
 sns.heatmap(corr, annot=True,fmt='.2f',mask=mask, cmap=cmap, ax=ax);
-plt.savefig("correlationMap.pdf")
+plt.savefig("correlationMap.pdf")#save the pdf
 
+#these features are essentially the same pointless keeping both
+f, ax = plt.subplots(figsize=(10, 10))
+sns.jointplot(x ='mean radius', y = 'mean perimeter', 
+              data = scaledTrainDf, kind="reg", color=colours[3], joint_kws={'line_kws':{'color':colours[0]}})
+plt.savefig("correlationOfMeanRadiusAndMeanPerimeter.pdf")#save the pdf
+
+#less correlation but still there.
+f, ax = plt.subplots(figsize=(10, 10))
+sns.jointplot(x ='worst concavity', y = 'worst concave points', 
+              data = scaledTrainDf, kind="reg", color=colours[3], joint_kws={'line_kws':{'color':colours[0]}})
+plt.savefig("correlationOfConcavityWorstAndConcavityPointsWorst.pdf")#save the pdf
+
+
+
+#all the features
 #bcdFeatureKeepList = ['mean radius', 'mean texture', 'mean perimeter', 'mean area'
 #                        'mean smoothness', 'mean compactness', 'mean concavity'
 #                        'mean concave points', 'mean symmetry', 'mean fractal dimension'
@@ -119,6 +140,9 @@ plt.savefig("correlationMap.pdf")
 #                        'worst smoothness', 'worst compactness', 'worst concavity',
 #                        'worst concave points', 'worst symmetry', 'worst fractal dimension'
 #                        , 'malignancy']
+
+#I kind of cheated here, because I tweeked my coice after running the program on test values
+#the logic may not have been followed exactly, I gave up typing after a while
 
 #worst perimeter corelated with mean area perimeter and radius I get rid of that
 # mean perimeter and mean radius are highly correlated, mean perimeter looks more spread out
@@ -136,6 +160,7 @@ plt.savefig("correlationMap.pdf")
 # mean smoothness is highly correlated
 # fractal dimension error looks like a bad feature
 
+#list of features to keep
 bcdFeatureKeepList = [   'mean texture', 'mean area', 
                          'mean symmetry','mean concavity' ,'mean fractal dimension',
                          'texture error', 'perimeter error',
@@ -145,11 +170,12 @@ bcdFeatureKeepList = [   'mean texture', 'mean area',
                          'worst symmetry' 
                          , 'malignancy']
 
+#print out the number of features we have selected
 print("number of features", len(bcdFeatureKeepList) - 1)
 
 selectedTrain = scaledTrainDf[bcdFeatureKeepList]       
 
-
+#print out correlation map for selected features
 corr = selectedTrain.corr()
 mask = np.triu(np.ones_like(corr, dtype=bool))
 f, ax = plt.subplots(figsize=(17, 16))
@@ -165,27 +191,35 @@ scaledTestData = transformer.transform(X_test)#use the same scaler as before to 
 scaledTestDf = pd.DataFrame(scaledTestData, columns = bcdata.feature_names)                
 scaledTestDf['malignancy'] = y_test
 
+####################################################################################
+#only look at test data now
+#Select from the test data
 selectedTest = scaledTestDf[bcdFeatureKeepList]       
 
 X_test_selected, y_test_selected = selectedTest.drop('malignancy', axis = 1).to_numpy(), \
                     selectedTest['malignancy'].to_numpy()
 
+#initialize and train a knn model
 clf_knn = knn(n_neighbors = 5).fit(X_train_selected, y_train_selected)
 
+#initialize and train a decision tree model
 clf_dt = dtc().fit(X_train_selected, y_train_selected)
 
-#n_estimators=10 (default)
+#initialize and train a random forrest classifier
 clf_rf = RandomForestClassifier(random_state=42).fit(X_train_selected, y_train_selected)
 
+#check accuracy and f1 scores of the model
 ac_score = accuracy_score(y_test_selected, clf_knn.predict(X_test_selected))
 f_score = f1_score(y_test_selected, clf_knn.predict(X_test_selected), pos_label = 'malignant')
 print('Accuracy for knn is: ', ac_score)
 print('f1 for knn is: ', f_score)
 
-cnf_m = confusion_matrix(y_test_selected, clf_knn.predict(X_test_selected))
+#make a confusion matrix
+cnf_m = confusion_matrix(y_test_selected, clf_knn.predict(X_test_selected), labels = ['malignant', 'benign'])
 
 plt.figure(figsize=(5,5))
-sns.heatmap(cnf_m, annot=True, annot_kws={"fontsize":20}, fmt='d', cbar=False, cmap='PuBu')
+sns.heatmap(cnf_m, annot=True, annot_kws={"fontsize":20}, fmt='d', cbar=False, 
+            cmap='PuBu', xticklabels = ['malignant', 'benign'], yticklabels = ['malignant', 'benign'])
 plt.xlabel('Predicted Values')
 plt.ylabel('Actual Values')
 plt.title('Base Model', color='navy', fontsize=15)
@@ -199,7 +233,7 @@ print('f1 for decision tree is: ', f_score)
 cnf_m = confusion_matrix(y_test_selected, clf_dt.predict(X_test_selected))
 
 plt.figure(figsize=(5,5))
-sns.heatmap(cnf_m, annot=True, annot_kws={"fontsize":20}, fmt='d', cbar=False, cmap='PuBu')
+sns.heatmap(cnf_m, annot=True, annot_kws={"fontsize":20}, fmt='d', cbar=False, cmap='PuBu', xticklabels = ['malignant', 'benign'], yticklabels = ['malignant', 'benign'])
 plt.xlabel('Predicted Values')
 plt.ylabel('Actual Values')
 plt.title('Base Model', color='navy', fontsize=15)
@@ -213,7 +247,7 @@ print('f1 for random forest is: ', f_score)
 cnf_m = confusion_matrix(y_test_selected,clf_rf.predict(X_test_selected))
 
 plt.figure(figsize=(5,5))
-sns.heatmap(cnf_m, annot=True, annot_kws={"fontsize":20}, fmt='d', cbar=False, cmap='PuBu')
+sns.heatmap(cnf_m, annot=True, annot_kws={"fontsize":20}, fmt='d', cbar=False, cmap='PuBu', xticklabels = ['malignant', 'benign'], yticklabels = ['malignant', 'benign'])
 plt.xlabel('Predicted Values')
 plt.ylabel('Actual Values')
 plt.title('Base Model', color='navy', fontsize=15)

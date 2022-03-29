@@ -36,6 +36,8 @@ TASK_NUM_RAM: .BYTE 1             ;
   JMP   t0_OC_ISR
 .org OVF0addr
   JMP   t0_OV_ISR
+.org OVF2addr
+  JMP   t2_OV_ISR
 
 .org $02A		                      ; locate code past the interupt vectors
 
@@ -67,13 +69,6 @@ MAIN_LOOP:
   NOP
   NOP
 	RJMP MAIN_LOOP
-
-
-INT0_ISR:
-  RETI
-
-INT1_ISR:
-  RETI
 
 .include "IO.asm"
 .include "LCD.asm"

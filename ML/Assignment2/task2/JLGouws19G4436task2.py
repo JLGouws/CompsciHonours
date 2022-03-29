@@ -129,3 +129,6 @@ for scalerTup in scalerList:
     reportDict['accuracy'] = {'precision': ' ', 'recall': ' ', 'f1-score': reportDict['accuracy'], 'support': reportDict['weighted avg']['support']}
     reportDf = pd.DataFrame(data = reportDict).transpose()
     #print(reportDf)
+################################################################################
+# Standard scalar seems to work the bes.
+# This makes sense because the data is probably normally distributed

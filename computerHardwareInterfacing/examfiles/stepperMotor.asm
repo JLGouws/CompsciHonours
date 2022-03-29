@@ -73,8 +73,7 @@ NEXTSTEP:
   RET
 
 t0_OC_ISR:
-  LDI   tmp1, 0;
-  OUT   TCCR0, tmp1                 ; stop timer 0
+  OUT   TCCR0, zero                 ; stop timer 0
   INC   slow
   CP    slow, arg2
   BRNE  contSteps
@@ -87,15 +86,13 @@ t0_OC_ISR:
   CALL  stepper_done
   RETI                              ; this is done
 contSteps:
-  LDI   tmp1, 0x00        ; reset timer0s counter
-  OUT   TCNT0, tmp1
-  LDI   tmp1, 0x04        ; 0b00000100 | clock prescalar 256
-  OUT   TCCR0, tmp1       ; revive timer
+  OUT   TCNT0, zero
+  LDI   tmp1, 0x04                  ; 0b00000100 | clock prescalar 256
+  OUT   TCCR0, tmp1                 ; revive timer
   RETI
 
 t0_OV_ISR:
-  LDI   tmp1, 0;
-  OUT   TCCR0, tmp1                 ; stop timer 0
+  OUT   TCCR0, zero                 ; stop timer 0
   LDI   tmp1, 0x02        
   OUT   TIFR, tmp1                  ; clear the  output compare flag
   CALL  stepper_done
@@ -130,6 +127,14 @@ set_motor:
   OUT   PORTD, tmp1
   RET
 
-;SINGLE_STEPS:     .db 0x09, 0x00, 0x10, 0x10, 0x20, 0x20, 0x40, 0x40, \
-;                      0x80, 0x80, 0x00, 0x00
-STEP_TABLE:            .db 0x10, 0x30, 0x20, 0x60, 0x40, 0xC0, 0x80, 0x90, 0x00 
+pause_stepper:
+  OUT   TCNT0, zero
+  OUT   TCCR0, zero                 ; stop timer 0
+  RET
+
+start_stepper:
+  LDI   tmp1, 0x04                  ; 0b00000100 | clock prescalar 256
+  OUT   TCCR0, tmp1                 ; stop timer 0
+  RET
+
+STEP_TABLE:       .db 0x10, 0x30, 0x20, 0x60, 0x40, 0xC0, 0x80, 0x90, 0x00, 0x00
