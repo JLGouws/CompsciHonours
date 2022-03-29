@@ -124,7 +124,7 @@
 \end{frame}
 \begin{frame}{Predator \cite{PredatorVid}}
 \centering
-  \embedvideo*{	}{predatorcut.mp4}
+  \embedvideo*{\includegraphics[width=1.0\textwidth]{predatorcutThumb.png}}{predatorcut.mp4}
 \end{frame}
 
 \begin{frame}{Why the TLD approach?}
@@ -145,26 +145,28 @@
 %   \end{columns}
 \end{frame}
 
+\bgroup
 \begin{frame}{TLD Approach\cite{Kalal2011}}
 
+   \begin{minipage}[t]{\textwidth}
    \centering
-   \begin{tikzpicture}[approach/.style={draw,very thick, fill=blue!20, text width=5em,
+   \begin{tikzpicture}[approach/.style={draw,very thick, fill=white, text width=5em,
             text centered, minimum height=2em,rounded corners=3ex},
-         idea/.style={draw, very thick,fill=blue!40, circle,text width=6em,
+         idea/.style={draw=orange!40, very thick,fill=orange!40, circle,text width=6em,
             text centered, minimum height=2.5em},
-         connections/.style={->,draw=black!30,line width=3pt,shorten <=5pt,shorten >=5pt},
+         connections/.style={->,draw=black!40,line width=3pt,shorten <=5pt,shorten >=5pt},
          reverseConnections/.style={<-,draw=black!30,line width=3pt,shorten <=5pt,shorten >=5pt},
       ]
 
       % Draw diagram elements
-      \node[draw] at (0,0) (tracking) [idea,draw=blue,fill=blue!20]  {Tracking};
+      \node[draw] at (0,0) (tracking) [idea,draw=orange,fill=orange!10]  {Tracking};
       \pause
-        \node[draw] at (3.464101615,4) (learning) [idea,draw=blue,fill=blue!20]  {Learning};
+        \node[draw] at (3.464101615,3.8) (learning) [idea,draw=orange,fill=orange!10]  {Learning\footnotemark};
       \pause
         %\def\shiftup#1{\raisebox{1ex}}
         \draw[connections, postaction={decorate, decoration={raise=1ex, text along path, text align=center, text={|\small|Fragments of trajectory}}}] (tracking.north)to[out=90,in=180] (learning.west) ;
       \pause
-        \node[draw] at (6.92820323,0) (detection) [idea,draw=blue,fill=blue!20]  {Detection};
+        \node[draw] at (6.92820323,0) (detection) [idea,draw=orange,fill=orange!10]  {Detection};
       \pause
          \draw[connections, postaction={decorate, decoration={raise=-2.5ex, text along path, text align=center, text={|\small|Training data}}}] (learning.south) to[out=270,in=180] (detection.west) ;
       \pause
@@ -172,11 +174,14 @@
       \pause
          \draw[reverseConnections, postaction={decorate, decoration={raise=-2.5ex, text along path, text align=center, text={|\small|re-initialization}}}] (tracking.south east) to[out=-45,in=225] (detection.south west) ;
    \end{tikzpicture}
+  \footnotetext<2->{P-N Learning.}
+   \end{minipage}
 \end{frame}
+\egroup
 
 \bgroup
 \let\oldfootnoterule\footnoterule
-\def\footnoterule{\only<3->\oldfootnoterule}
+\def\footnoterule{\only<4->\oldfootnoterule}
 \begin{frame}{Improvements to Predator}
     \begin{itemize}
       \setlength\itemsep{.5em}
@@ -198,11 +203,36 @@
               \bottomrule
             \end{tabular}
        \item \hspace{0pt}
-         \pause Better Learning Models
+         \pause Better Learning Models?
+       \item \hspace{0pt}
+         \pause Better Detection Models?
     \end{itemize}
 
 \end{frame}
 \egroup
+
+\begin{frame}{Goal}
+    \begin{itemize}
+      \setlength\itemsep{1.5em}
+       \item \hspace{0pt}
+          \pause Create a system \pause that takes a live video feed
+          \pause of a crowd of people \pause and identifies and tracks people in the video.
+       \item \hspace{0pt}
+          \pause Problems?
+          \begin{itemize}
+            \item<.-> \pause E\pause\hspace{0pt}T\pause\hspace{0pt}HICS!
+            \pause \item<.-> Time.
+          \end{itemize}
+          \item \hspace{0pt}
+          \pause Solutions?
+          \begin{itemize}
+            \item<.-> \pause Public Data\pause\hspace{0pt}. For now...
+            \pause \item<.-> Work harder.
+          \end{itemize}
+    \end{itemize}
+
+%   \end{columns}
+\end{frame}
 
 \begin{frame}[label=furtherApps]{Further applications}
 
@@ -224,10 +254,10 @@
 \end{frame}
 
 \begin{frame}[label=deliverables]{Deliverables}
-  \begin{itemize}[<+->]
+  \begin{itemize}
     \setlength\itemsep{.5em}
      \item \hspace{0pt}
-        \pause Full Implementation of Predator in C++
+        \pause Full Implementation of Predator
           %\pause 
           \begin{itemize}
             \item<.-> 3\textsuperscript{rd} week of 2\textsuperscript{nd} term
