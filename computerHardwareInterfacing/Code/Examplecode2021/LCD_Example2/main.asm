@@ -33,8 +33,8 @@ START:
     ldi ZL, low(2*PGMMSG)
     ldi ZH, high(2*PGMMSG)
     call READPGM
-    ldi XL, low(Message2)
-    ldi XH, high(Message2)
+    ldi XL, low(Message1)
+    ldi XH, high(Message1)
     call Message2LCD
 
 MAIN_LOOP:

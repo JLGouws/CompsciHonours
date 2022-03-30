@@ -1,4 +1,5 @@
 ;                     LCD file
+
 .MACRO LCD_WRITE
  CBI PORTB, 1
 .ENDMACRO
@@ -96,7 +97,8 @@ Write_instruc:
   ret
 
 
-Init_LCD:	push r16
+Init_LCD:	
+  push r16
   clr r16
   out ddrc, r16
   out portc, r16
@@ -115,3 +117,27 @@ Init_LCD:	push r16
   rcall Write_instruc
   pop r16
   ret
+
+ message_to_LCD:
+     ldi tmp2, 0x00
+ oneChar:
+     cpi tmp2, 16
+     brne writeChar
+     ldi tmp1, 0b11000000
+     call Write_instruc
+ writeChar:
+     ld tmp1, x+
+     cpi tmp1, 0x00
+     breq m2ldone
+     call write_char
+     inc tmp2
+     rjmp oneChar
+ m2ldone:
+     RET
+
+clear_LCD:
+  CBI   PORTB, 0
+  CBI   PORTB, 1    
+  LDI   R16, 0X01
+  RCALL write_instruc
+  RET

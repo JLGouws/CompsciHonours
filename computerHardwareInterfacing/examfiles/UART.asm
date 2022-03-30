@@ -28,6 +28,19 @@ clear_terminal:
   OUT   UDR, tmp1
   RET
 
+clear_line:
+  LDI   ZH, HIGH(2 * blankline)
+  LDI   ZL, LOW(2 * blankline)
+  LPM   tmp1, Z+
+  OUT   UDR, tmp1
+  RET
+
+wait_transmit:
+  SBIS  UCSRA, TXC                ; wait for bit data to be sent 
+  RJMP  wait_transmit
+  SBI   UCSRA, TXC
+  RET
+
 URXC_ISR: ; on receive
   LDI   XH, HIGH(TASK_NUM_RAM)
   LDI   XL, LOW(TASK_NUM_RAM)
@@ -35,12 +48,12 @@ URXC_ISR: ; on receive
   CPI   tmp1, '.'
   BREQ  setTask
   OUT   UDR, tmp1                 ; echo to terminal
+  RCALL wait_transmit
   LD    tmp3, X                   ; get current stored number
   LDI   tmp2, 10
   MUL   tmp3, tmp2                ; multiply tmp3 by tmp2
   MOV   tmp3, MUL_LOW
   SUBI  tmp1, '0'
-  LSL   tmp1
   ADD   tmp3, tmp1
   ST    X, tmp3
   RETI

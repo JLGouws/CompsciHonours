@@ -1,16 +1,23 @@
 ; found this at 
 ; https://www.avrfreaks.net/forum/how-do-you-make-jump-table-avr-assembly
+.DSEG 
+TASK_NUM_RAM: .BYTE 2 ;
+
 .MACRO jumpto       
   LDI   XH, HIGH(@0)  ; NB Can't use Z register for IJMP
   LDI   XL, LOW(@0)
-  ADD   XL, @1
+  MOV   tmp1, @1
+  LSL   tmp1
+  ADD   XL, tmp1
   ADC   XH, ZERO
   PUSH  XL
   PUSH  XH
   RET
 .ENDMACRO
 
+.CSEG
 do_task:
+  CALL  clear_line
   jumpto taskTable, tasknum
 taskTable:
   RCALL task0
@@ -25,23 +32,17 @@ taskTable:
   RET
   RCALL task5
   RET
-  CALL  task6
+  RCALL  task6
   RET
-  CALL  task7
+  RCALL  task7
   RET
-  CALL  task8
+  RCALL  task8
   RET
-  CALL  task9
+  RCALL  task9
 	RET
-  CALL  task10
+  RCALL  task10
 	RET
-  CALL  task11
-  RET
-
-stepper_done:
-  SBI   UCSRB, RXEN               ; Re-enable receiving
-  LDI   tasknum, 0
-  RCALL do_task
+  RCALL  task11
   RET
 
 task0:
@@ -49,8 +50,12 @@ task0:
   RET
 
 task1:
+  CALL  stepper_is_enabled
+  SBRS  retReg, 0
+  RET
   CBI   UCSRB, RXEN 
   CALL  clear_terminal
+  CALL  enable_buttons
   LDI   tmp1, 1
   MOV   dstep, tmp1
   LDI   arg1, 10                  ; set number of steps
@@ -58,8 +63,12 @@ task1:
   CALL  step_motor
   RET
 task2:
+  CALL  stepper_is_enabled
+  SBRS  retReg, 0
+  RET
   CBI   UCSRB, RXEN 
   CALL  clear_terminal
+  CALL  enable_buttons
   LDI   tmp1, -1
   MOV   dstep, tmp1
   LDI   arg1, 10                  ; set number of steps
@@ -67,8 +76,12 @@ task2:
   CALL  step_motor
   RET
 task3:
+  CALL  stepper_is_enabled
+  SBRS  retReg, 0
+  RET
   CBI   UCSRB, RXEN 
   CALL  clear_terminal
+  CALL  enable_buttons
   LDI   tmp1, 2
   MOV   dstep, tmp1
   LDI   arg1, 80                  ; set number of steps
@@ -76,8 +89,12 @@ task3:
   CALL  step_motor
   RET
 task4:
+  CALL  stepper_is_enabled
+  SBRS  retReg, 0
+  RET
   CBI   UCSRB, RXEN 
   CALL  clear_terminal
+  CALL  enable_buttons
   LDI   tmp1, -2
   MOV   dstep, tmp1
   LDI   arg1, 80                  ; set number of steps
@@ -85,27 +102,57 @@ task4:
   CALL  step_motor
   RET
 task5:
-  CALL  stepper_disable
   LDI   tasknum, 0x00
-  RCALL stepper_done
+  CALL  stepper_disable
   RET
 task6:
-  CALL  stepper_enable
   LDI   tasknum, 0x00
-  RCALL stepper_done
+  CALL  stepper_enable
   RET
 task7:
+  LDI   tasknum, 0x00
+  CALL  convert_voltage
   RET
 task8:
+  LDI   tasknum, 0x00
+  CALL  adc_disable
+  CALL  clear_lights
   RET
 task9:
+  LDI   tasknum, 0x00
+  LDI   XH, HIGH(RAMMESSAGE3)
+  LDI   XL, LOW(RAMMESSAGE3)
+  CALL  message_to_LCD
   RET
 task10:
+  LDI   tasknum, 0x00
+  CALL  clear_LCD 
   RET
 task11:
+  NOP
+  NOP
+  RJMP  task11
   RET
 
-menu_text:          .db 0x0c,"Project Tasks: ",0x0d,0x0a
+adc_done:
+  MOV   arg1, retReg
+  CALL  output_lights
+  RET
+
+stepper_done:
+  LDI   tasknum, 0x00
+  SBI   UCSRB, RXEN               ; Re-enable receiving
+  RCALL do_task
+  CALL  disable_buttons
+  RET
+
+stepper_off_handle:
+  LDI   tasknum, 0x00
+  SBI   UCSRB, RXEN               ; Re-enable receiving
+  CALL  clear_line
+  RET
+
+menu_text:          .db 0x0C,"Project Tasks: ",0x0d,0x0a
 menu_text1:         .db "--------------",0x0d,0x0a
 menu_text2:         .db "1) Rotate clockwise for 5 seconds ",0x0d,0x0a
 menu_text3:         .db "2) Rotate anti-clockwise for 5 seconds",0x0d,0x0a
@@ -118,4 +165,5 @@ menu_text9:         .db "8) Stop ADC PWM task",0x0d,0x0a
 menu_text10:        .db "9) Print 3rd stored message to LCD",0x0d,0x0a
 menu_text11:        .db "10) Clear LCD ",0x0d,0x0a
 menu_text12:        .db "11) Reset Microcontroller ",0x0d,0x0a,0x00,0x00
-blankterminal:      .db 0x0c,0x00
+blankterminal:      .db 0x0C,0x00
+blankline:          .db 0x0D,"          ", 0x0D,0x00,0x00

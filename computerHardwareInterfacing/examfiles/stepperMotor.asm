@@ -1,8 +1,6 @@
 ;           This file is responsible for handling the stepper motor
 ; J L Gouws 19G4436
 ; 
-.equ CW   = 0
-.equ CCW  = 1
 
 .DSEG
 RAM_STEPS: .BYTE  9     ;
@@ -16,14 +14,13 @@ init_stepper:
   OUT   DDRD, tmp1
   IN    tmp1, PORTD
   ANDI  tmp1, 0x0F      ; lower bits of the PORTD
-  LDI   tmp2, 0x10      ; lock motor on first driver
-  OR    tmp1, tmp2      ; set D4-D7 to output
+  ORI   tmp1, 0x10      ; lock motor on first driver
   OUT   PORTD, tmp1
   EOR   step, step      ; set step to 0
-  RCALL init_timer0
   LDI   ZH, HIGH(2 * STEP_TABLE)
   LDI   ZL, LOW(2 * STEP_TABLE) 
   CALL  read_steps_to_RAM
+  RCALL init_timer0
   RET
 
 init_timer0:
@@ -91,24 +88,20 @@ contSteps:
   OUT   TCCR0, tmp1                 ; revive timer
   RETI
 
-t0_OV_ISR:
-  OUT   TCCR0, zero                 ; stop timer 0
-  LDI   tmp1, 0x02        
-  OUT   TIFR, tmp1                  ; clear the  output compare flag
-  CALL  stepper_done
-  RETI
-
 stepper_disable:
-  IN    tmp1, TIMSK
-  ANDI  tmp1, 0xFC                  ; mask off TIMSK
-  ORI   tmp1, 0x01                  ; this stops the timer from resetting on a
-                                    ; compare match
-  OUT   TIMSK, tmp1
-
   IN    tmp1, PORTD
   ANDI  tmp1, 0x0F                  ; tmp1 now contains the masked off values 
                                     ; of portD
   OUT   PORTD, tmp1                 ; the lower bits of PORTD are now off
+  RET
+
+stepper_is_enabled:
+  IN    tmp1, TIMSK
+  ANDI  tmp1, 0x03                ; mask off TIMSK
+  MOV   retReg, tmp1
+  ANDI  tmp1, 0x01                ; mask off TIMSK
+  LSR   retReg
+  OR    retReg, tmp1
   RET
 
 stepper_enable:
@@ -118,11 +111,8 @@ stepper_enable:
   ADD   XL, step
   ADC   XH, zero
   LD    tmp2, X
-  LDI   tmp3, 0x00
-  CP    step, tmp3
-  BRNE  set_motor
-  LDI   tmp2, 0x10
-set_motor:
+  IN    tmp1, PORTD
+  ANDI  tmp1, 0x0F
   OR    tmp1, tmp2
   OUT   PORTD, tmp1
   RET

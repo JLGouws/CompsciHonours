@@ -10,16 +10,14 @@
 .def step=R3
 .def dstep=R4
 .def slow=R5
-.def arg1=R16		    ;
-.def arg2=R17		    ;
-.def tmp1=R18
-.def tmp2=R19
-.def tmp3=R20
+.def retReg=R6
+.def tmp1=R16
+.def tmp2=R17
+.def tmp3=R18
+.def arg1=R19		    ;
+.def arg2=R20		    ;
 .def tasknum=R21
 .def stepCount=R22
-
-.DSEG
-TASK_NUM_RAM: .BYTE 1             ;
 
 .CSEG                             ; start the code segment
 .org 0x000                        ; locate code at address $000
@@ -34,40 +32,46 @@ TASK_NUM_RAM: .BYTE 1             ;
   JMP   utxc_isr
 .org OC0addr
   JMP   t0_OC_ISR
-.org OVF0addr
-  JMP   t0_OV_ISR
 .org OVF2addr
   JMP   t2_OV_ISR
+.org ADCCaddr
+  JMP   ADC_ISR
+.org OC1Aaddr
+  JMP   t1_OCA_ISR
+.org OVF1addr
+  JMP   t1_OV_ISR
 
 .org $02A		                      ; locate code past the interupt vectors
 
 START:
-	LDI   tmp1, HIGH(RAMEND)        ; initialise the stack pointer
-	OUT   SPH, tmp1
 	LDI   tmp1, LOW(RAMEND)	
 	OUT   SPL, tmp1
+	LDI   tmp1, HIGH(RAMEND)        ; initialise the stack pointer
+	OUT   SPH, tmp1
 
   EOR   zero, zero                ; make zero register, well zero
 
-  ; set task num to
+  ; set task num to zero
   LDI   tasknum, 0x00
   LDI   XH, HIGH(TASK_NUM_RAM)
   LDI   XL, LOW(TASK_NUM_RAM)
   ST    X, tasknum                ; make the task number buffer zero
 
   ; initialize the microcontroller
-  CALL  init_EEPmessages
-  CALL  init_UART
-	CALL  init_stepper
-	CALL  init_IO
   CALL  init_LCD
+  CALL  init_EEP
+  CALL  init_UART
+  CALL  init_stepper
+  CALL  init_IO
   CALL  send_menu
-	SEI
+  CALL  init_watchdog
+  SEI
 
 MAIN_LOOP:
   NOP
   NOP
   NOP
+  WDR
 	RJMP MAIN_LOOP
 
 .include "IO.asm"
@@ -76,3 +80,5 @@ MAIN_LOOP:
 .include "EEP.asm"
 .include "stepperMotor.asm"
 .include "taskHandler.asm"
+.include "ADC.asm"
+.include "watchdog.asm"
