@@ -1,5 +1,5 @@
 .ESEG     
-EEMSG: .DB "Message1",0x00,"Message2",0x00,"Message3abcdefghij",0x00
+EEMSG: .DB "Why am I here",0x00,"Not this message",0x00,"The message is long",0x00
 
 .DSEG    
 RAMMESSAGE1: .BYTE 20    
@@ -9,19 +9,6 @@ RAMMESSAGE3: .BYTE 20
 .CSEG
 ; Reads the EEPROM messages into RAM
 init_EEP:
-  ; read first message into RAM
-;  LDI   XH, HIGH(RAMMESSAGE1)
-;  LDI   XL, LOW(RAMMESSAGE1)
-;  LDI   YH, HIGH(EEPMESSAGE1)
-;  LDI   YL, LOW(EEPMESSAGE1)
-;  CALL read_EEP
-  ; read second message into RAM
-;  LDI   XH, HIGH(RAMMESSAGE2)
-;  LDI   XL, LOW(RAMMESSAGE2)
-;  LDI   YH, HIGH(EEPMESSAGE2)
-;  LDI   YL, LOW(EEPMESSAGE2)
-;  CALL read_EEP
-  ; read third message into RAM
   LDI   XH, HIGH(RAMMESSAGE1)
   LDI   XL, LOW(RAMMESSAGE1)
   LDI   YH, HIGH(EEMSG)

@@ -8,15 +8,15 @@ RAM_STEPS: .BYTE  9     ;
 .CSEG
 init_stepper:
   IN    tmp1, DDRD
-  ANDI  tmp1, 0x0F      ; lower bits of the DDRD
+  ANDI  tmp1, 0x0F                ; lower bits of the DDRD
   LDI   tmp2, 0xF0
-  OR    tmp1, tmp2      ; set D4-D7 to output
+  OR    tmp1, tmp2                ; set D4-D7 to output
   OUT   DDRD, tmp1
   IN    tmp1, PORTD
-  ANDI  tmp1, 0x0F      ; lower bits of the PORTD
-  ORI   tmp1, 0x10      ; lock motor on first driver
+  ANDI  tmp1, 0x0F                ; lower bits of the PORTD
+  ORI   tmp1, 0x10                ; lock motor on first driver
   OUT   PORTD, tmp1
-  EOR   step, step      ; set step to 0
+  EOR   step, step                ; set step to 0
   LDI   ZH, HIGH(2 * STEP_TABLE)
   LDI   ZL, LOW(2 * STEP_TABLE) 
   CALL  read_steps_to_RAM
@@ -25,20 +25,19 @@ init_stepper:
 
 init_timer0:
   IN    tmp1, TIMSK
-  ANDI  tmp1, 0xFC        ;mask off TIMSK
+  ANDI  tmp1, 0xFC                ; mask off TIMSK
   ORI   tmp1, 0x02
   OUT   TIMSK, tmp1
-  LDI   tmp1, 156         ; output compare 0.125 x 10^{-6} x 256 x 156 = 4.992ms
+  LDI   tmp1, 156                 ; output compare 0.125 x 10^{-6} x 256 x 156 = 4.992ms
   OUT   OCR0, tmp1
-  LDI   tmp1, 0x00        ; reset timer0s counter
+  LDI   tmp1, 0x00                ; reset timer0s counter
   OUT   TCNT0, tmp1
   RET 
 
 step_motor:
   MOV   slow, ZERO
   MOV   stepCount, ZERO
-  LDI   tmp1, 0x04        ; 0b00000100 | clock prescalar 256
-  OUT   TCCR0, tmp1       ; start timer
+  RCALL start_stepper
   RET
 
 read_steps_to_RAM:
@@ -53,10 +52,10 @@ readPGM:
 
 ; makes the motor make one step
 NEXTSTEP:
-  ADD   step, dstep               ; get to the next step
+  ADD   step, dstep                 ; get to the next step
   LDI   tmp1, 0x07
   AND   step, tmp1
-  INC   stepCount                 ; get to the next step
+  INC   stepCount                   ; get to the next step
   LDI   XH, HIGH(RAM_STEPS)
   LDI   XL, LOW(RAM_STEPS)
   ADD   XL, step
@@ -83,12 +82,13 @@ t0_OC_ISR:
   CALL  stepper_done
   RETI                              ; this is done
 contSteps:
-  OUT   TCNT0, zero
-  LDI   tmp1, 0x04                  ; 0b00000100 | clock prescalar 256
-  OUT   TCCR0, tmp1                 ; revive timer
+  RCALL start_stepper
   RETI
 
 stepper_disable:
+  IN    tmp1, TIMSK
+  ANDI  tmp1, 0xFC                  ; mask off TIMSK
+  OUT   TIMSK, tmp1
   IN    tmp1, PORTD
   ANDI  tmp1, 0x0F                  ; tmp1 now contains the masked off values 
                                     ; of portD
@@ -118,11 +118,11 @@ stepper_enable:
   RET
 
 pause_stepper:
-  OUT   TCNT0, zero
   OUT   TCCR0, zero                 ; stop timer 0
   RET
 
 start_stepper:
+  OUT   TCNT0, zero
   LDI   tmp1, 0x04                  ; 0b00000100 | clock prescalar 256
   OUT   TCCR0, tmp1                 ; stop timer 0
   RET

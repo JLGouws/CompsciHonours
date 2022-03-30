@@ -12,7 +12,7 @@ init_IO:
   ANDI  tmp1, 0xF0
   ORI   tmp1, 0x0C
   OUT   PORTD, tmp1               ; enable pull ups for buttons
-  LDI   tmp1, 0x02
+  LDI   tmp1, 0x0A
   OUT   MCUCR, tmp1               ; falling edge triggered.
   IN    tmp1, TIMSK               ; timer 1 for PWM
   ANDI  tmp1, 0xC3
@@ -23,6 +23,7 @@ init_IO:
 enable_buttons:
   LDI   tmp1, 0xC0                ; 0b11000000
   OUT   GICR, tmp1                ; int0 and int1 enabled
+  OUT   GIFR, tmp1                ; clear int0 flag and in1 flags
   RET
 
 disable_buttons:
@@ -33,7 +34,7 @@ output_lights:
   OUT   TCCR1A, zero
   LDI   tmp1, 0x01                ; prescalar of 1, 8 makes the timer too slow
   OUT   TCCR1B, tmp1
-  LDI   tmp2, 0x5F
+  LDI   tmp2, 0x2F
   MUL   tmp2, arg1 
   ADD   MUL_LOW, tmp2
   ADC   MUL_HIGH, zero
@@ -79,9 +80,7 @@ int1_ISR:
 t2_OV_ISR:
   OUT   TCCR2, zero               ; stop counter
   OUT   TCNT2, zero               ; zero counter
-  LDI   tmp1, 0xC0
-  OUT   GIFR, tmp1                ; clear int0 flag
-  OUT   GICR, tmp1                ; int0 re-enabled
+  RCALL enable_buttons
   RETI
 
 t1_OCA_ISR:

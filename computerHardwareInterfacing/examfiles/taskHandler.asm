@@ -48,59 +48,30 @@ taskTable:
 task0:
   CALL  send_menu
   RET
-
 task1:
-  CALL  stepper_is_enabled
-  SBRS  retReg, 0
-  RET
-  CBI   UCSRB, RXEN 
-  CALL  clear_terminal
-  CALL  enable_buttons
   LDI   tmp1, 1
   MOV   dstep, tmp1
   LDI   arg1, 10                  ; set number of steps
   LDI   arg2, 100
-  CALL  step_motor
-  RET
+  RJMP  do_motor_task
 task2:
-  CALL  stepper_is_enabled
-  SBRS  retReg, 0
-  RET
-  CBI   UCSRB, RXEN 
-  CALL  clear_terminal
-  CALL  enable_buttons
   LDI   tmp1, -1
   MOV   dstep, tmp1
   LDI   arg1, 10                  ; set number of steps
   LDI   arg2, 100
-  CALL  step_motor
-  RET
+  RJMP  do_motor_task
 task3:
-  CALL  stepper_is_enabled
-  SBRS  retReg, 0
-  RET
-  CBI   UCSRB, RXEN 
-  CALL  clear_terminal
-  CALL  enable_buttons
   LDI   tmp1, 2
   MOV   dstep, tmp1
   LDI   arg1, 80                  ; set number of steps
   LDI   arg2, 25
-  CALL  step_motor
-  RET
+  RJMP  do_motor_task
 task4:
-  CALL  stepper_is_enabled
-  SBRS  retReg, 0
-  RET
-  CBI   UCSRB, RXEN 
-  CALL  clear_terminal
-  CALL  enable_buttons
   LDI   tmp1, -2
   MOV   dstep, tmp1
   LDI   arg1, 80                  ; set number of steps
   LDI   arg2, 25
-  CALL  step_motor
-  RET
+  RJMP  do_motor_task
 task5:
   LDI   tasknum, 0x00
   CALL  stepper_disable
@@ -133,6 +104,17 @@ task11:
   NOP
   RJMP  task11
   RET
+
+do_motor_task:
+  CALL  stepper_is_enabled
+  SBRS  retReg, 0
+  RET
+  CBI   UCSRB, RXEN 
+  CALL  clear_terminal
+  CALL  enable_buttons
+  CALL  step_motor
+  RET
+  
 
 adc_done:
   MOV   arg1, retReg

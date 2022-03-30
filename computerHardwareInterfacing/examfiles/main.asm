@@ -44,10 +44,10 @@
 .org $02A		                      ; locate code past the interupt vectors
 
 START:
-	LDI   tmp1, LOW(RAMEND)	
-	OUT   SPL, tmp1
-	LDI   tmp1, HIGH(RAMEND)        ; initialise the stack pointer
-	OUT   SPH, tmp1
+  LDI   tmp1, LOW(RAMEND)	
+  OUT   SPL, tmp1
+  LDI   tmp1, HIGH(RAMEND)        ; initialise the stack pointer
+  OUT   SPH, tmp1
 
   EOR   zero, zero                ; make zero register, well zero
 
