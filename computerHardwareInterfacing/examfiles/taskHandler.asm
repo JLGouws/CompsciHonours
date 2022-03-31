@@ -46,7 +46,9 @@ taskTable:
   RET
 
 task0:
-  CALL  send_menu
+  LDI   ZH, HIGH(2 * menu_text)
+  LDI   ZL, LOW(2 * menu_text)
+  CALL  send_chars_terminal
   RET
 task1:
   LDI   tmp1, 1
@@ -110,7 +112,9 @@ do_motor_task:
   SBRS  retReg, 0
   RET
   CBI   UCSRB, RXEN 
-  CALL  clear_terminal
+  LDI   ZH, HIGH(2 * blankterminal)
+  LDI   ZL, LOW(2 * blankterminal)
+  CALL  send_chars_terminal
   CALL  enable_buttons
   CALL  step_motor
   RET

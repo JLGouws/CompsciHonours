@@ -14,9 +14,7 @@ init_UART:
 	SBI   UCSRB, TXCIE
 	RET
 
-send_menu:
-  LDI   ZH, HIGH(2 * menu_text)
-  LDI   ZL, LOW(2 * menu_text)
+send_chars_terminal:
   LPM   tmp1, Z+
   OUT   UDR, tmp1
   RET
@@ -45,36 +43,41 @@ URXC_ISR: ; on receive
   LDI   XH, HIGH(TASK_NUM_RAM)
   LDI   XL, LOW(TASK_NUM_RAM)
   IN    tmp1, UDR                 
-  CPI   tmp1, '.'
-  BREQ  setTask
+  CPI   tmp1, '.'                 ; check for stop character
+  BREQ  set_task
   OUT   UDR, tmp1                 ; echo to terminal
   RCALL wait_transmit
   LD    tmp3, X                   ; get current stored number
   LDI   tmp2, 10
   MUL   tmp3, tmp2                ; multiply tmp3 by tmp2
+  CP    MUL_HIGH, zero
+  BRNE  reset_task                ; bad input this has bad interaction
+                                  ; but whatever
   MOV   tmp3, MUL_LOW
   SUBI  tmp1, '0'
+  BRMI  reset_task
   ADD   tmp3, tmp1
   ST    X, tmp3
   RETI
-setTask:
+set_task:
   LD    tasknum, X
-  ST    X, ZERO                   ; clear the input register.
+  CPI   tasknum, 0x00
+  BRLT  reset_task
+  CPI   tasknum, 0x0C
+  BRGE  reset_task
+  RJMP  do_set_task
+reset_task:
+  LDI   tasknum, 0x0              ; set task num to zero
+do_set_task:
+  ST    X, zero                   ; clear the input register.
   CALL  do_task
   RETI
+  
 
-UTXC_ISR: ; continue transmitting
+UTXC_ISR:                         ; continue transmitting
   LPM   tmp1, Z+
-  CPI   tmp1, 0x00
+  CPI   tmp1, 0x00                ; check for byte
   BREQ  donetx
   OUT   udr, tmp1
 donetx:    
-  RETI
-
-sendfromram:
-  LD tmp1, x+
-  CPI tmp1, 0x00
-  BREQ txcexit
-  OUT UDR, tmp1
-txcexit:
   RETI

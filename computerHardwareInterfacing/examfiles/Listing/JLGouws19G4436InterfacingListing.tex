@@ -13,10 +13,15 @@
 \usepackage{unicode-math}
 \usepackage{booktabs}
 \usepackage{listings}
+
+\definecolor{bluegreen}{HTML}{33997e}
+
 \lstdefinelanguage{AVR}
 [x86masm]{Assembler}
 {
-  morekeywords = {RCALL,LDI,LD,RJMP,EOR,SEI,SER,SBRS,SBRC,SBIS,SBIC,SBI,CBI,ANDI,ORI,LSR,RETI,CPI,CP,BRNE,BREQ,LPM,SUBI,ADIW,CLR}
+  morekeywords = {RCALL,LDI,LD,RJMP,EOR,SEI,SER,SBRS,SBRC,SBIS,SBIC,SBI,CBI,ANDI,ORI,LSR,RETI,CPI,CP,BRNE,BREQ,LPM,SUBI,ADIW,CLR,WDR},
+%  morecomment = [s]{}{:},
+%  commentstyle = [s]\color{bluegreen},
 }
 \lstset{
   language=AVR,

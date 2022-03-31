@@ -34,7 +34,7 @@ output_lights:
   OUT   TCCR1A, zero
   LDI   tmp1, 0x01                ; prescalar of 1, 8 makes the timer too slow
   OUT   TCCR1B, tmp1
-  LDI   tmp2, 0x2F
+  LDI   tmp2, 0x3F
   MUL   tmp2, arg1 
   ADD   MUL_LOW, tmp2
   ADC   MUL_HIGH, zero

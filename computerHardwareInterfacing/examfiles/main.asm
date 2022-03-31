@@ -63,16 +63,15 @@ START:
   CALL  init_UART
   CALL  init_stepper
   CALL  init_IO
-  CALL  send_menu
   CALL  init_watchdog
   SEI
-
+  CALL  do_task
 MAIN_LOOP:
   NOP
   NOP
   NOP
   WDR
-	RJMP MAIN_LOOP
+  RJMP MAIN_LOOP
 
 .include "IO.asm"
 .include "LCD.asm"
