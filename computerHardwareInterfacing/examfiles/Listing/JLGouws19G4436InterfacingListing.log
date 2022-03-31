@@ -1,4 +1,4 @@
-This is LuaHBTeX, Version 1.12.0 (TeX Live 2020/Debian)  (format=lualatex 2022.3.19)  31 MAR 2022 10:34
+This is LuaHBTeX, Version 1.12.0 (TeX Live 2020/Debian)  (format=lualatex 2022.3.19)  31 MAR 2022 15:44
  restricted system commands enabled.
 **JLGouws19G4436InterfacingListing.tex
 (./JLGouws19G4436InterfacingListing.tex
@@ -1189,14 +1189,14 @@ Dictionary: translator-basic-dictionary, Language: English
 * layout: <same size as paper>
 * layoutoffset:(h,v)=(0.0pt,0.0pt)
 * modes: 
-* h-part:(L,W,R)=(42.67912pt, 512.14963pt, 42.67912pt)
+* h-part:(L,W,R)=(45.52458pt, 529.22101pt, 22.76228pt)
 * v-part:(T,H,B)=(56.9055pt, 731.23584pt, 56.9055pt)
 * \paperwidth=597.50787pt
 * \paperheight=845.04684pt
-* \textwidth=512.14963pt
+* \textwidth=529.22101pt
 * \textheight=731.23584pt
-* \oddsidemargin=-29.59087pt
-* \evensidemargin=-29.59087pt
+* \oddsidemargin=-26.7454pt
+* \evensidemargin=-26.7454pt
 * \topmargin=-52.36449pt
 * \headheight=12.0pt
 * \headsep=25.0pt
@@ -1269,7 +1269,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 60--62
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}])
 (../taskHandler.asm
-LaTeX Font Info:    Trying to load font information for TS1+ppl on input line 2.
+LaTeX Font Info:    Trying to load font information for TS1+ppl on input line 5.
 
  (/usr/share/texlive/texmf-dist/tex/latex/psnfss/ts1ppl.fd
 File: ts1ppl.fd 2001/06/04 font definitions for TS1/ppl.
@@ -1337,7 +1337,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                You might also make \topmargin smaller to compensate:
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
-[9]) (../UART.asm
+[9]
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -1345,7 +1345,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                You might also make \topmargin smaller to compensate:
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
-[10]
+[10]) (../UART.asm
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -1404,22 +1404,22 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 [17] (./JLGouws19G4436InterfacingListing.aux))
 
 Here is how much of LuaTeX's memory you used:
- 38222 strings out of 478824
- 381558,1648299 words of node,token memory allocated
+ 38217 strings out of 478824
+ 381557,1648299 words of node,token memory allocated
  560 words of node memory still in use:
    6 hlist, 2 vlist, 2 rule, 2 glue, 5 kern, 1 glyph, 8 attribute, 64 glue_spec,
  8 attribute_list, 2 write nodes
-   avail lists: 1:1,2:3902,3:118,4:43,5:8482,6:114,7:15110,8:2,9:16723,10:42,11:
-837
- 56560 multiletter control sequences out of 65536+600000
- 75 fonts using 14232883 bytes
+   avail lists: 1:1,2:4598,3:119,4:44,5:10044,6:115,7:17332,8:3,9:19809,10:43,11
+:1007
+ 56555 multiletter control sequences out of 65536+600000
+ 75 fonts using 14232927 bytes
  98i,12n,116p,748b,1049s stack positions out of 5000i,500n,10000p,200000b,200000s
 {/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/share/texmf/fon
 ts/opentype/public/lm/lmroman12-regular.otf></usr/share/texlive/texmf-dist/fonts
 /type1/urw/palatino/uplb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/pa
 latino/uplr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/palatino/uplri8
 a.pfb>
-Output written on JLGouws19G4436InterfacingListing.pdf (17 pages, 110703 bytes).
+Output written on JLGouws19G4436InterfacingListing.pdf (17 pages, 114178 bytes).
 
 
 PDF statistics: 81 PDF objects out of 1000 (max. 8388607)

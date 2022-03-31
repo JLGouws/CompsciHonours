@@ -4,18 +4,18 @@
 .INCLUDE "m16def.inc"
 .LIST
 
-.def MUL_LOW=R0		  ;
-.def MUL_HIGH=R1		;
-.def ZERO=R2		    ;
+.def MUL_LOW=R0
+.def MUL_HIGH=R1
+.def ZERO=R2
 .def step=R3
 .def dstep=R4
 .def slow=R5
 .def retReg=R6
-.def tmp1=R16
-.def tmp2=R17
-.def tmp3=R18
-.def arg1=R19		    ;
-.def arg2=R20		    ;
+.def tmp1=R16       ; my code is a bit brittle somewhere
+.def tmp2=R17       ; it seems like tmp1 and tmp2 have to
+.def tmp3=R18       ; r16 and r17
+.def arg1=R19
+.def arg2=R20
 .def tasknum=R21
 .def stepCount=R22
 
@@ -69,10 +69,10 @@ START:
 MAIN_LOOP:
   NOP
   NOP
-  NOP
   WDR
   RJMP MAIN_LOOP
 
+; files to include
 .include "IO.asm"
 .include "LCD.asm"
 .include "UART.asm"

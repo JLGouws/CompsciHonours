@@ -1,36 +1,32 @@
+;                           UART.asm
+; J L Gouws
 ;               File for handling UART and related things
 
 init_UART:
   ;set baud rate (9600,8,n,2)
- 	LDI   tmp1, 51
-	LDI   tmp2, 0x00
-	OUT   UBRRH, tmp2
-	OUT	  UBRRL, tmp1
+  LDI   tmp1, 51
+  LDI   tmp2, 0x00
+  OUT   UBRRH, tmp2               ; Baudrate
+  OUT	  UBRRL, tmp1
   ; set rx and tx enable
-	SBI   UCSRB, RXEN
-	SBI   UCSRB, TXEN
+  SBI   UCSRB, RXEN
+  SBI   UCSRB, TXEN
   ; enable uart interrupts, both transmit and receive
-	SBI   UCSRB, RXCIE
-	SBI   UCSRB, TXCIE
-	RET
+  SBI   UCSRB, RXCIE
+  SBI   UCSRB, TXCIE
+  RET
 
 send_chars_terminal:
-  LPM   tmp1, Z+
+  LPM   tmp1, Z+                  ; outputs the characters in program
+                                  ; memmory to terminal
   OUT   UDR, tmp1
   RET
 
-clear_terminal:
-  LDI   ZH, HIGH(2 * blankterminal)
-  LDI   ZL, LOW(2 * blankterminal)
+clear_line:                       ; clears a line in the terminal
+  LDI   ZH, HIGH(2 * blankline)   ; this is one method because it gets
+  LDI   ZL, LOW(2 * blankline)    ; called often
   LPM   tmp1, Z+
-  OUT   UDR, tmp1
-  RET
-
-clear_line:
-  LDI   ZH, HIGH(2 * blankline)
-  LDI   ZL, LOW(2 * blankline)
-  LPM   tmp1, Z+
-  OUT   UDR, tmp1
+  OUT   UDR, tmp1                 ;
   RET
 
 wait_transmit:
