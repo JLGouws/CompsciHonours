@@ -9,4 +9,4 @@ source ~/.bashrc
 mkvirtualenv cvML
 workon cvML
 
-pip3 install -r requirements.txt 
+pip3 install -r requireInstall.txt 
