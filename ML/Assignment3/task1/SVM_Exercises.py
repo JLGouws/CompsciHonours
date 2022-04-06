@@ -117,7 +117,7 @@ X4 = np.array([[r * np.cos(p), r * np.sin(p)] for r, p in zip(rho, phi)])
 y4 = np.vstack((np.ones((n_samples // 2, 1)), np.zeros((n_samples // 2, 1))))
 
 plt.figure(figsize=(10, 6))
-plt.scatter(np.reshape(X4[:, 0],-1), np.reshape(X4[:, 1],-1), c=np.reshape(y4,-1),s=100)
+plt.scatter(np.reshape(X4[:, 0],-1), np.reshape(X4[:, 1],-1), c=np.reshape(y4,-1),s=100, cmap = 'cool')
 
 #quit()
 # Code solution 4 here:
@@ -126,20 +126,21 @@ def my_kernel(X, Y = None):
     X = np.atleast_2d(X)
     if Y is None:
         dists = pdist(X, metric="sqeuclidean")
-        K = np.exp(-0.5 * dists)
+        K = np.exp(-0.2 * dists)
         # convert from upper-triangular matrix to square matrix
         K = squareform(K)
         np.fill_diagonal(K, 1)
     else:
         dists = cdist(X, Y, metric="sqeuclidean")
-        K = np.exp(-0.5 *dists)
+        K = np.exp(-0.2 *dists)
     return K
 plt.title("Exercise 4")
 
 X4 = np.c_[np.reshape(X4[:, 0],-1), np.reshape(X4[:, 1],-1)]
 y4 = np.reshape(y4,-1)
 
-clf = make_pipeline(prep.StandardScaler(), SVC(kernel=my_kernel, C=999999, gamma='scale'))
+#this is stupidly overfitted
+clf = make_pipeline(prep.StandardScaler(), SVC(kernel=my_kernel, C=9999999, gamma='scale'))
 clf.fit(X4, y4) 
 plot_svc_decision_function(clf, plot_support=False)
 

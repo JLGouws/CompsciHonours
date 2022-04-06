@@ -16,6 +16,8 @@ from skimage.transform import resize
 from sklearn.model_selection import GridSearchCV
 from sklearn.svm import SVC
 import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 def load_image_files(container_path, dimension=(30, 30)):
     image_dir = Path(container_path)
@@ -63,6 +65,12 @@ grid = GridSearchCV(SVC(), tune_param, cv=3,
 
 grid.fit(X_train, y_train) #note how we do CV on the training set
 
-print(pd.DataFrame(grid.cv_results_).apply(
+gridSearchResults = pd.DataFrame(grid.cv_results_)
+gridSearchResults['Kernel'] = grid.cv_results_['param_kernel']
+print(gridSearchResults.apply(
         lambda x: "{mean_test_score:#0.3f} (+/-{std_test_score:#0.03f}) for {params}".format(**x), 1
         ).to_frame().to_string(index=False, max_colwidth=-1, header=False))
+print()
+ax = sns.barplot(x="Kernel", y="mean_test_score", data = gridSearchResults)
+plt.savefig("KernelVsPrecision.png")
+
