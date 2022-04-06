@@ -4,6 +4,10 @@ from sklearn import datasets
 from sklearn.svm import SVC #sklearns support vector machine
 from sklearn.pipeline import make_pipeline
 from sklearn import preprocessing as prep
+from sklearn.gaussian_process.kernels import RBF
+
+from scipy.spatial.distance import pdist, cdist, squareform
+
 np.random.seed(4242)
 
 # plot the decision boundaries for SVM model
@@ -47,11 +51,11 @@ plt.figure(figsize=(10, 6))
 plt.scatter(np.reshape(X1[:, 0],-1), np.reshape(X1[:, 1],-1), c=np.reshape(y1,-1),s=100)
 # Code solution 1 here:
 plt.title("Exercise 1")
-clf = make_pipeline(prep.StandardScaler(), SVC(kernel='rbf', C=10000, gamma='scale'))
-clf.fit(X1, np.reshape(y1,-1)) 
+clf = SVC(kernel='rbf', C=10000, gamma='scale').fit(X1, np.reshape(y1,-1)) 
 plot_svc_decision_function(clf, plot_support=False)
 
 plt.savefig("exercise1.pdf")
+print("Ex1: ", clf.score(X1, y1))
 
 # -------------------------------------------------------------------------------------------------------------------
 # Exercise 2
@@ -63,23 +67,17 @@ y2[idx_neg] = 0
 plt.figure(figsize=(10, 6))
 plt.scatter(np.reshape(X2[:, 0],-1), np.reshape(X2[:, 1],-1), c=np.reshape(y2,-1),s=100)
 
-from sklearn.gaussian_process.kernels import RBF
-print(RBF(1.0).__call__(X2,X2))
 # Code solution 2 here:
+
 plt.title("Exercise 2")
 
-def myKernal(X, Y): 
-    indices = (X[:, 0] < 0.5) * (X[:, 1] < 0.5) + (X[:, 0] > 0.5) * (X[:, 1] > 0.5)
-    outMatrix = np.ones_like(X)
-    indices = np.resize(indices, outMatrix.shape)
-    outMatrix[indices] = 0
-    return outMatrix
-print(myKernal(X1, y1))
-clf = make_pipeline(prep.MinMaxScaler(), SVC(kernel="linear", C=10000, gamma='scale'))
-clf.fit(X1, np.reshape(y1,-1)) 
+clf = make_pipeline(prep.MinMaxScaler(), SVC(kernel='rbf', C=10000, gamma='scale'))
+clf.fit(X2, np.reshape(y2,-1)) 
 plot_svc_decision_function(clf, plot_support=False)
 
 plt.savefig("exercise2.pdf")
+
+print("Ex2: ", clf.score(X2, y2))
 
 # -------------------------------------------------------------------------------------------------------------------
 # Exercise 3
@@ -95,10 +93,18 @@ y3 = np.vstack((np.ones((n_samples // 2, 1)), np.zeros((n_samples // 2, 1))))
 plt.figure(figsize=(10, 6))
 plt.scatter(np.reshape(X3[:, 0],-1), np.reshape(X3[:, 1],-1), c=np.reshape(y3,-1),s=100)
 
+
 # Code solution 3 here:
 plt.title("Exercise 3")
 
+X3 = np.reshape(X3, X3.shape[:2])
+y3 = np.reshape(y3,-1)
+
+clf = SVC(kernel='rbf', C=10000, gamma='scale').fit(X3, y3)
+plot_svc_decision_function(clf, plot_support=False)
+
 plt.savefig("exercise3.pdf")
+print("Ex3: ", clf.score(X3, y3))
 
 # -------------------------------------------------------------------------------------------------------------------
 # Exercise 4
@@ -113,10 +119,32 @@ y4 = np.vstack((np.ones((n_samples // 2, 1)), np.zeros((n_samples // 2, 1))))
 plt.figure(figsize=(10, 6))
 plt.scatter(np.reshape(X4[:, 0],-1), np.reshape(X4[:, 1],-1), c=np.reshape(y4,-1),s=100)
 
+#quit()
 # Code solution 4 here:
+
+def my_kernel(X, Y = None):
+    X = np.atleast_2d(X)
+    if Y is None:
+        dists = pdist(X, metric="sqeuclidean")
+        K = np.exp(-0.5 * dists)
+        # convert from upper-triangular matrix to square matrix
+        K = squareform(K)
+        np.fill_diagonal(K, 1)
+    else:
+        dists = cdist(X, Y, metric="sqeuclidean")
+        K = np.exp(-0.5 *dists)
+    return K
 plt.title("Exercise 4")
 
+X4 = np.c_[np.reshape(X4[:, 0],-1), np.reshape(X4[:, 1],-1)]
+y4 = np.reshape(y4,-1)
+
+clf = make_pipeline(prep.StandardScaler(), SVC(kernel=my_kernel, C=999999, gamma='scale'))
+clf.fit(X4, y4) 
+plot_svc_decision_function(clf, plot_support=False)
+
 plt.savefig("exercise4.pdf")
+print("Ex4: ", clf.score(X4, y4))
 
 # -------------------------------------------------------------------------------------------------------------------
 # Exercise 5
@@ -125,8 +153,12 @@ plt.figure(figsize=(10, 6))
 plt.scatter(np.reshape(X5[:, 0],-1), np.reshape(X5[:, 1],-1), c=np.reshape(y5,-1),s=100)
 
 # Code solution 5 here:
+
 plt.title("Exercise 5")
 
+clf = make_pipeline(prep.StandardScaler(), SVC(kernel='rbf', C=9999999, gamma='scale'))
+clf.fit(X5, y5) 
+plot_svc_decision_function(clf, plot_support=False)
+
 plt.savefig("exercise5.pdf")
-
-
+print("Ex5: ", clf.score(X5, y5))
