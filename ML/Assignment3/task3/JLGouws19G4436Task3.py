@@ -85,7 +85,7 @@ from sklearn.pipeline import make_pipeline
 
 random_state = 42
 
-preprocessSVC = make_pipeline(prep.MinMaxScaler(), PCA(n_components=5, random_state=random_state, whiten=True))
+preprocessSVC = make_pipeline(prep.MinMaxScaler(), PCA(n_components=20, random_state=random_state, whiten=True))
 
 preprocessSVC.fit(X_train, y_train)
 X_train_transform_SVC = preprocessSVC.transform(X_train)
@@ -98,37 +98,53 @@ gridPrepSVC.fit(X_train_transform_SVC, y_train) #note how we do CV on the traini
 gridSearchResultsPrepSVC = pd.DataFrame(gridPrepSVC.cv_results_)
 gridSearchResultsPrepSVC['Kernel'] = gridPrepSVC.cv_results_['param_kernel']
 
-#print(gridSearchResultsPrepSVC.apply(
-#        lambda x: "{mean_test_score:#0.3f} (+/-{std_test_score:#0.03f}) for {params}".format(**x), 1
-#        ).to_frame().to_string(index=False, max_colwidth=-1, header=False))
+print(gridSearchResultsPrepSVC.apply(
+        lambda x: "{mean_test_score:#0.3f} (+/-{std_test_score:#0.03f}) for {params}".format(**x), 1
+        ).to_frame().to_string(index=False, max_colwidth=-1, header=False))
 
 # hog(x, pixels_per_cell=(5,5))
 grayImages = rgb2gray(image_dataset.images)
 data = []
 for image in grayImages:
-    data += [hog(image, orientations = 10, pixels_per_cell=(8,8))]
+    data += [hog(image, orientations = 10, pixels_per_cell=(9,9))]
 data = np.array(data)
 X_train_gray, X_test_gray, y_train_gray, y_test_gray = train_test_split(data, image_dataset.target, test_size=0.5, random_state=42)
 
-preprocessMLP = make_pipeline(PCA(n_components=70, random_state=random_state), prep.MinMaxScaler())
+preprocessMLP = make_pipeline(PCA(n_components=59, random_state=random_state), prep.MinMaxScaler())
 
 preprocessMLP.fit(X_train_gray,y_train_gray)
 
 X_train_transform_MLP = preprocessMLP.transform(X_train_gray)
 #print(X_train_transform_MLP[0].shape)
 
-mlp = MLPClassifier(solver='lbfgs', hidden_layer_sizes=(5), alpha = 1.5, activation='relu',warm_start=True, max_iter = 1000, random_state=random_state)
-mlp.fit(X_train_transform_MLP, y_train_gray)
+mlp = MLPClassifier(solver='lbfgs', activation='relu',warm_start=True, max_iter = 5000, random_state=random_state)
+#mlp.fit(X_train_transform_MLP, y_train_gray)
 
+tune_param_MLP =[
+                    {'hidden_layer_sizes': [(20, 5), (20, 3), (20), (10), (5), (4), (3)], 'alpha': [1e-1, 1, 1.5, 3]},
+            ]
+
+gridPrepMLP = GridSearchCV(mlp, tune_param_MLP, cv=3,
+                   scoring='precision')
+
+gridPrepMLP.fit(X_train_transform_MLP, y_train) #note how we do CV on the training set
+
+gridSearchResultsPrepMLP= pd.DataFrame(gridPrepMLP.cv_results_)
+
+print(gridSearchResultsPrepMLP.apply(
+        lambda x: "{mean_test_score:#0.3f} (+/-{std_test_score:#0.03f}) for {params}".format(**x), 1
+        ).to_frame().to_string(index=False, max_colwidth=-1, header=False))
+
+mlp = MLPClassifier(solver='lbfgs', hidden_layer_sizes = 5, alpha = 1, activation='relu',warm_start=True, max_iter = 5000, random_state=random_state)
+mlp.fit(X_train_transform_MLP, y_train_gray)
 y_pred_mlp = mlp.predict(X_train_transform_MLP)
 
-accuracy=metrics.accuracy_score(y_train_gray, y_pred_mlp)
+precision=metrics.precision_score(y_train_gray, y_pred_mlp)
 
-print('accuracy=',accuracy)
+print('Train precision=',precision)
 
 X_test_transform_MLP = preprocessMLP.transform(X_test_gray)
 y_pred = mlp.predict(X_test_transform_MLP)
 
-accuracy=metrics.accuracy_score(y_test_gray, y_pred)
-print('accuracy=',accuracy)
-
+precision=metrics.precision_score(y_test_gray, y_pred)
+print('Test precision=',precision)
