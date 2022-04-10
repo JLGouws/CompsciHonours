@@ -1,0 +1,13 @@
+\section{Limitations}
+  It is difficult to accurately identify people from the rear.
+  In this case it might be good to try and prevent the system from learning the appearance of the back of a person's head.
+  A solution to this problem is also developing a system that can be distributed so as to be able to track people from a surrounded view.
+
+  It is possible to track semi-ocluded targets, but detecting them is difficult.
+  This will cause problems for the initialization and re-initialization of the tracker.
+  It might be possible to impute some facial features before inputing the stream into the detection system.
+  If a face is fully ocluded, however, there is not much that the system will be able to do, but a human will not be able to do very much.
+
+  The system will require relatively good resolution cameras in order to identify people accurately from a long distance.
+  In most situations involving crowds, a camera capturing a video stream will need to be placed a significant distance from the targets.
+  Hence, the best we can do in software is try to use image processing techniques to artificially enlarge the target, or work on detectors that can work on minimal resolution.

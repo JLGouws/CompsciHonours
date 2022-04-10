@@ -1,0 +1,63 @@
+\documentclass[12pt,a4wide]{article}
+\usepackage{amsmath,amsfonts,amsthm,amssymb, mathtools,steinmetz, gensymb, siunitx}	% LOADS USEFUL MATH STUFF
+\usepackage{xcolor,graphicx}
+\usepackage[left=1cm, top=2cm, right=1cm, bottom=1cm ,a4paper]{geometry} 				% ADJUSTS PAGE
+\usepackage{setspace}
+\usepackage{caption}
+\usepackage{tikz}
+\usepackage{pgf,tikz,pgfplots}
+\usepackage{mathrsfs}
+\usepackage{fancyhdr}
+\usepackage{float}
+\usepackage{array}
+\usepackage{unicode-math}
+\usepackage{booktabs}
+\setmathfont{Libertinus Math}
+
+\usetikzlibrary{decorations.pathreplacing,decorations.markings}
+\usepgfplotslibrary{fillbetween}
+
+\usepackage{hyperref}
+\usepackage[style=ieee]{biblatex}
+\addbibresource{references.bib}
+
+
+\title{
+\includegraphics[width=0.55\textwidth]{download.jpg}~ 
+\\[1cm]
+\textsc{Real Time Detection and Tracking of People in Crowds}
+}
+\author{\textsc{J L Gouws}
+\\Supervisor: \textsc{Mr. J Connan}
+\\ \emph{Computer Science Department, Rhodes University}}
+\date{\today
+\\[1cm]}
+
+
+
+\usepackage{graphicx}
+\usepackage{array}
+
+
+
+%\addbibresource{references.bib}
+
+\begin{document}
+\fontencoding{T1}
+\fontfamily{ppl}\selectfont
+\thispagestyle{empty}
+
+\maketitle
+
+%In some sections you have to make a best guess (hypothesis), since you haven't done your MSc yet. 
+\input{abstract}
+\input{introduction}
+\input{researchstatement}
+\input{researchobjectives}
+\input{relatedworks}
+\input{limitations}
+\input{timeline}
+
+\printbibliography
+
+\end{document}

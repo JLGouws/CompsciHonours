@@ -6,6 +6,7 @@ from pathlib import Path
 import skimage
 from skimage.io import imread
 from skimage.transform import resize
+import pandas as pd
 
 
 random_state = 42
@@ -103,12 +104,41 @@ def score_metrics(model, X_test, y_test):
 
 
 def compare_models(models, X_test, y_test):
-    # TODO: Draw Bar Graph(s) showing accuracy, precision and recall
-    # TODO: report on best model for precision, accuracy and recall
+    for model in models:
+        print(score_metrics(model, X_test, y_test))
     return
 
-def visualize_data(X, y):
-    # TODO: visualize the data
+def visualize_images(df):
+    import seaborn as sns
+    import matplotlib.pyplot as plt
+    return
+
+def visualize_non_images(df):
+    import seaborn as sns
+    import matplotlib.pyplot as plt
+    from sklearn.preprocessing import MinMaxScaler
+    df_scaled = df
+    df_scaled[df.columns[:-1]] = MinMaxScaler().fit_transform(df[df.columns[:-1]])
+    DfMelted = pd.melt(df_scaled, id_vars="Class", 
+                       var_name = "features", value_name = 'value')
+    num_plots = df.columns[:-1].size // 5 + 1
+    for i, features in enumerate(np.array_split(df.columns[:-1], num_plots)):
+        sns.pairplot(data = df_scaled, hue = 'Class', vars = features)
+
+    num_plots = df.columns[:-1].size // 10 + 1
+    for i, features in enumerate(np.array_split(df.columns[:-1], num_plots)):
+        plt.figure(figsize=(30,12))
+        sns.stripplot(x="features", y="value", hue="Class", jitter = 0.2,
+                data=DfMelted[DfMelted["features"].isin(features)], alpha = 0.8) #
+
+        plt.xticks(rotation=30)
+
+    plt.show()
+    return
+
+def visualize_data(df, are_images = False):
+    if(are_images): visualize_images(df)
+    else: visualize_non_images(df)
     return
 
 # Entry Point of Program
@@ -130,16 +160,19 @@ if __name__ == '__main__':
         except Exception as e:
             print(e)
 
-    images = hasattr(dataset, 'images')
+    are_images = hasattr(dataset, 'images')
 
     X = dataset.data
     y = dataset.target
+
+    train_df = pd.DataFrame(X, columns = dataset.feature_names)
+    train_df['Class'] = dataset.target_names[dataset.target]
 
     # Split Dataset
     X_train, X_test, y_train, y_test = train_test_split(X,y,test_size=0.3,random_state=random_state)
 
     # Visualize Data
-    visualize_data(X_train, y_train)
+    visualize_data(train_df, are_images)
 
     # Preprocess Data
     X_train_new = preprocess_data(X_train)
