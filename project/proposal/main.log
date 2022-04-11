@@ -1,4 +1,4 @@
-This is LuaHBTeX, Version 1.12.0 (TeX Live 2020/Debian)  (format=lualatex 2022.3.19)  11 APR 2022 10:43
+This is LuaHBTeX, Version 1.12.0 (TeX Live 2020/Debian)  (format=lualatex 2022.3.28)  11 APR 2022 14:49
  restricted system commands enabled.
 **main.tex
 (./main.tex
@@ -1366,7 +1366,7 @@ File: biblatex.cfg
 \@quotereset=\count475
 
 LaTeX Warning: Unused global option(s):
-    [a4wide].
+    [a4].
 
 (./main.aux)
 \openout1 = main.aux
@@ -1602,7 +1602,7 @@ Here is how much of LuaTeX's memory you used:
 c, 33 attribute_list, 2 write, 2 pdf_action nodes
    avail lists: 1:1,2:836,3:382,4:56,5:346,6:50,7:7988,8:107,9:255,10:8,11:564
  68541 multiletter control sequences out of 65536+600000
- 104 fonts using 22255135 bytes
+ 104 fonts using 22254975 bytes
  98i,6n,116p,1055b,1014s stack positions out of 5000i,500n,10000p,200000b,200000s
 </usr/share/texmf/fonts/opentype/public/lm/lmromancaps10-regular.otf></usr/share
 /texmf/fonts/opentype/public/lm/lmmono12-regular.otf></usr/share/texmf/fonts/ope

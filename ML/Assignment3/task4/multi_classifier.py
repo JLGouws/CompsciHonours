@@ -1,6 +1,6 @@
 import argparse
 import numpy as np
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.utils import Bunch
 from pathlib import Path
 import skimage
@@ -46,14 +46,40 @@ def xgboost(X,y):
     return model
 
 def svm(X, y):
-    # TODO: Initialize SVM, and train
-    quit()
+    from sklearn.svm import SVC
+
+    tune_param =[
+                    {'kernel': ['rbf', 'poly', 'sigmoid'], 'gamma': [1e-1, 1e-2, 1e-3], 'C': [0.01, 1, 10]},
+    ]
+
+    grid = GridSearchCV(SVC(), tune_param, cv=5, scoring='f1_weighted')
+
+    grid.fit(X, y) #note how we do CV on the training set
+
+    model = grid.best_estimator_ #get the best model predicted by the grid search
+
+    return model
 
 
 def mlp(X, y):
-    # TODO: Initialize MLP, and train
-    quit()
+    from sklearn.neural_network import MLPClassifier
 
+    mlp = MLPClassifier(solver='lbfgs', warm_start=True, max_iter = 5000, random_state=random_state)
+
+    tune_param = [
+        {'hidden_layer_sizes': [(20, 5), (20, 3), (20), (10), (5), (4), (3)], 'alpha': [1e-1, 1, 1.5, 3], 'activation': ['relu', 'logistic', 'identity']},
+    ]
+
+    grid= GridSearchCV(mlp, tune_param, cv=5, scoring='f1_weighted')
+
+    grid.fit(X, y) #note how we do CV on the training set
+
+    model = grid.best_estimator_ #get the best model predicted by the grid search
+    print("shape of x", X.shape)
+    print("model inputs", model.n_features_in_)
+    print("model outputs", model.n_outputs_)
+
+    return model
 
 model_map = {
     'k_nearest': k_nearest,
@@ -85,10 +111,12 @@ def load_image_files(container_path, dimension=(30, 30)):
     flat_data = np.array(flat_data)
     target = np.array(target)
     images = np.array(images)
+    categories = np.array(categories)
 
     # return in the exact same format as the built-in datasets
     return Bunch(data=flat_data,
                  target=target,
+                 feature_names=[f'pixel{i}' for i in range(3 * dimension[0] * dimension[1])],
                  target_names=categories,
                  images=images,
                  DESCR=descr)
@@ -165,11 +193,13 @@ if __name__ == '__main__':
     X = dataset.data
     y = dataset.target
 
-    train_df = pd.DataFrame(X, columns = dataset.feature_names)
-    train_df['Class'] = dataset.target_names[dataset.target]
-
     # Split Dataset
     X_train, X_test, y_train, y_test = train_test_split(X,y,test_size=0.3,random_state=random_state)
+
+    print(y_train)
+    print(y_train.shape)
+    train_df = pd.DataFrame(X_train, columns = dataset.feature_names)
+    train_df['Class'] = dataset.target_names[y_train]
 
     # Visualize Data
     visualize_data(train_df, are_images)
