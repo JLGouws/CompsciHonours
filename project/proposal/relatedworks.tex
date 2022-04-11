@@ -1,8 +1,8 @@
 \section{Related Works}
 \subsection{Closely related works}
-In 2011 Zdenek Kalal invented the Tracking, Learning and Detection(TLD) framework for the longterm tracking of objects in a video stream\cite{Kalal2011}.
+In 2011 Zdenek Kalal invented the Tracking, Learning and Detection(TLD) framework for the longterm tracking of objects in a video stream \cite{Kalal2011} \cite{KalalPHD}.
 Kalal's original implementation uses a median flow tracking stage, P-N learning, and a random forrest based detector.
-The system requires online(learning as data becomes available) learning in order for the system to work, Kalal developed the P-N Learning paradigm \cite{PNLearning}, a semi-supervised bootstrapping model, tailored to the needs of TLD.
+The system requires online(learning as data becomes available) learning in order for the system to work, Kalal developed the P-N Learning paradigm \cite{PNLearning}, a semi-supervised bootstrapping model \cite{murphy2012machine}, tailored to the needs of TLD.
 
 There have been improvements in tracking methods since his development of TLD.
 Most notably Kernelized Correlation Filters(KCF) being applied on Histogram of Oriented Gradient features\cite{Enriques2014}.
@@ -14,11 +14,17 @@ Kalal uses Random Forest for detection in his implementation of TLD.
 A more modern approach would be to use Extreme Gradient Boosting(XGB) for the detector.
 XGB generally offers similar if not better classification performance than Random Forest and requires significantly less time to train \cite{comparativeXGB}.
 
-
 There has also been investigation into the use of Convolutional Neural Networks in tracking \cite{CNNTracking}.
 This offers high performance tracking of generic objects.
 It will be investigated for extension to tracking and detecting people in crowds.
 It will not be a main point of research unless it turns out to be fruitful--seeing as CNNs tend to require large amounts of training time, data, and memory space.
+
+There has also been some quite old research that involves localizing multiple targets.
+The research of Taylor and Drummond \cite{taylorDrummondTracking} offer this at high FPS even on low powered devices.
+
+Currently there are vary many trackers availble all with varying degrees of performance.
+These have been benchmarked in \cite{VOT2017} and \cite{VOT2020}.
+This is a good reference, and will be explored further, but not all trackers can satisfy the requirements of this project. 
 
 \subsection{Less related work}
 There has also been relevant work done on correlation tracking by \cite{Ma2015Correlation}.

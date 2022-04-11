@@ -91,7 +91,7 @@
     </bcf:option>
     <bcf:option type="singlevalued">
       <bcf:key>maxbibnames</bcf:key>
-      <bcf:value>999</bcf:value>
+      <bcf:value>7</bcf:value>
     </bcf:option>
     <bcf:option type="singlevalued">
       <bcf:key>maxcitenames</bcf:key>
@@ -99,7 +99,7 @@
     </bcf:option>
     <bcf:option type="singlevalued">
       <bcf:key>maxsortnames</bcf:key>
-      <bcf:value>999</bcf:value>
+      <bcf:value>7</bcf:value>
     </bcf:option>
     <bcf:option type="singlevalued">
       <bcf:key>maxitems</bcf:key>
@@ -317,7 +317,7 @@
     </bcf:option>
     <bcf:option type="singlevalued">
       <bcf:key>maxbibnames</bcf:key>
-      <bcf:value>999</bcf:value>
+      <bcf:value>7</bcf:value>
     </bcf:option>
     <bcf:option type="singlevalued">
       <bcf:key>maxcitenames</bcf:key>
@@ -325,7 +325,7 @@
     </bcf:option>
     <bcf:option type="singlevalued">
       <bcf:key>maxsortnames</bcf:key>
-      <bcf:value>999</bcf:value>
+      <bcf:value>7</bcf:value>
     </bcf:option>
     <bcf:option type="singlevalued">
       <bcf:key>maxitems</bcf:key>
@@ -2348,15 +2348,25 @@
     <bcf:datasource type="file" datatype="bibtex" glob="false">references.bib</bcf:datasource>
   </bcf:bibdata>
   <bcf:section number="0">
-    <bcf:citekey order="1">Kalal2011</bcf:citekey>
-    <bcf:citekey order="2">PNLearning</bcf:citekey>
+    <bcf:citekey order="1">VOT2017</bcf:citekey>
+    <bcf:citekey order="2">Kalal2011</bcf:citekey>
     <bcf:citekey order="3">Enriques2014</bcf:citekey>
-    <bcf:citekey order="4">comparativeXGB</bcf:citekey>
-    <bcf:citekey order="5">CNNTracking</bcf:citekey>
-    <bcf:citekey order="6">Ma2015Correlation</bcf:citekey>
-    <bcf:citekey order="7">onlineRL</bcf:citekey>
-    <bcf:citekey order="8">onlineRL</bcf:citekey>
-    <bcf:citekey order="9">onlineRL</bcf:citekey>
+    <bcf:citekey order="4">VOT2017</bcf:citekey>
+    <bcf:citekey order="5">Kalal2011</bcf:citekey>
+    <bcf:citekey order="6">KalalPHD</bcf:citekey>
+    <bcf:citekey order="7">PNLearning</bcf:citekey>
+    <bcf:citekey order="8">murphy2012machine</bcf:citekey>
+    <bcf:citekey order="9">Enriques2014</bcf:citekey>
+    <bcf:citekey order="10">comparativeXGB</bcf:citekey>
+    <bcf:citekey order="11">CNNTracking</bcf:citekey>
+    <bcf:citekey order="12">taylorDrummondTracking</bcf:citekey>
+    <bcf:citekey order="13">VOT2017</bcf:citekey>
+    <bcf:citekey order="14">VOT2020</bcf:citekey>
+    <bcf:citekey order="15">Ma2015Correlation</bcf:citekey>
+    <bcf:citekey order="16">onlineRL</bcf:citekey>
+    <bcf:citekey order="17">onlineRL</bcf:citekey>
+    <bcf:citekey order="18">onlineRL</bcf:citekey>
+    <bcf:citekey order="19">KalalPHD</bcf:citekey>
   </bcf:section>
   <!-- SORTING TEMPLATES -->
   <bcf:sortingtemplate name="none">
