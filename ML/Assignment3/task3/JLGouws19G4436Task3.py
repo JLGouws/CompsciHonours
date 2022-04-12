@@ -121,8 +121,8 @@ mlp = MLPClassifier(solver='lbfgs', activation='relu',warm_start=True, max_iter 
 #mlp.fit(X_train_transform_MLP, y_train_gray)
 
 tune_param_MLP =[
-                    {'hidden_layer_sizes': [(), (20, 5), (20, 3), (20), (10), (5), (4), (3)], 'alpha': [1e-1, 1, 1.5, 3]},
-            ]
+    {'hidden_layer_sizes': [(), (20, 5), (20, 3), (20), (10), (5), (4), (3)], 'alpha': [1e-1, 1, 1.5, 3]},
+]
 
 gridPrepMLP = GridSearchCV(mlp, tune_param_MLP, cv=3,
                    scoring='precision')

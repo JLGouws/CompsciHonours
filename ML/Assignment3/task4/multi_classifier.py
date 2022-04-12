@@ -11,9 +11,31 @@ import pandas as pd
 
 random_state = 42
 
-def preprocess_data(X):
+scaler = None
+
+def preprocessImages(X, images):
+    global scaler
+    from skimage.feature import hog
+    from skimage.color import rgb2gray
+    import sklearn.preprocessing as prep
+    if (images.shape[1] >= 25 and images.shape[2] >= 25):
+        data = []
+        for image in images:
+            data += [hog(image, orientations = 7, pixels_per_cell=(2,2), channel_axis = -1 if len(images.shape) - 1 == 3 else None)]
+        X = np.array(data)
+    elif len(images.shape) - 1 == 3:
+        X = rgb2gray(images)
+    if scaler == None:
+        scaler = prep.MinMaxScaler().fit(X)
+    X = scaler.transform(X)
     return X
 
+def preprocessNonImages(X):
+    return X
+
+def preprocess_data(X, images = None):
+    if(images is not None): return preprocessImages(X, images)
+    else: return preprocessNonImages(X)
 
 def k_nearest(X, y):
     from sklearn.neighbors import KNeighborsClassifier as knn
@@ -31,7 +53,7 @@ def k_nearest(X, y):
 
 
 def logistic_regression(X, y):
-    from sklearn.linear_model import LosgisticRegression as LR
+    from sklearn.linear_model import LogisticRegression as LR
     model = LR(random_state = random_state)
     model.fit(X, y)
     return model
@@ -150,12 +172,12 @@ def compare_models(models, X_test, y_test):
 def visualize_images(df, images):
     import seaborn as sns
     import matplotlib.pyplot as plt
-    for label in np.unique(df['Class']):
-        fig, ax = plt.subplots()
-        ax.imshow(images[np.where(df['Class'] == label)[0][0]], cmap = 'gray')
-        ax.spines[['left', 'bottom', 'top', 'right']].set_visible(False);
-        ax.set(xticks = [], yticks = [],title = label)
-        plt.show()
+    fig, ax = plt.subplots(1, np.unique(df['Class']).size)
+    for i, e in enumerate(np.dstack(np.unique(df['Class'], return_index = True))[0]):
+        ax[i].imshow(images[e[1]], cmap = 'gray')
+        ax[i].spines[['left', 'bottom', 'top', 'right']].set_visible(False);
+        ax[i].set(xticks = [], yticks = [], ylabel = e[0])
+    plt.savefig("out.pdf")
     return
 
 def visualize_non_images(df):
@@ -205,8 +227,6 @@ if __name__ == '__main__':
         except Exception as e:
             print(e)
 
-    images = dataset.images if hasattr(dataset, 'images') else None
-
     X = dataset.data
     y = dataset.target
 
@@ -216,11 +236,13 @@ if __name__ == '__main__':
     train_df = pd.DataFrame(X_train, columns = dataset.feature_names)
     train_df['Class'] = dataset.target_names[y_train]
 
+    train_images, test_images = train_test_split(dataset.images, y, test_size=0.3, random_state=random_state)[0:2] if hasattr(dataset, 'images') else None
     # Visualize Data
-    visualize_data(train_df, images)
+
+    visualize_data(train_df, train_images)
 
     # Preprocess Data
-    X_train_new = preprocess_data(X_train)
+    X_train_new = preprocess_data(X_train, train_images)
 
     # Splits the command-line arguments into separate classifiers
     classifiers = args.classifiers.split(',')
@@ -235,7 +257,7 @@ if __name__ == '__main__':
         selected_models.append(trained_model)
 
     # Preprocess Test data
-    X_test_new = preprocess_data(X_test)
+    X_test_new = preprocess_data(X_test, test_images)
 
     # If multiple models selected: make a bar graph comparing them. If not, just report on results
     if len(selected_models) > 1:
