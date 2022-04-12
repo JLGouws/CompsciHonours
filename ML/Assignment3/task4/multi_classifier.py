@@ -17,8 +17,16 @@ def preprocess_data(X):
 
 def k_nearest(X, y):
     from sklearn.neighbors import KNeighborsClassifier as knn
-    model = knn(n_neighbors = 3)
-    model.fit(X, y)
+
+    tune_param =[
+        {'n_neighbors': [1, 2, 3, 5, 7, 10, 15, 20]},
+    ]
+
+    grid = GridSearchCV(knn(), tune_param, cv=5, scoring='f1_weighted')
+
+    grid.fit(X, y)
+
+    model = grid.best_estimator_ #get the best model predicted by the grid search
     return model
 
 
@@ -49,7 +57,7 @@ def svm(X, y):
     from sklearn.svm import SVC
 
     tune_param =[
-                    {'kernel': ['rbf', 'poly', 'sigmoid'], 'gamma': [1e-1, 1e-2, 1e-3], 'C': [0.01, 1, 10]},
+        {'kernel': ['rbf', 'poly', 'sigmoid'], 'gamma': [1e-1, 1e-2, 1e-3], 'C': [0.01, 1, 10]},
     ]
 
     grid = GridSearchCV(SVC(), tune_param, cv=5, scoring='f1_weighted')
@@ -66,18 +74,21 @@ def mlp(X, y):
 
     mlp = MLPClassifier(solver='lbfgs', warm_start=True, max_iter = 5000, random_state=random_state)
 
+    n_features = X.shape[-1]
+
     tune_param = [
-        {'hidden_layer_sizes': [(20, 5), (20, 3), (20), (10), (5), (4), (3)], 'alpha': [1e-1, 1, 1.5, 3], 'activation': ['relu', 'logistic', 'identity']},
+        {'hidden_layer_sizes': [(2 * n_features//3 + 1, 4 * n_features//9 + 1), 
+            (n_features//2 + 1, n_features//4 + 1), (2 * n_features//3 + 1), 
+            (n_features//2 + 1), (n_features//3 + 1), (n_features//4 + 1), ()], 
+            'alpha': [1e-1, 1, 1.5, 3], 'activation': ['relu', 'logistic', 'identity']
+        }
     ]
 
-    grid= GridSearchCV(mlp, tune_param, cv=5, scoring='f1_weighted')
+    grid = GridSearchCV(mlp, tune_param, cv=5, scoring='f1_weighted')
 
-    grid.fit(X, y) #note how we do CV on the training set
+    grid.fit(X, y)
 
     model = grid.best_estimator_ #get the best model predicted by the grid search
-    print("shape of x", X.shape)
-    print("model inputs", model.n_features_in_)
-    print("model outputs", model.n_outputs_)
 
     return model
 
@@ -136,9 +147,15 @@ def compare_models(models, X_test, y_test):
         print(score_metrics(model, X_test, y_test))
     return
 
-def visualize_images(df):
+def visualize_images(df, images):
     import seaborn as sns
     import matplotlib.pyplot as plt
+    for label in np.unique(df['Class']):
+        fig, ax = plt.subplots()
+        ax.imshow(images[np.where(df['Class'] == label)[0][0]], cmap = 'gray')
+        ax.spines[['left', 'bottom', 'top', 'right']].set_visible(False);
+        ax.set(xticks = [], yticks = [],title = label)
+        plt.show()
     return
 
 def visualize_non_images(df):
@@ -164,8 +181,8 @@ def visualize_non_images(df):
     plt.show()
     return
 
-def visualize_data(df, are_images = False):
-    if(are_images): visualize_images(df)
+def visualize_data(df, images = None):
+    if(images is not None): visualize_images(df, images)
     else: visualize_non_images(df)
     return
 
@@ -188,7 +205,7 @@ if __name__ == '__main__':
         except Exception as e:
             print(e)
 
-    are_images = hasattr(dataset, 'images')
+    images = dataset.images if hasattr(dataset, 'images') else None
 
     X = dataset.data
     y = dataset.target
@@ -196,13 +213,11 @@ if __name__ == '__main__':
     # Split Dataset
     X_train, X_test, y_train, y_test = train_test_split(X,y,test_size=0.3,random_state=random_state)
 
-    print(y_train)
-    print(y_train.shape)
     train_df = pd.DataFrame(X_train, columns = dataset.feature_names)
     train_df['Class'] = dataset.target_names[y_train]
 
     # Visualize Data
-    visualize_data(train_df, are_images)
+    visualize_data(train_df, images)
 
     # Preprocess Data
     X_train_new = preprocess_data(X_train)
