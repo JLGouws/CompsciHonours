@@ -74,10 +74,15 @@ fig.savefig("figs/q6.pdf")
 rs = [0.005 * x for x in range(0, 690)]
 rnew =[]
 
+xstarnew = []
+rnewnew = []
+
 fig, ax = plt.subplots(1)
 xstar = []
 for r in rs:
   xstar += logisticMapList(r, 0.5, 1000)[-2:]
+  xstarnew += [np.flip(np.unique(np.round(xstar[-2:], 3)))]
+  rnewnew += [r]
   rnew += [r, r]
 ax.scatter(rnew, xstar)
 ax.set_xlabel("$r$")
@@ -90,8 +95,39 @@ extraPoints = 100
 fig, ax = plt.subplots(1)
 for r in rs:
   xstar += logisticMapList(r, 0.5, 1000 + extraPoints)[-extraPoints:]
+  xstarnew += [np.flip(np.unique(np.round(xstar[-extraPoints:], 4)))]
+  rnewnew += [r]
   rnew += [r] * extraPoints
-ax.scatter(rnew, xstar, s = 4)
+ax.plot(rnew, xstar, 'bo', ms = 2)
 ax.set_xlabel("$r$")
 ax.set_ylabel("$x^*$")
-fig.savefig("figs/furtherEquilibriumPointsBifurcations.jpeg")
+fig.savefig("figs/furtherEquilibriumPointsBifurcations.pdf")
+
+def finish_path(r_list, xstar_list, r_plot, xstar_plot, ax, index):
+    if len(r_list) == 0:
+        ax.plot(r_plot, xstar_plot, 'b-')
+    else:
+        finish_path(r_list[1:], xstar_list[1:], np.append(r_plot, r_list[0]), np.append(xstar_plot, xstar_list[1][index]), ax, index)
+
+def draw_rest_path(r_list, xstar_list, r_plot, xstar_plot, ax, index):
+    print(xstar_list[1].size, r_list[0])
+    if len(r_list) == 0:
+        ax.plot(r_plot, xstar_plot, 'b-')
+    elif xstar_list[1].size > xstar_list[0].size:
+        if xstar_list[1].size - xstar_list[0].size == 1:
+            draw_rest_path(r_list[1:], xstar_list[1:], np.append(r_plot, r_list[0]), np.append(xstar_plot, xstar_list[1][index]), ax, index) 
+            draw_rest_path(r_list[1:], xstar_list[1:], np.append(r_plot[-1], r_list[0]), np.append(xstar_plot[-1], xstar_list[1][index + 1]), ax, index + 1) 
+        elif xstar_list[1].size - xstar_list[0].size == 2:
+            finish_path(r_list[1:], xstar_list[1:], np.append(r_plot, r_list[0]), np.append(xstar_plot, xstar_list[1][2 * index]), ax, 2 * index) 
+#            finish_path(r_list[1:], xstar_list[1:], np.append(r_plot[-1], r_list[0]), np.append(xstar_plot[-1], xstar_list[1][2 * index + 1]), ax, 2 * index + 1) 
+    else:
+        draw_rest_path(r_list[1:], xstar_list[1:], np.append(r_plot, r_list[0]), np.append(xstar_plot, xstar_list[1][index]), ax, index)
+        
+def draw_path(r_list, xstar_list, ax):
+    draw_rest_path(r_list[1:], xstar_list, r_list[0], xstar_list[0][0], ax, 0)
+
+#fig, ax = plt.subplots(1)
+#draw_path(rnewnew, xstarnew, ax)
+#ax.set_xlabel("$r$")
+#ax.set_ylabel("$x^*$")
+#fig.savefig("figs/furtherEquilibriumPointsBifurcationsNew.pdf")

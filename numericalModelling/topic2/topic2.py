@@ -28,6 +28,8 @@ def runge_kutta2(f, a, b, N, w):
 
 logistic = lambda t, u : 1 * u * (1 - u)
 
+################################################################################
+#1a.
 points = np.array(taylors_method(logistic, 0, 20, 2000, 0.05))
 time = points[:, 0]
 solution = points[:, 1]
@@ -43,7 +45,7 @@ time = points[:, 0]
 solution = points[:, 1]
 
 fig, ax = plt.subplots(figsize=(10,10))
-ax.scatter(time, solution)
+ax.plot(time, solution, 'bo')
 fig.savefig("1b.pdf")
 
 ################################################################################
@@ -67,10 +69,44 @@ points = np.array(runge_kutta2(logistic, t0, tf, 2000, u0))
 time = points[:, 0]
 solution = points[:, 1]
 
-df = pd.DataFrame(data = {'time' : np.ravel(time, order = 'F'), 'solution' : np.ravel(solution, order = 'F'), 'u_0' : np.round(np.repeat(np.linspace(-0.1, 2.0, 22).T, 2001), 2)})
+df = pd.DataFrame(data = {'time' : np.ravel(time, order = 'F'), '$\\nu$' : np.ravel(solution, order = 'F'), 'u_0' : np.round(np.repeat(np.linspace(-0.1, 2.0, 22).T, 2001), 2)})
 
 fig= plt.figure(figsize=(10,10))
-ax = sns.lineplot(data = df, x = 'time', y = 'solution', hue = 'u_0', palette = 'icefire', legend = 'full')
+ax = sns.lineplot(data = df, x = 'time', y = '$\\nu$', hue = 'u_0', palette = 'icefire', legend = 'full')
 ax.set(ylim = [-.75, 2.2], xlim = [0.0, 7.0])
-ax.legend(loc = 'upper right')
+ax.legend(loc = 'upper right', title = '$u_0$')
 fig.savefig("2.pdf")
+
+################################################################################
+#3.
+#a.
+udot = lambda t, u: u - np.exp(t / 2) * np.sin(5 * t) + 5 * np.exp(t / 2) * np.cos(5 * t)
+
+fig, ax = plt.subplots(3, 1, figsize=(10,15))
+for i, (method, name) in enumerate([(taylors_method, "Euler's Method"), 
+                                    (midpoint_method, "Midpoint Method"), 
+                                    (runge_kutta2, "Runge-Kutta Second Order Method")]):
+    points = np.array(method(udot, 0, 5, 63, 0))
+    time = points[:, 0]
+    solution = points[:, 1]
+
+    ax[i].plot(time, solution, label = '$\Delta t = 0.08$', alpha = 0.5, c = 'r')
+
+    points = np.array(method(udot, 0, 5, 125, 0))
+    time = points[:, 0]
+    solution = points[:, 1]
+
+    ax[i].plot(time, solution, label = '$\Delta t = 0.04$', alpha = 0.6, c = 'b')
+
+    ax[i].legend(title = 'Time step')
+
+    points = np.array(method(udot, 0, 5, 500, 0))
+    time = points[:, 0]
+    solution = points[:, 1]
+
+    ax[i].plot(time, solution, 'k-', label = '$\Delta t = 0.01$', dashes = (3, 7))
+
+    ax[i].legend(title = 'Time step')
+    ax[i].set(title = name, xlabel = 'time', ylabel = '$\\nu$')
+
+fig.savefig("3a.pdf")
