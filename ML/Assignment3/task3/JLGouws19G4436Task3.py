@@ -1,3 +1,4 @@
+#sorry this code is quite roughly done an lacks good commenting, good luck marking :)
 # ---------------------------------------------------------------------------------------------------------------
 # Task 2 and 3 skeleton
 
@@ -102,24 +103,27 @@ print(gridSearchResultsPrepSVC.apply(
         lambda x: "{mean_test_score:#0.3f} (+/-{std_test_score:#0.03f}) for {params}".format(**x), 1
         ).to_frame().to_string(index=False, max_colwidth=-1, header=False))
 
-# hog(x, pixels_per_cell=(5,5))
-grayImages = rgb2gray(image_dataset.images)
+#preprocessing the images
+grayImages = rgb2gray(image_dataset.images) #gray out images, this can be done in HOG
+#we gray out images as luminance is probably most important feature and individual pixels will in general not be helpful
 data = []
 for image in grayImages:
-    data += [hog(image, orientations = 10, pixels_per_cell=(9,9))]
+    data += [hog(image, orientations = 10, pixels_per_cell=(9,9))] #Getting the HOG of the images
 data = np.array(data)
 X_train_gray, X_test_gray, y_train_gray, y_test_gray = train_test_split(data, image_dataset.target, test_size=0.5, random_state=42)
 
+#use pca and min max scaler
 preprocessMLP = make_pipeline(PCA(n_components=59, random_state=random_state), prep.MinMaxScaler())
 
+#fit the preprocessing to the data
 preprocessMLP.fit(X_train_gray,y_train_gray)
 
+#transform test data
 X_train_transform_MLP = preprocessMLP.transform(X_train_gray)
-#print(X_train_transform_MLP[0].shape)
 
 mlp = MLPClassifier(solver='lbfgs', activation='relu',warm_start=True, max_iter = 5000, random_state=random_state)
-#mlp.fit(X_train_transform_MLP, y_train_gray)
 
+#for tuning the mlp
 tune_param_MLP =[
     {'hidden_layer_sizes': [(), (20, 5), (20, 3), (20), (10), (5), (4), (3)], 'alpha': [1e-1, 1, 1.5, 3]},
 ]
@@ -131,20 +135,21 @@ gridPrepMLP.fit(X_train_transform_MLP, y_train) #note how we do CV on the traini
 
 gridSearchResultsPrepMLP= pd.DataFrame(gridPrepMLP.cv_results_)
 
+#print out the results of the grid search
 print(gridSearchResultsPrepMLP.apply(
         lambda x: "{mean_test_score:#0.3f} (+/-{std_test_score:#0.03f}) for {params}".format(**x), 1
         ).to_frame().to_string(index=False, max_colwidth=-1, header=False))
 
-mlp = MLPClassifier(solver='lbfgs', hidden_layer_sizes = 5, alpha = 1, activation='relu',warm_start=True, max_iter = 5000, random_state=random_state)
-mlp.fit(X_train_transform_MLP, y_train_gray)
+mlp = gridPrepMLP.best_estimator_ #test the best estimator on test data
 y_pred_mlp = mlp.predict(X_train_transform_MLP)
 
 precision=metrics.precision_score(y_train_gray, y_pred_mlp)
-
+#print precision on training data
 print('Train precision=',precision)
 
 X_test_transform_MLP = preprocessMLP.transform(X_test_gray)
 y_pred = mlp.predict(X_test_transform_MLP)
 
 precision=metrics.precision_score(y_test_gray, y_pred)
+#print precision on testing data
 print('Test precision=',precision)

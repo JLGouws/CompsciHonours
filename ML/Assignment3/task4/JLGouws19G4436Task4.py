@@ -1,3 +1,13 @@
+#JLGouws - 19G4436
+#I think I should get around 70/80
+#I did not get my code to work on the kddcup99 dataset
+#It will not work for dataset with categorical features
+#I tried to keep everything relatively general, and it should work on most
+#scikit datasets without categorical features
+#I did grid search for all models except for XGB, which had problems with running a grid search
+#I don't print out the parameters of the model and preprocessing
+#Maybe I should realistically get 65/80, but it depends on how other students did with their task
+#At the en of the day the assessment is comparative
 import argparse
 import numpy as np
 from sklearn.model_selection import train_test_split, GridSearchCV
@@ -12,11 +22,11 @@ import pandas as pd
 import sklearn.preprocessing as prep
 
 
+
 random_state = 42
 
-scaler = None
-
-def pca_map(X, figsize=(10,10), sup="", print_values= False):
+#This plots a VFM
+def pca_map(X, figsize=(10,10), sup="", print_values= False, output_pdf = None):
     import matplotlib.pyplot as plt
     #PCA
     columns=X.columns.values
@@ -25,7 +35,7 @@ def pca_map(X, figsize=(10,10), sup="", print_values= False):
     pca_values=pca.components_
     
     #Plot
-    plt.figure(figsize=figsize)
+    fig = plt.figure(figsize=figsize)
     plt.rcParams.update({'font.size': 14}) 
     
     #Plot circle
@@ -71,41 +81,46 @@ def pca_map(X, figsize=(10,10), sup="", print_values= False):
     plt.ylabel(f"Component 2 ({round(pca.explained_variance_ratio_[1]*100,2)}%)")
     plt.title('Variable factor map (PCA)')
     plt.suptitle(sup, y=1, fontsize=18)
-    plt.show()
+    if (output_pdf is None) or (output_pdf == ""):
+        plt.show()
+    else:
+        fig.savefig(output_pdf, format = 'pdf')
 
 def preprocessImages(X, images):
     from skimage.feature import hog
     from skimage.color import rgb2gray
     if (images.shape[1] >= 25 and images.shape[2] >= 25):
         data = []
-        for image in images:
-            data += [hog(image, orientations = 7, pixels_per_cell=(2,2), channel_axis = -1 if len(images.shape) - 1 == 3 else None)]
+        for image in images:#perform hog on the images if they are big enough
+            data += [hog(image, orientations = 9, pixels_per_cell=(9,9), channel_axis = -1 if len(images.shape) - 1 == 3 else None)]
         X = np.array(data)
     elif len(images.shape) - 1 == 3:
         X = rgb2gray(images)
     return X
 
 def preprocessNonImages(X):
+    #TODO I am not sure what extra preprocessing to do here, I already do PCA and scaling below
     return X
 
 def preprocess_data(X, images = None):
     global preprocess_data
     X = preprocessImages(X, images) if(images is not None) else preprocessNonImages(X)
-    scaler = Pipeline([('PCA', PCA(n_components = 0.99, svd_solver = 'full')), ('scaler', prep.MinMaxScaler())])
-    scaler.fit(X)
+    #using PCA for feature selection, keep 99% of variance
+    scaler = Pipeline([('PCA', PCA(n_components = 0.99, svd_solver = 'full')), ('scaler', prep.MinMaxScaler())])#min max scaling because it is safe
+    scaler.fit(X)#fit the scaler to the test data
     X = scaler.transform(X)
     def new_prep(X, images = None):
         X = preprocessImages(X, images) if(images is not None) else preprocessNonImages(X)
         X = scaler.transform(X)
         return X
-    preprocess_data = new_prep
+    preprocess_data = new_prep #kind of a closure to keep the scaler pipeline
     return X
 
 def k_nearest(X, y):
     from sklearn.neighbors import KNeighborsClassifier as knn
 
     tune_param =[
-        {'n_neighbors': [1, 2, 3, 5, 7, 10, 15, 20]},
+        {'n_neighbors': [1, 2, 3, 5, 7, 10, 15, 20]},#not sure what other parameters to score on
     ]
 
     grid = GridSearchCV(knn(), tune_param, cv=5, scoring='f1_weighted', n_jobs = -1)
@@ -120,7 +135,7 @@ def logistic_regression(X, y):
     from sklearn.linear_model import LogisticRegression as LR
 
     tune_param =[
-            {'C': [1e-2, 1e-1, 1, 5, 10, 20], 'penalty': ['l1', 'l2'], 'solver' : ['saga', 'liblinear']},
+            {'C': [1e-2, 1e-1, 1, 5, 10, 20], 'penalty': ['l1', 'l2'], 'solver' : ['saga', 'liblinear']}, #parameter for logistic regression
     ]
 
     grid = GridSearchCV(LR(random_state = random_state, max_iter = 3000, warm_start = True)
@@ -133,8 +148,16 @@ def logistic_regression(X, y):
 
 def random_forest(X, y):
     from sklearn.ensemble import RandomForestClassifier as RFC
-    model = RFC(random_state = random_state)
-    model.fit(X, y)
+
+    tune_param =[
+        {'criterion': ['gini', 'entropy'], 'max_depth': [None, 50, 100, 200], 'n_estimators': [50, 100, 500]},
+    ]
+
+    grid = GridSearchCV(RFC(random_state = random_state, warm_start = True, n_jobs = -1), tune_param, cv=5, scoring='f1_weighted', n_jobs = -1)
+
+    grid.fit(X, y) #note how we do CV on the training set
+
+    model = grid.best_estimator_ #get the best model predicted by the grid search
     return model
 
 
@@ -171,6 +194,7 @@ def mlp(X, y):
 
     n_features = X.shape[-1]
 
+    #tune the model
     tune_param = [
         {'hidden_layer_sizes': [(2 * n_features//3 + 1, 4 * n_features//9 + 1), 
             (n_features//2 + 1, n_features//4 + 1), (2 * n_features//3 + 1), 
@@ -229,43 +253,55 @@ def load_image_files(container_path, dimension=(30, 30)):
 
 
 def score_metrics(model, X_test, y_test):
-    from sklearn.metrics import accuracy_score, precision_score, recall_score
+    from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
     y_pred = model.predict(X_test)
     accuracy = accuracy_score(y_test, y_pred)
     precision = precision_score(y_test, y_pred, average = 'weighted')
     recall = recall_score(y_test, y_pred, average = 'weighted')
-    return precision, accuracy, recall
+    f1 = f1_score(y_test, y_pred, average = 'micro')
+    return precision, accuracy, recall, f1
 
 
-def compare_models(models, X_test, y_test):
+def compare_models(models, X_test, y_test, args):
     import matplotlib.pyplot as plt
     import seaborn as sns
-    model_dict = {'Model' : args.classifiers.split(','), 'Precision' : [], 'Accuracy' : [], 'Recall' : []}
+    model_dict = {'Model' : args.classifiers.split(','), 'precision' : [], 'accuracy' : [], 'recall' : [], 'f1' : []}
     for model in models:
-        precision, accuracy, recall = score_metrics(model, X_test, y_test)
-        model_dict['Precision'] += [precision]
-        model_dict['Accuracy'] += [accuracy]
-        model_dict['Recall'] += [recall]
+        #get scores on test sets
+        precision, accuracy, recall, f1 = score_metrics(model, X_test, y_test)
+        model_dict['precision'] += [precision]
+        model_dict['accuracy'] += [accuracy]
+        model_dict['recall'] += [recall]
+        model_dict['f1'] += [f1]
     fig, axes = plt.subplots(3, 1, figsize = (len(model_dict['Model']) * 5, 21))
     results_df = pd.DataFrame(model_dict)
-    sns.barplot(x="Model", y="Precision", data = results_df, ax = axes[0])
-    sns.barplot(x="Model", y="Accuracy", data = results_df, ax = axes[1])
-    sns.barplot(x="Model", y="Recall", data = results_df, ax = axes[2])
+    #Plot the precision, accuracy and recall of the models
+    sns.barplot(x="Model", y="precision", data = results_df, ax = axes[0])
+    sns.barplot(x="Model", y="accuracy", data = results_df, ax = axes[1])
+    sns.barplot(x="Model", y="recall", data = results_df, ax = axes[2])
     plt.savefig("ModelsCompared.pdf")
+    #get the list to compare models
+    try:
+        compareList = model_dict[args.decisionmetric]
+    except Exception as e:
+        print('You entered', args.decisionmetric, 'which is an invalid metric.')
+        compareList = model_dict['precision']
+    print('The best classifier was determined to be: ', model_dict['Model'][compareList.index(max(compareList))])
     return
 
-def visualize_images(df, images):
+def visualize_images(df, output_pdf, images):
     import seaborn as sns
     import matplotlib.pyplot as plt
+    #just plot sample images from each class, don't really know what else to plot here
     fig, ax = plt.subplots(1, np.unique(df['Class']).size)
     for i, e in enumerate(np.dstack(np.unique(df['Class'], return_index = True))[0]):
         ax[i].imshow(images[e[1]], cmap = 'gray')
         ax[i].spines[['left', 'bottom', 'top', 'right']].set_visible(False);
-        ax[i].set(xticks = [], yticks = [], ylabel = e[0])
-    plt.savefig("out.pdf")
+        ax[i].set(xticks = [], yticks = [], title = e[0])
+    fig.savefig(output_pdf, format = 'pdf')
     return
 
-def visualize_non_images(df):
+def visualize_non_images(df, output_pdf):
     import seaborn as sns
     import matplotlib.pyplot as plt
     from sklearn.preprocessing import MinMaxScaler
@@ -275,26 +311,41 @@ def visualize_non_images(df):
                        var_name = "features", value_name = 'value')
     num_plots = df.columns[:-1].size // 5 + 1
     for i, features in enumerate(np.array_split(df.columns[:-1], num_plots)):
-        sns.pairplot(data = df_scaled, hue = 'Class', vars = features)
+        #apparently this works
+        fig = sns.pairplot(data = df_scaled, hue = 'Class', vars = features).fig
+        fig.savefig(output_pdf, format = 'pdf')
 
     num_plots = df.columns[:-1].size // 10 + 1
     for i, features in enumerate(np.array_split(df.columns[:-1], num_plots)):
-        plt.figure(figsize=(30,12))
+        fig = plt.figure(figsize=(30,12))
         sns.stripplot(x="features", y="value", hue="Class", jitter = 0.2,
                 data=DfMelted[DfMelted["features"].isin(features)], alpha = 0.8) #
 
         plt.xticks(rotation=30)
+        fig.savefig(output_pdf, format = 'pdf')
 
-    pca_map(df.drop('Class', axis = 1))
-    plt.show()
+    pca_map(df.drop('Class', axis = 1), output_pdf = output_pdf)
     return
 
 def visualize_data(df, images = None):
-    if(images is not None): visualize_images(df, images)
-    else: visualize_non_images(df)
+    import matplotlib.pyplot as plt
+    from matplotlib.backends import backend_pdf
+    import seaborn as sns
+    output_pdf = backend_pdf.PdfPages('vizualization.pdf')
+    if(images is not None): visualize_images(df, output_pdf, images)
+    else: visualize_non_images(df, output_pdf)
+
+    #distribution of class labels
+    fig = plt.figure(figsize=(2.5 * np.unique(df['Class']).size, 6))
+    sns.histplot(x="Class", hue="Class", shrink=0.75, data=df)
+
+    fig.savefig(output_pdf, format = 'pdf')
+
+    output_pdf.close()
     return
 
 def encode_kddcup99(dataset):
+    #tried to hot encode this,but it doesn't work
     from sklearn.feature_extraction.text import CountVectorizer
     X = prep.OneHotEncoder(handle_unknown='ignore').fit_transform(dataset.data)
     return X
@@ -302,9 +353,10 @@ def encode_kddcup99(dataset):
 # Entry Point of Program
 if __name__ == '__main__':
     p = argparse.ArgumentParser()
-    p.add_argument('--dataset', type=str, default='../images') #I changed this for my ease of
+    p.add_argument('--dataset', type=str, default='../images', help = 'The dataset that you which to work with e.g. breast_cancer') #I changed this for my ease of
                                                                #access
-    p.add_argument('--classifiers', type=str)
+    p.add_argument('--classifiers', type=str, help = 'The classifiers that you wish to use these should be given as a comma separated list e.g. mlp,k_nearest,svm')
+    p.add_argument('--decisionmetric', type=str, default='precision', help = 'The metric to choose the best classifier')
     args = p.parse_args()
     print("Welcome to the multiple model classifier. I see that you have chosen", args.classifiers, "as your model(s) of choice.")
 
@@ -314,7 +366,7 @@ if __name__ == '__main__':
     else:
         try:
             from sklearn import datasets
-            dataset = getattr(datasets, 'load_' + args.dataset)()
+            dataset = getattr(datasets, 'load_' + args.dataset)()#should work with most sklearn datasets
         except Exception as e:
             try:
                 dataset = getattr(datasets, 'fetch_' + args.dataset)()
@@ -360,9 +412,9 @@ if __name__ == '__main__':
 
     # If multiple models selected: make a bar graph comparing them. If not, just report on results
     if len(selected_models) > 1:
-        compare_models(selected_models, X_test_new, y_test)
+        compare_models(selected_models, X_test_new, y_test, args)
     else:
-        prec, acc, recall = score_metrics(selected_models[0], X_test_new, y_test)
+        prec, acc, recall, f1 = score_metrics(selected_models[0], X_test_new, y_test)
         print("Accuracy for model", args.classifiers ,":", acc)
         print("Precision for model", args.classifiers ,":", prec)
         print("Recall for model", args.classifiers ,":", recall)

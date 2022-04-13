@@ -56,6 +56,7 @@ image_dataset = load_image_files("../images/")
 '''Split data, but randomly allocate to training/test sets'''
 X_train, X_test, y_train, y_test = train_test_split(image_dataset.data, image_dataset.target, test_size=0.5, random_state=42)
 
+#parameters to tune for
 tune_param =[
                     {'kernel': ['rbf', 'poly', 'sigmoid'], 'gamma': [1e-1, 1e-2, 1e-3],'C': [0.01, 1, 10]},
             ]
@@ -63,14 +64,16 @@ tune_param =[
 grid = GridSearchCV(SVC(), tune_param, cv=3,
                    scoring='precision')
 
-grid.fit(X_train, y_train) #note how we do CV on the training set
+grid.fit(X_train, y_train) #do the grid search
 
 gridSearchResults = pd.DataFrame(grid.cv_results_)
+#add extra column for kernel for the bar plot
 gridSearchResults['Kernel'] = grid.cv_results_['param_kernel']
+#print all the results
 print(gridSearchResults.apply(
         lambda x: "{mean_test_score:#0.3f} (+/-{std_test_score:#0.03f}) for {params}".format(**x), 1
         ).to_frame().to_string(index=False, max_colwidth=-1, header=False))
 print()
-ax = sns.barplot(x="Kernel", y="mean_test_score", data = gridSearchResults)
+ax = sns.barplot(x="Kernel", y="mean_test_score", capsize = 0.2, data = gridSearchResults) #bar plot with erro bars
 plt.savefig("KernelVsPrecision.png")
 
