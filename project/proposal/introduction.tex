@@ -1,17 +1,37 @@
 \section{Introduction}
-  Analysis of videos of crowds of people has many practical applications.
-  Most real world situations that involve people have people that are moving.
-  On top of that most often people are not isolated, but instead form groups of people.
+  Consider a continuous video stream in which a set of faces appear.
+  The individual faces might move and change orientation in the video stream.
+  Imagine that there is some subset of these faces of interest, and pictures of these faces--these pictures may be unrelated to the video or frames of the video.
+  With these ideas in mind, the goal of this research is to develop a system that can automatically identify and track the target faces in the video stream.
 
-  There is huge potential for research in these areas, and a reliable system with high performance would be very useful in industry.
-  For these reasons it makes sense to investigate ways to develop a system that can efficiently and accurately detect and track multiple people in a video stream.
+  The intial input given to the system is images that have uniquely labelled regions of interest which define individual faces.
+  The input images are required to contain at least one instance of each target face, but there is no maximum limit.
+  This constitutes the initialization of operation, after which the system functions autonomously.
 
-  In the past visual tracking has been a largely understudied field, but more recently there has been a significant increase in available tracking systems \cite{VOT2017}.
-  Most trackers have niche target areas.
-  A lot of trackers are very fast and accurate, but fail in the long term.
-  Some trackers combat this long term failure \cite{Kalal2011}, but this often comes at the cost of performance \cite{Enriques2014} \cite{VOT2017}.
+  When given an arbitrary video the system detects the presence or absence of any of the target faces within the video as the video progresses with time.
+  Subsequently, the system labels every target face that it detects with the label that was given to the face in the initialization of the system.
+  Once a face is labelled, the system follows the motion of the face, and any other target faces appearing in the current frame, for as long as the face is visible.
+  This constitutes the running phase of the system, where the system identifies and tracks faces in a given video stream.
 
-  There are ofcourse ethical concerns.
-  As far as research and testing goes only relatively small datasets should be required.
-  This data can be sourced from a group of volunteers, and so ethical concerns should not be a concern for development.
-  But for serious real world applications investigation of larger datasets and an ethical clearance might be required.
+  While the system is running it determines information about the target faces.
+  It can, hence, extract the the number of times each target face appears, the amount of time for which each target appears and the trajectory of each while it is apparent in the video.
+  This is the output stage of the operation, which concludes the operation of the system.
+
+  The system is designed to operate with minimal input data given in the initialization stage.
+  With this constraint, it is desirable for the system to use all the data it can get access to. 
+  The system, thus, uses the the video in the running phase to learn more about each target face--in this way it can identify and track faces more accurately as the video progresses.
+
+  The next section of this proposal gives the formal research statement.
+  This is followed by a section on the research objectives.
+
+  Following this, there is a section that introduces works that are related to this research.
+  The afore mentioned section serves as a miniture literature review. 
+
+  The related works section is followed by a section discussing the approach to research that will be followed.
+  This is followed by a timeline of the deadlines for the project.
+
+  Following the timeline section are two sections discussing the practicalites of the research.
+  First is a discussion on the limitations of the research.
+  Second is a brief section discussing further applications of the research.
+
+  Finally the conclusion sumarises this proposal.

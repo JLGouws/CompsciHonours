@@ -1,0 +1,12 @@
+\begin{enumerate}
+  \item The weights from the first layer to the second layer(first hidden layer) are supposed to represent the contribution of the pixels to little line segments.
+        The sencond layer is supposed to pick up on small ``edges" or line segments.
+  \item The weights from the second layer to the third layer represent collection of the ``edges" making up larger structures.
+        These weights are supposed to represent the contribution of the small line segments to lines and circles.
+        The weights for input into the final layer are supposed to represent how the lines and circles get added together to form the numbers.
+  \item The weights are not coded or worked out by hand to represent this.
+        A computer works out the weights.
+        The network needs some starting values for the weights, these are set randomly for ease of use.
+        Since the network starts randomly there is no reason for the training network to follow a human's semantic structure.
+        The learning tries to find patterns that are natural for the network to recognize, which might not be natural/sensical to humans.
+\end{enumerate}

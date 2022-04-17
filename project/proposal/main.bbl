@@ -19,6 +19,280 @@
 
 \refsection{0}
   \datalist[entry]{none/global//global/global}
+    \entry{Kalal2011}{article}{}
+      \name{author}{3}{}{%
+        {{hash=07650b929bf7f6682596fd0ebc42096c}{%
+           family={Kalal},
+           familyi={K\bibinitperiod},
+           given={Zdenek},
+           giveni={Z\bibinitperiod}}}%
+        {{hash=15ba95a5d65938b99eaf1f46dd4c25b8}{%
+           family={Mikolajczyk},
+           familyi={M\bibinitperiod},
+           given={Krystian},
+           giveni={K\bibinitperiod}}}%
+        {{hash=7df17ebc3cfb4cf295bff60b579d5638}{%
+           family={Matas},
+           familyi={M\bibinitperiod},
+           given={Jiri},
+           giveni={J\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {IEEE}%
+      }
+      \strng{namehash}{fc4099f8bbad1dc3941f62a5f0c88b09}
+      \strng{fullhash}{fc4099f8bbad1dc3941f62a5f0c88b09}
+      \strng{bibnamehash}{fc4099f8bbad1dc3941f62a5f0c88b09}
+      \strng{authorbibnamehash}{fc4099f8bbad1dc3941f62a5f0c88b09}
+      \strng{authornamehash}{fc4099f8bbad1dc3941f62a5f0c88b09}
+      \strng{authorfullhash}{fc4099f8bbad1dc3941f62a5f0c88b09}
+      \field{sortinit}{1}
+      \field{sortinithash}{50c6687d7fc80f50136d75228e3c59ba}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{issue}{7}
+      \field{journaltitle}{IEEE transactions on pattern analysis and machine intelligence}
+      \field{title}{Tracking-learning-detection}
+      \field{volume}{34}
+      \field{year}{2011}
+      \field{pages}{1409\bibrangedash 1422}
+      \range{pages}{14}
+    \endentry
+    \entry{KalalPHD}{online}{}
+      \name{author}{1}{}{%
+        {{hash=07650b929bf7f6682596fd0ebc42096c}{%
+           family={Kalal},
+           familyi={K\bibinitperiod},
+           given={Zdenek},
+           giveni={Z\bibinitperiod}}}%
+      }
+      \list{publisher}{2}{%
+        {Centre for Vision, Speech}%
+        {Signal Processing, University of Surrey}%
+      }
+      \strng{namehash}{07650b929bf7f6682596fd0ebc42096c}
+      \strng{fullhash}{07650b929bf7f6682596fd0ebc42096c}
+      \strng{bibnamehash}{07650b929bf7f6682596fd0ebc42096c}
+      \strng{authorbibnamehash}{07650b929bf7f6682596fd0ebc42096c}
+      \strng{authornamehash}{07650b929bf7f6682596fd0ebc42096c}
+      \strng{authorfullhash}{07650b929bf7f6682596fd0ebc42096c}
+      \field{sortinit}{2}
+      \field{sortinithash}{ed39bb39cf854d5250e95b1c1f94f4ed}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Tracking Learning Detection}
+      \field{year}{2011}
+      \verb{urlraw}
+      \verb http://www.ee.surrey.ac.uk/CVSSP/Publications/papers/Kalal-PhD_Thesis-2011.pdf
+      \endverb
+      \verb{url}
+      \verb http://www.ee.surrey.ac.uk/CVSSP/Publications/papers/Kalal-PhD_Thesis-2011.pdf
+      \endverb
+    \endentry
+    \entry{PNLearning}{inproceedings}{}
+      \name{author}{3}{}{%
+        {{hash=07650b929bf7f6682596fd0ebc42096c}{%
+           family={Kalal},
+           familyi={K\bibinitperiod},
+           given={Zdenek},
+           giveni={Z\bibinitperiod}}}%
+        {{hash=7df17ebc3cfb4cf295bff60b579d5638}{%
+           family={Matas},
+           familyi={M\bibinitperiod},
+           given={Jiri},
+           giveni={J\bibinitperiod}}}%
+        {{hash=15ba95a5d65938b99eaf1f46dd4c25b8}{%
+           family={Mikolajczyk},
+           familyi={M\bibinitperiod},
+           given={Krystian},
+           giveni={K\bibinitperiod}}}%
+      }
+      \strng{namehash}{4336d5a7a0aedfe93eff6e48ce72bdfc}
+      \strng{fullhash}{4336d5a7a0aedfe93eff6e48ce72bdfc}
+      \strng{bibnamehash}{4336d5a7a0aedfe93eff6e48ce72bdfc}
+      \strng{authorbibnamehash}{4336d5a7a0aedfe93eff6e48ce72bdfc}
+      \strng{authornamehash}{4336d5a7a0aedfe93eff6e48ce72bdfc}
+      \strng{authorfullhash}{4336d5a7a0aedfe93eff6e48ce72bdfc}
+      \field{sortinit}{3}
+      \field{sortinithash}{a37a8ef248a93c322189792c34fc68c9}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{2010 IEEE Computer Society Conference on Computer Vision and Pattern Recognition}
+      \field{title}{P-N learning: Bootstrapping binary classifiers by structural constraints}
+      \field{year}{2010}
+      \field{pages}{49\bibrangedash 56}
+      \range{pages}{8}
+      \verb{doi}
+      \verb 10.1109/CVPR.2010.5540231
+      \endverb
+    \endentry
+    \entry{murphy2012machine}{book}{}
+      \name{author}{1}{}{%
+        {{hash=8d5884fbe19bc9c4ab9214b2f05705b3}{%
+           family={Murphy},
+           familyi={M\bibinitperiod},
+           given={K.P.},
+           giveni={K\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {MIT Press}%
+      }
+      \strng{namehash}{8d5884fbe19bc9c4ab9214b2f05705b3}
+      \strng{fullhash}{8d5884fbe19bc9c4ab9214b2f05705b3}
+      \strng{bibnamehash}{8d5884fbe19bc9c4ab9214b2f05705b3}
+      \strng{authorbibnamehash}{8d5884fbe19bc9c4ab9214b2f05705b3}
+      \strng{authornamehash}{8d5884fbe19bc9c4ab9214b2f05705b3}
+      \strng{authorfullhash}{8d5884fbe19bc9c4ab9214b2f05705b3}
+      \field{sortinit}{4}
+      \field{sortinithash}{e071e0bcb44634fab398d68ad04e69f4}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{isbn}{9780262018029}
+      \field{series}{Adaptive Computation and Machine Learning series}
+      \field{title}{Machine Learning: A Probabilistic Perspective}
+      \field{year}{2012}
+    \endentry
+    \entry{Enriques2014}{article}{}
+      \name{author}{4}{}{%
+        {{hash=e9919d699cac92db2d57a42975bccf55}{%
+           family={Henriques},
+           familyi={H\bibinitperiod},
+           given={João\bibnamedelima F.},
+           giveni={J\bibinitperiod\bibinitdelim F\bibinitperiod}}}%
+        {{hash=562c00294ff628185c0a27bd2fc358b9}{%
+           family={Caseiro},
+           familyi={C\bibinitperiod},
+           given={Rui},
+           giveni={R\bibinitperiod}}}%
+        {{hash=dacba27c53bbfb4b45000e1d8ad58890}{%
+           family={Martins},
+           familyi={M\bibinitperiod},
+           given={Pedro},
+           giveni={P\bibinitperiod}}}%
+        {{hash=1b44bacf18c1247a37b60ce515c679d1}{%
+           family={Batista},
+           familyi={B\bibinitperiod},
+           given={Jorge},
+           giveni={J\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {IEEE}%
+      }
+      \strng{namehash}{8080a93ace56378331a137b617c1131f}
+      \strng{fullhash}{b777696798a6ba78798bc3b6f1b70095}
+      \strng{bibnamehash}{b777696798a6ba78798bc3b6f1b70095}
+      \strng{authorbibnamehash}{b777696798a6ba78798bc3b6f1b70095}
+      \strng{authornamehash}{8080a93ace56378331a137b617c1131f}
+      \strng{authorfullhash}{b777696798a6ba78798bc3b6f1b70095}
+      \field{sortinit}{7}
+      \field{sortinithash}{f615fb9c6fba11c6f962fb3fd599810e}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{issue}{3}
+      \field{journaltitle}{IEEE transactions on pattern analysis and machine intelligence}
+      \field{title}{High-Speed Tracking with Kernelized Correlation Filters}
+      \field{volume}{37}
+      \field{year}{2014}
+      \field{pages}{583\bibrangedash 596}
+      \range{pages}{14}
+    \endentry
+    \entry{comparativeXGB}{article}{}
+      \name{author}{3}{}{%
+        {{hash=921b0765deefa261b68c5ea740370209}{%
+           family={Bentéjac},
+           familyi={B\bibinitperiod},
+           given={Candice},
+           giveni={C\bibinitperiod}}}%
+        {{hash=14bd394214a4db7de8a70c8df7867811}{%
+           family={Csörgő},
+           familyi={C\bibinitperiod},
+           given={Anna},
+           giveni={A\bibinitperiod}}}%
+        {{hash=b69c319b609f0f2cef33dec33400034f}{%
+           family={Martı́nez-Muñoz},
+           familyi={M\bibinithyphendelim M\bibinitperiod},
+           given={Gonzalo},
+           giveni={G\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Springer}%
+      }
+      \strng{namehash}{e51a73a73e5e838ca8e628e7d570f78d}
+      \strng{fullhash}{e51a73a73e5e838ca8e628e7d570f78d}
+      \strng{bibnamehash}{e51a73a73e5e838ca8e628e7d570f78d}
+      \strng{authorbibnamehash}{e51a73a73e5e838ca8e628e7d570f78d}
+      \strng{authornamehash}{e51a73a73e5e838ca8e628e7d570f78d}
+      \strng{authorfullhash}{e51a73a73e5e838ca8e628e7d570f78d}
+      \field{sortinit}{8}
+      \field{sortinithash}{1b24cab5087933ef0826a7cd3b99e994}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Artificial Intelligence Review}
+      \field{number}{3}
+      \field{title}{A comparative analysis of gradient boosting algorithms}
+      \field{volume}{54}
+      \field{year}{2021}
+      \field{pages}{1937\bibrangedash 1967}
+      \range{pages}{31}
+    \endentry
+    \entry{CNNTracking}{inproceedings}{}
+      \name{author}{2}{}{%
+        {{hash=940880a65cb07e1cd6c9ba065400fb87}{%
+           family={Nam},
+           familyi={N\bibinitperiod},
+           given={Hyeonseob},
+           giveni={H\bibinitperiod}}}%
+        {{hash=3fe1accee0f476532572b35f0cdf240e}{%
+           family={Han},
+           familyi={H\bibinitperiod},
+           given={Bohyung},
+           giveni={B\bibinitperiod}}}%
+      }
+      \strng{namehash}{801cccb7aac1af2645e70162b37399dd}
+      \strng{fullhash}{801cccb7aac1af2645e70162b37399dd}
+      \strng{bibnamehash}{801cccb7aac1af2645e70162b37399dd}
+      \strng{authorbibnamehash}{801cccb7aac1af2645e70162b37399dd}
+      \strng{authornamehash}{801cccb7aac1af2645e70162b37399dd}
+      \strng{authorfullhash}{801cccb7aac1af2645e70162b37399dd}
+      \field{sortinit}{9}
+      \field{sortinithash}{54047ffb55bdefa0694bbd554c1b11a0}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR)}
+      \field{month}{6}
+      \field{title}{Learning Multi-Domain Convolutional Neural Networks for Visual Tracking}
+      \field{year}{2016}
+    \endentry
+    \entry{taylorDrummondTracking}{inproceedings}{}
+      \name{author}{2}{}{%
+        {{hash=0e118aa2b43b146cd7a65662be202973}{%
+           family={Taylor},
+           familyi={T\bibinitperiod},
+           given={Simon},
+           giveni={S\bibinitperiod}}}%
+        {{hash=7935612af661bcaae62a430e70094064}{%
+           family={Drummond},
+           familyi={D\bibinitperiod},
+           given={Tom},
+           giveni={T\bibinitperiod}}}%
+      }
+      \strng{namehash}{bc4c674ccc34c082c66b13aeaa011585}
+      \strng{fullhash}{bc4c674ccc34c082c66b13aeaa011585}
+      \strng{bibnamehash}{bc4c674ccc34c082c66b13aeaa011585}
+      \strng{authorbibnamehash}{bc4c674ccc34c082c66b13aeaa011585}
+      \strng{authornamehash}{bc4c674ccc34c082c66b13aeaa011585}
+      \strng{authorfullhash}{bc4c674ccc34c082c66b13aeaa011585}
+      \field{sortinit}{1}
+      \field{sortinithash}{50c6687d7fc80f50136d75228e3c59ba}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{month}{01}
+      \field{title}{Multiple Target Localisation at over 100 FPS}
+      \field{year}{2009}
+      \verb{doi}
+      \verb 10.5244/C.23.58
+      \endverb
+    \endentry
     \entry{VOT2017}{inproceedings}{}
       \name{author}{11}{}{%
         {{hash=bb63d3eb4cc28ddda10c2df01e0c907b}{%
@@ -92,280 +366,6 @@
       \field{month}{10}
       \field{title}{The Visual Object Tracking VOT2017 Challenge Results}
       \field{year}{2017}
-    \endentry
-    \entry{Kalal2011}{article}{}
-      \name{author}{3}{}{%
-        {{hash=07650b929bf7f6682596fd0ebc42096c}{%
-           family={Kalal},
-           familyi={K\bibinitperiod},
-           given={Zdenek},
-           giveni={Z\bibinitperiod}}}%
-        {{hash=15ba95a5d65938b99eaf1f46dd4c25b8}{%
-           family={Mikolajczyk},
-           familyi={M\bibinitperiod},
-           given={Krystian},
-           giveni={K\bibinitperiod}}}%
-        {{hash=7df17ebc3cfb4cf295bff60b579d5638}{%
-           family={Matas},
-           familyi={M\bibinitperiod},
-           given={Jiri},
-           giveni={J\bibinitperiod}}}%
-      }
-      \list{publisher}{1}{%
-        {IEEE}%
-      }
-      \strng{namehash}{fc4099f8bbad1dc3941f62a5f0c88b09}
-      \strng{fullhash}{fc4099f8bbad1dc3941f62a5f0c88b09}
-      \strng{bibnamehash}{fc4099f8bbad1dc3941f62a5f0c88b09}
-      \strng{authorbibnamehash}{fc4099f8bbad1dc3941f62a5f0c88b09}
-      \strng{authornamehash}{fc4099f8bbad1dc3941f62a5f0c88b09}
-      \strng{authorfullhash}{fc4099f8bbad1dc3941f62a5f0c88b09}
-      \field{sortinit}{2}
-      \field{sortinithash}{ed39bb39cf854d5250e95b1c1f94f4ed}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{issue}{7}
-      \field{journaltitle}{IEEE transactions on pattern analysis and machine intelligence}
-      \field{title}{Tracking-learning-detection}
-      \field{volume}{34}
-      \field{year}{2011}
-      \field{pages}{1409\bibrangedash 1422}
-      \range{pages}{14}
-    \endentry
-    \entry{Enriques2014}{article}{}
-      \name{author}{4}{}{%
-        {{hash=e9919d699cac92db2d57a42975bccf55}{%
-           family={Henriques},
-           familyi={H\bibinitperiod},
-           given={João\bibnamedelima F.},
-           giveni={J\bibinitperiod\bibinitdelim F\bibinitperiod}}}%
-        {{hash=562c00294ff628185c0a27bd2fc358b9}{%
-           family={Caseiro},
-           familyi={C\bibinitperiod},
-           given={Rui},
-           giveni={R\bibinitperiod}}}%
-        {{hash=dacba27c53bbfb4b45000e1d8ad58890}{%
-           family={Martins},
-           familyi={M\bibinitperiod},
-           given={Pedro},
-           giveni={P\bibinitperiod}}}%
-        {{hash=1b44bacf18c1247a37b60ce515c679d1}{%
-           family={Batista},
-           familyi={B\bibinitperiod},
-           given={Jorge},
-           giveni={J\bibinitperiod}}}%
-      }
-      \list{publisher}{1}{%
-        {IEEE}%
-      }
-      \strng{namehash}{8080a93ace56378331a137b617c1131f}
-      \strng{fullhash}{b777696798a6ba78798bc3b6f1b70095}
-      \strng{bibnamehash}{b777696798a6ba78798bc3b6f1b70095}
-      \strng{authorbibnamehash}{b777696798a6ba78798bc3b6f1b70095}
-      \strng{authornamehash}{8080a93ace56378331a137b617c1131f}
-      \strng{authorfullhash}{b777696798a6ba78798bc3b6f1b70095}
-      \field{sortinit}{3}
-      \field{sortinithash}{a37a8ef248a93c322189792c34fc68c9}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{issue}{3}
-      \field{journaltitle}{IEEE transactions on pattern analysis and machine intelligence}
-      \field{title}{High-Speed Tracking with Kernelized Correlation Filters}
-      \field{volume}{37}
-      \field{year}{2014}
-      \field{pages}{583\bibrangedash 596}
-      \range{pages}{14}
-    \endentry
-    \entry{KalalPHD}{online}{}
-      \name{author}{1}{}{%
-        {{hash=07650b929bf7f6682596fd0ebc42096c}{%
-           family={Kalal},
-           familyi={K\bibinitperiod},
-           given={Zdenek},
-           giveni={Z\bibinitperiod}}}%
-      }
-      \list{publisher}{2}{%
-        {Centre for Vision, Speech}%
-        {Signal Processing, University of Surrey}%
-      }
-      \strng{namehash}{07650b929bf7f6682596fd0ebc42096c}
-      \strng{fullhash}{07650b929bf7f6682596fd0ebc42096c}
-      \strng{bibnamehash}{07650b929bf7f6682596fd0ebc42096c}
-      \strng{authorbibnamehash}{07650b929bf7f6682596fd0ebc42096c}
-      \strng{authornamehash}{07650b929bf7f6682596fd0ebc42096c}
-      \strng{authorfullhash}{07650b929bf7f6682596fd0ebc42096c}
-      \field{sortinit}{6}
-      \field{sortinithash}{7851c86048328b027313775d8fbd2131}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{title}{Tracking Learning Detection}
-      \field{year}{2011}
-      \verb{urlraw}
-      \verb http://www.ee.surrey.ac.uk/CVSSP/Publications/papers/Kalal-PhD_Thesis-2011.pdf
-      \endverb
-      \verb{url}
-      \verb http://www.ee.surrey.ac.uk/CVSSP/Publications/papers/Kalal-PhD_Thesis-2011.pdf
-      \endverb
-    \endentry
-    \entry{PNLearning}{inproceedings}{}
-      \name{author}{3}{}{%
-        {{hash=07650b929bf7f6682596fd0ebc42096c}{%
-           family={Kalal},
-           familyi={K\bibinitperiod},
-           given={Zdenek},
-           giveni={Z\bibinitperiod}}}%
-        {{hash=7df17ebc3cfb4cf295bff60b579d5638}{%
-           family={Matas},
-           familyi={M\bibinitperiod},
-           given={Jiri},
-           giveni={J\bibinitperiod}}}%
-        {{hash=15ba95a5d65938b99eaf1f46dd4c25b8}{%
-           family={Mikolajczyk},
-           familyi={M\bibinitperiod},
-           given={Krystian},
-           giveni={K\bibinitperiod}}}%
-      }
-      \strng{namehash}{4336d5a7a0aedfe93eff6e48ce72bdfc}
-      \strng{fullhash}{4336d5a7a0aedfe93eff6e48ce72bdfc}
-      \strng{bibnamehash}{4336d5a7a0aedfe93eff6e48ce72bdfc}
-      \strng{authorbibnamehash}{4336d5a7a0aedfe93eff6e48ce72bdfc}
-      \strng{authornamehash}{4336d5a7a0aedfe93eff6e48ce72bdfc}
-      \strng{authorfullhash}{4336d5a7a0aedfe93eff6e48ce72bdfc}
-      \field{sortinit}{7}
-      \field{sortinithash}{f615fb9c6fba11c6f962fb3fd599810e}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{booktitle}{2010 IEEE Computer Society Conference on Computer Vision and Pattern Recognition}
-      \field{title}{P-N learning: Bootstrapping binary classifiers by structural constraints}
-      \field{year}{2010}
-      \field{pages}{49\bibrangedash 56}
-      \range{pages}{8}
-      \verb{doi}
-      \verb 10.1109/CVPR.2010.5540231
-      \endverb
-    \endentry
-    \entry{murphy2012machine}{book}{}
-      \name{author}{1}{}{%
-        {{hash=8d5884fbe19bc9c4ab9214b2f05705b3}{%
-           family={Murphy},
-           familyi={M\bibinitperiod},
-           given={K.P.},
-           giveni={K\bibinitperiod}}}%
-      }
-      \list{publisher}{1}{%
-        {MIT Press}%
-      }
-      \strng{namehash}{8d5884fbe19bc9c4ab9214b2f05705b3}
-      \strng{fullhash}{8d5884fbe19bc9c4ab9214b2f05705b3}
-      \strng{bibnamehash}{8d5884fbe19bc9c4ab9214b2f05705b3}
-      \strng{authorbibnamehash}{8d5884fbe19bc9c4ab9214b2f05705b3}
-      \strng{authornamehash}{8d5884fbe19bc9c4ab9214b2f05705b3}
-      \strng{authorfullhash}{8d5884fbe19bc9c4ab9214b2f05705b3}
-      \field{sortinit}{8}
-      \field{sortinithash}{1b24cab5087933ef0826a7cd3b99e994}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{isbn}{9780262018029}
-      \field{series}{Adaptive Computation and Machine Learning series}
-      \field{title}{Machine Learning: A Probabilistic Perspective}
-      \field{year}{2012}
-    \endentry
-    \entry{comparativeXGB}{article}{}
-      \name{author}{3}{}{%
-        {{hash=921b0765deefa261b68c5ea740370209}{%
-           family={Bentéjac},
-           familyi={B\bibinitperiod},
-           given={Candice},
-           giveni={C\bibinitperiod}}}%
-        {{hash=14bd394214a4db7de8a70c8df7867811}{%
-           family={Csörgő},
-           familyi={C\bibinitperiod},
-           given={Anna},
-           giveni={A\bibinitperiod}}}%
-        {{hash=b69c319b609f0f2cef33dec33400034f}{%
-           family={Martı́nez-Muñoz},
-           familyi={M\bibinithyphendelim M\bibinitperiod},
-           given={Gonzalo},
-           giveni={G\bibinitperiod}}}%
-      }
-      \list{publisher}{1}{%
-        {Springer}%
-      }
-      \strng{namehash}{e51a73a73e5e838ca8e628e7d570f78d}
-      \strng{fullhash}{e51a73a73e5e838ca8e628e7d570f78d}
-      \strng{bibnamehash}{e51a73a73e5e838ca8e628e7d570f78d}
-      \strng{authorbibnamehash}{e51a73a73e5e838ca8e628e7d570f78d}
-      \strng{authornamehash}{e51a73a73e5e838ca8e628e7d570f78d}
-      \strng{authorfullhash}{e51a73a73e5e838ca8e628e7d570f78d}
-      \field{sortinit}{1}
-      \field{sortinithash}{50c6687d7fc80f50136d75228e3c59ba}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{journaltitle}{Artificial Intelligence Review}
-      \field{number}{3}
-      \field{title}{A comparative analysis of gradient boosting algorithms}
-      \field{volume}{54}
-      \field{year}{2021}
-      \field{pages}{1937\bibrangedash 1967}
-      \range{pages}{31}
-    \endentry
-    \entry{CNNTracking}{inproceedings}{}
-      \name{author}{2}{}{%
-        {{hash=940880a65cb07e1cd6c9ba065400fb87}{%
-           family={Nam},
-           familyi={N\bibinitperiod},
-           given={Hyeonseob},
-           giveni={H\bibinitperiod}}}%
-        {{hash=3fe1accee0f476532572b35f0cdf240e}{%
-           family={Han},
-           familyi={H\bibinitperiod},
-           given={Bohyung},
-           giveni={B\bibinitperiod}}}%
-      }
-      \strng{namehash}{801cccb7aac1af2645e70162b37399dd}
-      \strng{fullhash}{801cccb7aac1af2645e70162b37399dd}
-      \strng{bibnamehash}{801cccb7aac1af2645e70162b37399dd}
-      \strng{authorbibnamehash}{801cccb7aac1af2645e70162b37399dd}
-      \strng{authornamehash}{801cccb7aac1af2645e70162b37399dd}
-      \strng{authorfullhash}{801cccb7aac1af2645e70162b37399dd}
-      \field{sortinit}{1}
-      \field{sortinithash}{50c6687d7fc80f50136d75228e3c59ba}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{booktitle}{Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR)}
-      \field{month}{6}
-      \field{title}{Learning Multi-Domain Convolutional Neural Networks for Visual Tracking}
-      \field{year}{2016}
-    \endentry
-    \entry{taylorDrummondTracking}{inproceedings}{}
-      \name{author}{2}{}{%
-        {{hash=0e118aa2b43b146cd7a65662be202973}{%
-           family={Taylor},
-           familyi={T\bibinitperiod},
-           given={Simon},
-           giveni={S\bibinitperiod}}}%
-        {{hash=7935612af661bcaae62a430e70094064}{%
-           family={Drummond},
-           familyi={D\bibinitperiod},
-           given={Tom},
-           giveni={T\bibinitperiod}}}%
-      }
-      \strng{namehash}{bc4c674ccc34c082c66b13aeaa011585}
-      \strng{fullhash}{bc4c674ccc34c082c66b13aeaa011585}
-      \strng{bibnamehash}{bc4c674ccc34c082c66b13aeaa011585}
-      \strng{authorbibnamehash}{bc4c674ccc34c082c66b13aeaa011585}
-      \strng{authornamehash}{bc4c674ccc34c082c66b13aeaa011585}
-      \strng{authorfullhash}{bc4c674ccc34c082c66b13aeaa011585}
-      \field{sortinit}{1}
-      \field{sortinithash}{50c6687d7fc80f50136d75228e3c59ba}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{month}{01}
-      \field{title}{Multiple Target Localisation at over 100 FPS}
-      \field{year}{2009}
-      \verb{doi}
-      \verb 10.5244/C.23.58
-      \endverb
     \endentry
     \entry{VOT2020}{inproceedings}{}
       \name{author}{109}{}{%

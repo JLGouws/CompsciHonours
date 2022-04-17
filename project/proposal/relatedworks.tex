@@ -1,12 +1,41 @@
-\section{Related Works}
-\subsection{Closely related works}
-In 2011 Zdenek Kalal invented the Tracking, Learning and Detection(TLD) framework for the longterm tracking of objects in a video stream \cite{Kalal2011} \cite{KalalPHD}.
-Kalal's original implementation uses a median flow tracking stage, P-N learning, and a random forrest based detector.
-The system requires online(learning as data becomes available) learning in order for the system to work, Kalal developed the P-N Learning paradigm \cite{PNLearning}, a semi-supervised bootstrapping model \cite{murphy2012machine}, tailored to the needs of TLD.
+\section{Related Works}\label{sec:relatedWorks}
+In 2011 \citeauthor{Kalal2011} invented the Tracking, Learning and Detection(TLD) framework for the longterm tracking of objects in a video stream.
+Kalal's original implementation uses a median flow tracker, P-N learning, and a random forrest based detector \cite{KalalPHD}.
+These three components give the respective tracking, learning and detection components of the system.
 
-There have been improvements in tracking methods since his development of TLD.
-Most notably Kernelized Correlation Filters(KCF) being applied on Histogram of Oriented Gradient features\cite{Enriques2014}.
-KCFs, however, do not have the ability to detect, and so if they fail they are unlikely to recover.
+The learning compenent of TLD forms the backbone of the system governing the interaction between the detector and tracker.
+The three components exchange information as shown in Figure~\ref{fig:tld}, this allows the tracker to improve it's performance as time progresses \cite{Kala2011}
+The system requires online learning, learning as data becomes available, in order for the system to work. 
+Kalal developed the P-N Learning paradigm \cite{PNLearning}, a semi-supervised bootstrapping model \cite{murphy2012machine}, tailored to the needs of TLD.
+
+\begin{figure}{l}{0.55\textwidth}
+   \begin{tikzpicture}[approach/.style={draw,very thick, fill=white, text width=5em,
+         text centered, minimum height=2em,rounded corners=3ex, scale=0.1, everynode/.style={scale=0.1}},
+         idea/.style={draw=black, circle,text width=5em,
+            text centered, minimum height=2.5em},
+         connections/.style={->,draw=black,shorten <=2pt,shorten >=2pt},
+         reverseConnections/.style={<-,draw=black,shorten <=2pt,shorten >=2pt},
+      ]
+
+      \node[draw] at (0,0) (tracking) [idea]  {Tracking};
+      \node[draw] at (3.5,4.5) (learning) [idea]  {Learning};
+      \draw[connections, postaction={decorate, decoration={raise=1ex, text along path, text align=center, text={|\small|Fragments of trajectory}}}] (tracking.north)to[out=90,in=190] (learning.west) ;
+      \node[draw] at (7,0) (detection) [idea]  {Detection};
+      \draw[connections, postaction={decorate, decoration={raise=-2.5ex, text along path, text align=center, text={|\small|Training data}}}] (learning.south) to[out=270,in=180] (detection.west) ;
+      \draw[reverseConnections, postaction={decorate, decoration={raise=1ex, text along path, text align=center, text={|\small|Detections}}}] (learning.east) to[out=350,in=90] (detection.north) ;
+      \draw[reverseConnections, postaction={decorate, decoration={raise=-2.5ex, text along path, text align=center, text={|\small|re-initialization}}}] (tracking.south east) to[out=-45,in=225] (detection.south west) ;
+   \end{tikzpicture}
+   \caption{The interaction between tracking, learning and detection in TLD. Figure from \cite{Kalal2011}}
+   \label{fig:tld}
+\end{figure}
+
+\citeauthor{Enriques2014} \cite{Enriques2014} propose Kernelized Correlation Filters(KCF) and the novel Dual Correlaion filter(DCF).
+Both KCF and DCF use circulant matrices and the kernel Trick.
+
+applied on Histogram of Oriented Gradient features.
+
+The system developed by \citeauthor{Enriques2014} does not encorporate a failure recovery mechanism--section 8 of \cite{Enriques2014}.
+This is in contrast to the TLD system which provides a failure recovery mechanism in the detection component \cite{Kalal2011}.
 KCFs also require a stage that will start them tracking.
 KCFs have great potential to be used as the tracking stage for a TLD tracker.
 
@@ -26,7 +55,6 @@ Currently there are vary many trackers availble all with varying degrees of perf
 These have been benchmarked in \cite{VOT2017} and \cite{VOT2020}.
 This is a good reference, and will be explored further, but not all trackers can satisfy the requirements of this project. 
 
-\subsection{Less related work}
 There has also been relevant work done on correlation tracking by \cite{Ma2015Correlation}.
 Ma. et al investigated the problem of long term tracking where the target undergoes abrupt motion, heavy occlusions and disapearing from view.
 There work will probably integrate well with Kernelized Correlation filters, and it has very practical advantages.
