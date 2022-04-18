@@ -1,18 +1,21 @@
 \section{Limitations}
-  It is difficult to accurately identify people from the rear.
-  In this case it might be good to try and prevent the system from learning the appearance of the back of a person's head.
-  A solution to this problem is also developing a system that can be distributed so as to be able to track people from a surrounded view.
+  The first concern of this research is in regards to ethics.
+  Owing to ethical concerns, the system can only be tested on public data, which limits the test cases for the system.
+  An ethical clearance is required to test the system on examples that are closer to real world applications.
+  Time restrictions on the project make doing an ethical clearance impractical.
 
-  It is possible to track semi-ocluded targets, but detecting them is difficult.
-  This will cause problems for the initialization and re-initialization of the tracker.
-  It might be possible to impute some facial features before inputing the stream into the detection system.
-  If a face is fully ocluded, however, there is not much that the system will be able to do, but a human will not be able to do very much.
+  Further on this point, the second limitation of this research is time.
+  The project is set to take one year, being an honours project.
+  There is only so much literature that can be reviewed and still allow for the implementation of a system.
+  On account of this restiction, the research might not explore certain areas of concern.
 
-  The system will require relatively good resolution cameras in order to identify people accurately from a long distance.
-  In most situations involving crowds, a camera capturing a video stream will need to be placed a significant distance from the targets.
-  Hence, the best we can do in software is try to use image processing techniques to artificially enlarge the target, or work on detectors that can work on minimal resolution.
+  This research is only concerned with the tracking of faces.
+  There are many other features that can be used to detect and track humans, for example gait. 
+  Sometimes, there are also needs to track objects other than faces. 
+  The system implemented by the research cannot guarantee tracking capabilities of objects other than human faces.
 
-  There is a problem with access to data that can be trained on, and ethics.
-  Most crowd video data will be impractical to use for testing, owing to resolution and crowd size.
-  There are also ethical issues to be taken into consideration.
-  For testing purposes, I should be able to source my own data, but it will not necessarily resemble real world data.
+  There will be an upper limit on the number of faces that can be tracked simultaneously in real time.
+  There are two problematic cases: First, limited compute power, second screen space.
+  The first case occurs if the runtime complexity of the implemented system increases proportionally to the number of faces being tracked.
+  Formally, if system has runtime complexity worse than $O(1)$, the system will eventually fail to track, in real time, as more faces are added.
+  The second problem case occurs in very large, dense crowds of faces where there is not enough space in the field of view for all the faces, or some faces are captured in insufficient resolution.

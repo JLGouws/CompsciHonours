@@ -91,15 +91,15 @@
     </bcf:option>
     <bcf:option type="singlevalued">
       <bcf:key>maxbibnames</bcf:key>
-      <bcf:value>7</bcf:value>
+      <bcf:value>1</bcf:value>
     </bcf:option>
     <bcf:option type="singlevalued">
       <bcf:key>maxcitenames</bcf:key>
-      <bcf:value>3</bcf:value>
+      <bcf:value>1</bcf:value>
     </bcf:option>
     <bcf:option type="singlevalued">
       <bcf:key>maxsortnames</bcf:key>
-      <bcf:value>7</bcf:value>
+      <bcf:value>1</bcf:value>
     </bcf:option>
     <bcf:option type="singlevalued">
       <bcf:key>maxitems</bcf:key>
@@ -111,15 +111,15 @@
     </bcf:option>
     <bcf:option type="singlevalued">
       <bcf:key>minbibnames</bcf:key>
-      <bcf:value>3</bcf:value>
+      <bcf:value>1</bcf:value>
     </bcf:option>
     <bcf:option type="singlevalued">
       <bcf:key>mincitenames</bcf:key>
-      <bcf:value>3</bcf:value>
+      <bcf:value>1</bcf:value>
     </bcf:option>
     <bcf:option type="singlevalued">
       <bcf:key>minsortnames</bcf:key>
-      <bcf:value>3</bcf:value>
+      <bcf:value>1</bcf:value>
     </bcf:option>
     <bcf:option type="singlevalued">
       <bcf:key>minitems</bcf:key>
@@ -317,15 +317,15 @@
     </bcf:option>
     <bcf:option type="singlevalued">
       <bcf:key>maxbibnames</bcf:key>
-      <bcf:value>7</bcf:value>
+      <bcf:value>1</bcf:value>
     </bcf:option>
     <bcf:option type="singlevalued">
       <bcf:key>maxcitenames</bcf:key>
-      <bcf:value>3</bcf:value>
+      <bcf:value>1</bcf:value>
     </bcf:option>
     <bcf:option type="singlevalued">
       <bcf:key>maxsortnames</bcf:key>
-      <bcf:value>7</bcf:value>
+      <bcf:value>1</bcf:value>
     </bcf:option>
     <bcf:option type="singlevalued">
       <bcf:key>maxitems</bcf:key>
@@ -337,15 +337,15 @@
     </bcf:option>
     <bcf:option type="singlevalued">
       <bcf:key>minbibnames</bcf:key>
-      <bcf:value>3</bcf:value>
+      <bcf:value>1</bcf:value>
     </bcf:option>
     <bcf:option type="singlevalued">
       <bcf:key>mincitenames</bcf:key>
-      <bcf:value>3</bcf:value>
+      <bcf:value>1</bcf:value>
     </bcf:option>
     <bcf:option type="singlevalued">
       <bcf:key>minsortnames</bcf:key>
-      <bcf:value>3</bcf:value>
+      <bcf:value>1</bcf:value>
     </bcf:option>
     <bcf:option type="singlevalued">
       <bcf:key>minitems</bcf:key>
@@ -2350,21 +2350,44 @@
   <bcf:section number="0">
     <bcf:citekey order="1">Kalal2011</bcf:citekey>
     <bcf:citekey order="2">KalalPHD</bcf:citekey>
-    <bcf:citekey order="3">PNLearning</bcf:citekey>
-    <bcf:citekey order="4">murphy2012machine</bcf:citekey>
-    <bcf:citekey order="5">Kalal2011</bcf:citekey>
+    <bcf:citekey order="3">Kalal2011</bcf:citekey>
+    <bcf:citekey order="4">PNLearning</bcf:citekey>
+    <bcf:citekey order="5">murphy2012</bcf:citekey>
     <bcf:citekey order="6">Kalal2011</bcf:citekey>
-    <bcf:citekey order="7">Enriques2014</bcf:citekey>
-    <bcf:citekey order="8">comparativeXGB</bcf:citekey>
-    <bcf:citekey order="9">CNNTracking</bcf:citekey>
-    <bcf:citekey order="10">taylorDrummondTracking</bcf:citekey>
-    <bcf:citekey order="11">VOT2017</bcf:citekey>
-    <bcf:citekey order="12">VOT2020</bcf:citekey>
-    <bcf:citekey order="13">Ma2015Correlation</bcf:citekey>
-    <bcf:citekey order="14">onlineRL</bcf:citekey>
-    <bcf:citekey order="15">onlineRL</bcf:citekey>
-    <bcf:citekey order="16">onlineRL</bcf:citekey>
-    <bcf:citekey order="17">KalalPHD</bcf:citekey>
+    <bcf:citekey order="7">Kalal2011</bcf:citekey>
+    <bcf:citekey order="8">Enriques2014</bcf:citekey>
+    <bcf:citekey order="9">Enriques2014</bcf:citekey>
+    <bcf:citekey order="10">Enriques2014</bcf:citekey>
+    <bcf:citekey order="11">multichannelCorrFilters</bcf:citekey>
+    <bcf:citekey order="12">multichannelCorrFilters</bcf:citekey>
+    <bcf:citekey order="13">Enriques2014</bcf:citekey>
+    <bcf:citekey order="14">Enriques2014</bcf:citekey>
+    <bcf:citekey order="15">struck</bcf:citekey>
+    <bcf:citekey order="16">mosse</bcf:citekey>
+    <bcf:citekey order="17">Enriques2014</bcf:citekey>
+    <bcf:citekey order="18">Enriques2014</bcf:citekey>
+    <bcf:citekey order="19">Enriques2014</bcf:citekey>
+    <bcf:citekey order="20">Enriques2014</bcf:citekey>
+    <bcf:citekey order="21">Enriques2014</bcf:citekey>
+    <bcf:citekey order="22">Kalal2011</bcf:citekey>
+    <bcf:citekey order="23">Enriques2014</bcf:citekey>
+    <bcf:citekey order="24">Ma2015Correlation</bcf:citekey>
+    <bcf:citekey order="25">Ma2015Correlation</bcf:citekey>
+    <bcf:citekey order="26">Ma2015Correlation</bcf:citekey>
+    <bcf:citekey order="27">murphy2012</bcf:citekey>
+    <bcf:citekey order="28">Ma2015Correlation</bcf:citekey>
+    <bcf:citekey order="29">ferns2007</bcf:citekey>
+    <bcf:citekey order="30">Kalal2011</bcf:citekey>
+    <bcf:citekey order="31">KalalPHD</bcf:citekey>
+    <bcf:citekey order="32">VOT2017</bcf:citekey>
+    <bcf:citekey order="33">VOT2020</bcf:citekey>
+    <bcf:citekey order="34">VOT2020</bcf:citekey>
+    <bcf:citekey order="35">CNNTracking</bcf:citekey>
+    <bcf:citekey order="36">CNNTracking</bcf:citekey>
+    <bcf:citekey order="37">CNNTracking</bcf:citekey>
+    <bcf:citekey order="38">onlineRL</bcf:citekey>
+    <bcf:citekey order="39">onlineRL</bcf:citekey>
+    <bcf:citekey order="40">onlineRL</bcf:citekey>
   </bcf:section>
   <!-- SORTING TEMPLATES -->
   <bcf:sortingtemplate name="none">
