@@ -91,14 +91,14 @@ fig.savefig("figs/equilibriumPointsBifurcations.pdf")
 
 rs = [0.005 * x for x in range(690, 800)]
 
-extraPoints = 100
+extraPoints = 500
 fig, ax = plt.subplots(1)
 for r in rs:
   xstar += logisticMapList(r, 0.5, 1000 + extraPoints)[-extraPoints:]
   xstarnew += [np.flip(np.unique(np.round(xstar[-extraPoints:], 4)))]
   rnewnew += [r]
   rnew += [r] * extraPoints
-ax.plot(rnew, xstar, 'bo', ms = 2)
+ax.plot(rnew, xstar, 'bo', ms = 0.1)
 ax.set_xlabel("$r$")
 ax.set_ylabel("$x^*$")
 fig.savefig("figs/furtherEquilibriumPointsBifurcations.pdf")
@@ -123,8 +123,8 @@ def draw_rest_path(r_list, xstar_list, r_plot, xstar_plot, ax, index):
     else:
         draw_rest_path(r_list[1:], xstar_list[1:], np.append(r_plot, r_list[0]), np.append(xstar_plot, xstar_list[1][index]), ax, index)
         
-def draw_path(r_list, xstar_list, ax):
-    draw_rest_path(r_list[1:], xstar_list, r_list[0], xstar_list[0][0], ax, 0)
+#def draw_path(r_list, xstar_list, ax):
+#    draw_rest_path(r_list[1:], xstar_list, r_list[0], xstar_list[0][0], ax, 0)
 
 #fig, ax = plt.subplots(1)
 #draw_path(rnewnew, xstarnew, ax)
