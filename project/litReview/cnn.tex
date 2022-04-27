@@ -1,4 +1,16 @@
 \subsection{Convolutional Neural Networks}
+  Convolutional Neural networks(CNN) have been prominent in the field of Computer vision in recent years.
+  CNNs have been used in field of computer vision in order to classify images with high accuracy and speed \cite{razavian2014}.
+  CNNs come at the cost of requiring long times to train using GPUs \cite{krizhevsky2012}.
+  This makes standard use of CNNs impractical for tracking unknown objects, training a CNN online reduces the tracking speed of the system \cite{bertinetto2016}.
+
+  \subsubsection{Convolutional Siamese Neural Networks}
+  \citeauthor{bertinetto2016} \cite{bertinetto2016} offer a solution to the problem of tracking an unknown object with Convolutional Neural networks.
+  The solution given by \citeauthor{bertinetto2016} is to train, offline, a CNN that solves the more general similarity problem.
+  A function $f(z,x)$ is learned, the funtion compares images $x$ and $z$ and returns a value that estimates how similar the images are.
+
+  A siamese neural network, two identical neural networks conjoined at the output node \cite{bromley1993}, is used to learn the similarity relation.
+
   There has also been investigation into the use of Convolutional Neural Networks in tracking \cite{CNNTracking}.
   The work by \citeauthor{CNNTracking} offers high performance tracking of generic objects.
   The system implemented by \citeauthor{CNNTracking} requires a large amount of offline training.
