@@ -1,0 +1,36 @@
+\usetikzlibrary{shapes.geometric, arrows}
+
+\tikzstyle{startstop} = [rectangle, rounded corners, minimum width=3cm, minimum height=1cm,text centered, draw=black]
+\tikzstyle{io} = [trapezium, trapezium left angle=70, trapezium right angle=110, minimum width=3cm, minimum height=1cm, text centered, draw=black]
+\tikzstyle{process} = [rectangle, minimum width=3cm, minimum height=1cm, text centered, draw=black]
+\tikzstyle{decision} = [diamond, aspect = 2.5,minimum width=2cm, minimum height=0.5cm, text centered, draw=black]
+\tikzstyle{arrow} = [thick,->,>=stealth]
+\tikzstyle{line} = [thick]
+
+\subsection{Methodology Overview}
+\begin{figure}[H]
+  \centering
+  \begin{tikzpicture}[node distance=2cm]
+    \node (proposal) [startstop] {Proposal};
+    \node (litRev) [io, below of=proposal] {Review Literature};
+    \node (data) [io, below of=litRev] {Obtain public data};
+    \node (partImp) [process, below of=data] {Partial Implementation};
+    \node (testImp) [process, below of=partImp] {Test Implementation};
+    \node (passTest) [decision, below of=testImp, yshift=-1cm, text width = 17em, inner sep = -0.8em] {Satisfactory Performance and insufficient time};
+    \node (thesis) [startstop, below of=passTest, text width = 17em, yshift=-0.8cm] {Finish Thesis};
+    \coordinate [right of=passTest, xshift = 10em] (failTest);
+    \coordinate [right of=partImp, xshift = 10em] (reImp);
+    \node (reLit) [io, inner sep = 0.8em] at ($(reImp)!0.5!(failTest)$) {Review more literature};
+
+    \draw[arrow] (proposal) -- (litRev);
+    \draw[arrow] (litRev) -- (data);
+    \draw[arrow] (data) -- (partImp);
+    \draw[arrow] (partImp) -- (testImp);
+    \draw[arrow] (testImp) -- (passTest);
+    \draw[arrow] (passTest) -- node[anchor = east] {Yes} (thesis);
+    \draw[line] (passTest) -- node[anchor = south] {No} (failTest);
+    \draw[line] (reImp) -- (partImp);
+    \draw[line] (reImp) -- (reLit) -- (failTest);
+  \end{tikzpicture}
+  \caption{Conceptual overview of design methodology}
+\end{figure}

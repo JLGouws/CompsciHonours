@@ -1,0 +1,18 @@
+\section{Reseach Statement}
+  This section gives a revision of the problem statement stated in the project proposal.
+  The problem statement has not been revised since the final proposal.
+  \begin{itemize}
+    \item
+    Machine learning and computer vision techniques can be used to design and implement a long term tracking system that, when given minimal input data, is capable of counting the number and measuring the duration of appearances of multiple target faces in a single video stream.
+  \end{itemize}
+
+  The central computer vision technique that is tested is the Tracking, Learning, and Detection framework--discussed in Section~\ref{sec:tld}.
+  This framework allows for long-term tracking with minimal input data. 
+  
+  Long-term tracking(LT) is tracking of objects that can undergo partial oclusions, change appearance, and disappear and reappear from the field of view.
+  This is opposed to short-term tracking(ST) where the object remains fully in the field of view for the whole duration of tracking.
+  ST can be used as a basis for LT, as is done in the case of TLD.
+
+  The definition of minimal input data, in the context of this research, is a single image for each face that is required to be tracked, where each image includes at least one bounding box.
+  The bounding box defines the location of the face in the image and a label for the face.
+  The goal of this research is to implement a working system that meets the conditions specified by the Research Statement.

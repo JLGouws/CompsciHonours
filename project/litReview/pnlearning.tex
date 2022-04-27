@@ -1,0 +1,13 @@
+\subsection{P-N Learning} \label{sec:pnlearning}
+  Training a tracker on a video stream is, in effect, bootstrapping a classifier online.
+  \citeauthor{PNLearning} \cite{PNLearning} offers a solution to training a binary classifier in a stable way.
+  It is important that the tracker's learning is stable, so that tracker does not drift as the video progresses.
+
+  P-N learning consists of two components that evaluate the errors of the classifier every instant that new data become available, for example every frame of a video.
+  The first component is the P-expert which attempts to recognize the false negatives that classifier makes.
+  The second component is the N-expert which attempts to recognize false positives of the classifier.
+  These components make errors, otherwise the components would make a perfect classifer by themselves.
+  The errors of one component, however, compensate for the errors of the other component leading to stable learning \cite{Kalal2011}.
+
+  The P-N learning system can be modelled as a two dimensional dynamical system \cite{PNLearning} \cite{Kalal2011}.
+  This model can be used to determine the stability of the learning.

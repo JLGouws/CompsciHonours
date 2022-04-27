@@ -1,0 +1,96 @@
+\section{Related Works}\label{sec:relatedWorks}
+In 2011 \citeauthor{Kalal2011} invented the Tracking, Learning and Detection(TLD) framework for the longterm tracking of objects in a video stream.
+Kalal's original implementation uses a median flow tracker, P-N learning, and a random forrest and nearest neighbour based detector \cite{KalalPHD}.
+These three components give the respective tracking, learning and detection components of the system.
+
+The learning compenent of TLD forms the backbone of the system, governing the interaction between the detector and tracker.
+The three components exchange information as shown in Figure~\ref{fig:tld}, this allows the tracker to improve it's performance as time progresses \cite{Kalal2011}.
+For the system to operate, it requires online learning--learning as data becomes available. 
+Kalal developed the P-N Learning paradigm \cite{PNLearning}, a semi-supervised bootstrapping model \cite{murphy2012}, tailored to the needs of TLD.
+
+\begin{figure}[!ht]
+  \centering
+   \begin{tikzpicture}[approach/.style={draw,very thick, fill=white, text width=5em,
+         text centered, minimum height=2em,rounded corners=3ex, scale=0.1, everynode/.style={scale=0.1}},
+         idea/.style={draw=black, circle,text width=5em,
+            text centered, minimum height=2.5em},
+         connections/.style={->,draw=black,shorten <=2pt,shorten >=2pt},
+         reverseConnections/.style={<-,draw=black,shorten <=2pt,shorten >=2pt},
+      ]
+
+      \node[draw] at (0,0) (tracking) [idea]  {Tracking};
+      \node[draw] at (3.5,4.5) (learning) [idea]  {Learning};
+      \draw[connections, postaction={decorate, decoration={raise=1ex, text along path, text align=center, text={|\small|Fragments of trajectory}}}] (tracking.north)to[out=90,in=190] (learning.west) ;
+      \node[draw] at (7,0) (detection) [idea]  {Detection};
+      \draw[connections, postaction={decorate, decoration={raise=-2.5ex, text along path, text align=center, text={|\small|Training data}}}] (learning.south) to[out=270,in=180] (detection.west) ;
+      \draw[reverseConnections, postaction={decorate, decoration={raise=1ex, text along path, text align=center, text={|\small|Detections}}}] (learning.east) to[out=350,in=90] (detection.north) ;
+      \draw[reverseConnections, postaction={decorate, decoration={raise=-2.5ex, text along path, text align=center, text={|\small|re-initialization}}}] (tracking.south east) to[out=-45,in=225] (detection.south west) ;
+   \end{tikzpicture}
+   \caption{The interaction between tracking, learning and detection in TLD. Figure from \cite{Kalal2011}}
+   \label{fig:tld}
+\end{figure}
+
+\citeauthor{Enriques2014} \cite{Enriques2014} propose Kernelized Correlation Filters(KCF) and the novel Dual Correlaion filter(DCF).
+Both KCF and DCF use circulant matrices and the kernel Trick.
+The implementation of KCF by \citeauthor{Enriques2014} uses a Gaussian Kernel, whereas the DCF implementation uses a linear kernel.
+The calculations involved with the linear kernel are less computationally complex than KCF. 
+DCF can, hence, be processed faster, but, at the cost of some tracking precision.
+
+Work by \citeauthor{multichannelCorrFilters} \cite{multichannelCorrFilters} allows KCF and DCF to be applied to modern and useful feature descriptors.
+\citeauthor{Enriques2014} show that KCF and DCF be be applied to Histogram of Oriented Gradient(HOG) features to track and detect objects in a video stream with lower computation times and better accuracy.
+KCF and DCF applied to HOG features are shown to outperfrom many tracking systems Table~\ref{tab:trackers}.
+The results shown by Table~\ref{tab:trackers} are obtained from running the algorithms on a standard four core desktop processor from \citedate{Enriques2014}.
+
+\begin{table}
+  \centering
+  \begin{tabular}[t]{cccc}
+    \toprule
+    Algorithm & feature & Mean precision & Mean FPS \\
+    \midrule
+    KCF       & HOG     & 73.2\%         & 172      \\
+    \hline
+    DCF       & HOG     & 72.8\%         & 292      \\
+    \hline
+    KCF       & Raw pixels & 56.0\%      & 154      \\
+    \hline
+    DCF       & Raw pixels & 45.1\%      & 278      \\
+    \midrule
+    \midrule
+    \multicolumn{2}{c}{TLD}   & 60.8\%      &  28      \\
+    \hline
+    \multicolumn{2}{c}{Struck\cite{struck}}& 65.6\%     &  20     \\
+    \hline
+    \multicolumn{2}{c}{MOSSE\cite{mosse}}& 43.1\%      &  615     \\
+    \bottomrule
+  \end{tabular}
+  \caption{Comparison of various trackers, adapted from \cite{Enriques2014}}
+  \label{tab:trackers}
+\end{table}
+
+The system implemented by \citeauthor{Enriques2014} does not, however, encorporate a failure recovery mechanism--section 8 of \cite{Enriques2014}.
+In other words \citeauthor{Enriques2014} only explore KCF in the domain of ST.
+This is in contrast to the original TLD system which provides a failure recovery mechanism in the detection component \cite{Kalal2011}.
+The ST using KCF and DCF done by \citeauthor{Enriques2014} can be used in a TLD framework for LT.
+
+\citeauthor{Ma2015Correlation} \cite{Ma2015Correlation} investigate the problem of single object LT using correlation tracking.
+\citeauthor{Ma2015Correlation} use two Gaussian ridge regression \cite{murphy2012} models for tracking.
+One model uses the relative change in background and target as time progresses, the other model tracks by using the target's appearance.
+The first model is used to track the object's trajectory through fast motion and occlusions, and the second is used for scale change.
+Using both tracking models they train an online detector that is both flexible(from first tracker model) and stable(from second tracker model).
+
+\citeauthor{Ma2015Correlation} train a random fern classifier \cite{ferns2007} \cite{Kalal2011} online in order to handle tracker failure.
+This solves the LT problem in a similar way to \citeauthor{KalalPHD}.
+
+The Visual Object Tracking Challenge(VOT) is a challenge that benchmarks various trackers every year \cite{VOT2017} \cite{VOT2020}.
+VOT investigates both ST and LT.
+In recent years, VOT has also introduced a real time challenge \cite{VOT2020}.
+
+There has also been investigation into the use of Convolutional Neural Networks in tracking \cite{CNNTracking}.
+The work by \citeauthor{CNNTracking} offers high performance tracking of generic objects.
+The system implemented by \citeauthor{CNNTracking} requires a large amount of offline training.
+
+\citeauthor{onlineRL} \cite{onlineRL} propose a new online reinforcement learning method that can be used to train models with minimal input data.
+\citeauthor{onlineRL} describe the \textit{Reanalyse} algorithm.
+Given a state of a machine learning model the \textit{Reanalyse} algorithm generates training targets for the model from some input data.
+When the model has improved by training, the \textit{Reanalyse} algorithm generates more training targets based on the new state of the model, the already seen input data, and any new input data.
+The algorithm allows the available training data to be cycled--this allows the algorithm to extract most of the information from a limited dataset.

@@ -1,0 +1,37 @@
+\subsection{Tracking, Learning, Detection}\label{sec:tld}
+  In 2011 \citeauthor{Kalal2011} invented the Tracking, Learning and Detection(TLD) framework for the longterm tracking of objects in a video stream.
+  Kalal's original implementation uses a median flow tracker, P-N learning, and a random forrest and nearest neighbour based detector \cite{KalalPHD}.
+  These three components give the respective tracking, learning and detection components of the system.
+
+  The learning compenent of TLD forms the backbone of the system, governing the interaction between the detector and tracker.
+  The three components exchange information as shown in Figure~\ref{fig:tld}, this allows the tracker to improve it's performance as time progresses \cite{Kalal2011}.
+  For the system to operate, it requires online learning--learning as data becomes available. 
+  Kalal developed the P-N Learning paradigm \cite{PNLearning}, a semi-supervised bootstrapping model \cite{murphy2012}, tailored to the needs of TLD.
+
+  The tracker of TLD outputs a bounding box for the target object in every frame.
+  A second bounding box for the target object is also produced by the detector.
+  The P-experts and N-experts of the learning component use these bounding boxes to determine the false positives and the false negatives of the detector.
+  This is used to update the detector, as descibed in Section \ref{sec:pnlearning}.
+  An integrator is then used to combine the bounding boxes given by the tracker and detector \cite{Kalal2011}.
+
+  \begin{figure}[!ht]
+    \centering
+     \begin{tikzpicture}[approach/.style={draw,very thick, fill=white, text width=5em,
+           text centered, minimum height=2em,rounded corners=3ex, scale=0.1, everynode/.style={scale=0.1}},
+           idea/.style={draw=black, circle,text width=5em,
+              text centered, minimum height=2.5em},
+           connections/.style={->,draw=black,shorten <=2pt,shorten >=2pt},
+           reverseConnections/.style={<-,draw=black,shorten <=2pt,shorten >=2pt},
+        ]
+
+        \node[draw] at (0,0) (tracking) [idea]  {Tracking};
+        \node[draw] at (3.5,4.5) (learning) [idea]  {Learning};
+        \draw[connections, postaction={decorate, decoration={raise=1ex, text along path, text align=center, text={|\small|Fragments of trajectory}}}] (tracking.north)to[out=90,in=190] (learning.west) ;
+        \node[draw] at (7,0) (detection) [idea]  {Detection};
+        \draw[connections, postaction={decorate, decoration={raise=-2.5ex, text along path, text align=center, text={|\small|Training data}}}] (learning.south) to[out=270,in=180] (detection.west) ;
+        \draw[reverseConnections, postaction={decorate, decoration={raise=1ex, text along path, text align=center, text={|\small|Detections}}}] (learning.east) to[out=350,in=90] (detection.north) ;
+        \draw[reverseConnections, postaction={decorate, decoration={raise=-2.5ex, text along path, text align=center, text={|\small|re-initialization}}}] (tracking.south east) to[out=-45,in=225] (detection.south west) ;
+     \end{tikzpicture}
+     \caption{The interaction between tracking, learning and detection in TLD. Figure from \cite{Kalal2011}}
+     \label{fig:tld}
+  \end{figure}

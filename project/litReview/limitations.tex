@@ -1,0 +1,21 @@
+\section{Limitations}
+  The first concern of this research is in regards to ethics.
+  Owing to ethical concerns, the system can only be tested on public data, which limits the test cases for the system.
+  An ethical clearance is required to test the system on examples that are closer to real world applications.
+  Time restrictions on the project make doing an ethical clearance impractical.
+
+  Further on this point, the second limitation of this research is time.
+  The project is set to take one year, being an honours project.
+  There is only so much literature that can be reviewed and still allow for the implementation of a system.
+  On account of this restiction, the research might not explore certain areas of concern.
+
+  This research is only concerned with the tracking of faces.
+  There are many other features that can be used to detect and track humans, for example gait. 
+  Sometimes, there are also needs to track objects other than faces. 
+  The system implemented by the research cannot guarantee tracking capabilities of objects other than human faces.
+
+  There will be an upper limit on the number of faces that can be tracked simultaneously in real time.
+  There are two problematic cases: First, limited compute power, second screen space.
+  The first case occurs if the runtime complexity of the implemented system increases proportionally to the number of faces being tracked.
+  Formally, if system has runtime complexity worse than $O(1)$, the system will eventually fail to track, in real time, as more faces are added.
+  The second problem case occurs in very large, dense crowds of faces where there is not enough space in the field of view for all the faces, or some faces are captured in insufficient resolution.

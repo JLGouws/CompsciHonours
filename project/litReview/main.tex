@@ -1,0 +1,77 @@
+\documentclass[12pt,a4]{article}
+\usepackage{physics, amsmath,amsfonts,amsthm,amssymb, mathtools,steinmetz, gensymb, siunitx}	% LOADS USEFUL MATH STUFF
+\usepackage{xcolor,graphicx}
+\usepackage[left=45pt, top=60pt, right=45pt, bottom=65pt ,a4paper]{geometry} 				% ADJUSTS PAGE
+\usepackage{setspace}
+\usepackage{caption}
+\usepackage{tikz}
+\usepackage{pgf,tikz,pgfplots,wrapfig}
+\usepackage{mathrsfs}
+\usepackage{fancyhdr}
+\usepackage{float}
+\usepackage{array}
+\usepackage{unicode-math}
+\usepackage{booktabs,multirow}
+\setmathfont{Libertinus Math}
+
+\usetikzlibrary{decorations.text, calc}
+\pgfplotsset{compat=1.7}
+
+\usetikzlibrary{decorations.pathreplacing,decorations.markings}
+\usepgfplotslibrary{fillbetween}
+
+\newcommand{\vect}[1]{\boldsymbol{#1}}
+
+\usepackage{hyperref}
+\usepackage[style= ACM-Reference-Format, maxbibnames=6, minnames=1,maxnames = 1]{biblatex}
+\addbibresource{references.bib}
+
+
+\AtBeginDocument{\hypersetup{pdfborder={0 0 0}}}
+
+\title{
+\includegraphics[scale = 0.5]{download.jpg}~ 
+\\[1cm]
+\textsc{Literature Review of the Tracking and Detection of Human Facial Features and project revision}
+}
+\author{\textsc{J L Gouws}
+\\Supervisor: \textsc{Mr. J Connan}
+\\ \emph{Computer Science Department, Rhodes University}}
+\date{\today
+\\[1cm]}
+
+
+
+\usepackage{graphicx}
+\usepackage{array}
+
+
+
+
+\begin{document}
+\fontencoding{T1}
+\fontfamily{ppl}\selectfont
+\thispagestyle{empty}
+
+\maketitle
+
+%In some sections you have to make a best guess (hypothesis), since you haven't done your MSc yet. 
+\input{abstract}
+\newpage
+\input{introduction}
+%\input{researchstatement}
+%\input{researchobjectives}
+%\input{relatedworks}
+%\input{researchApproach}
+\input{researchstatement}
+\input{faceRecog}
+\input{learning}
+\input{tracking}
+\input{methodology}
+%\input{limitations}
+%\input{applications}
+\input{conclusion}
+
+\printbibliography
+
+\end{document}

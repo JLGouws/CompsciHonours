@@ -1,0 +1,14 @@
+\subsection{Multi-Pose Face Recognition}
+  In a realistic video stream it is atypical for all the faces to be facing the camera at a given time.
+  The faces might change pose from frontal to profile.
+  It is thus key for a detector to recognize faces that both from a frontal and portrait pose, if it is going to used on real world data.
+
+  \citeauthor{viewBasedFaceRecog} \cite{viewBasedFaceRecog} suggest two solutions to the problem of Multi-Pose Face Recognition using eigenfaces.
+  First, a single high dimensional eigenface space can be used.
+  In this face-space a basis vector contains information about the face and its orientation.
+  Second, different face-spaces can be used for different orientations.
+  Each face-space is defined by using PCA on images of all the faces taken a given viewpoint, for example 10 degrees left of frontal view.
+
+  \citeauthor{PoseFaceRec} \cite{PoseFaceRec} describe ways to recognise and track a face that takes on multiple poses.
+  The system proposed by \citeauthor{PoseFaceRec} has three components: Haar Cascades based face detection, weighted modular PCA based face recognition and Kalman tracker.
+  
