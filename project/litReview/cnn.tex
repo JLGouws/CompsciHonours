@@ -4,6 +4,11 @@
   CNNs come at the cost of requiring long times to train using GPUs \cite{krizhevsky2012}.
   This makes standard use of CNNs impractical for tracking unknown objects, training a CNN online results in impairment of the system's speed \cite{bertinetto2016}.
 
+  \subsubsection{Crowd Segmentation with CNNs}
+  A crucial part of a tracking is the ability to distinguish background from objects of interest.
+  \citeauthor{kang2014} \cite{kang2014} propose fast fully convolutional neural networks to segment crowds.
+  
+
   \subsubsection{Multi-domain CNNs}
   \citeauthor{CNNTracking} \cite{CNNTracking} use a CNN as the basis of the trakcer that they implement.
   The CNN is trained on a large, labelled dataset of videos to obtain a generic target representation.
@@ -29,7 +34,4 @@
   A \textit{fully-convolutional}, translation invariant, siamese network is suggested by \citeauthor{bertinetto2016}.
   The fully-convolutional network allows for a whole frame to be searched in one pass of the image.
   This produces better results than sliding window techniques \cite{kang2014}.
-
-  \subsubsection{Crowd Segmentation with CNNs}
-  
 
