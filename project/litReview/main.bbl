@@ -187,6 +187,50 @@
       \field{volume}{6}
       \field{year}{1993}
     \endentry
+    \entry{farabet2012}{article}{}
+      \name{author}{4}{}{%
+        {{hash=7d8373375787570177a6e577b3ef6e31}{%
+           family={Farabet},
+           familyi={F\bibinitperiod},
+           given={Clement},
+           giveni={C\bibinitperiod}}}%
+        {{hash=f19e2a99ad9edfa217542eeff292dbe3}{%
+           family={Couprie},
+           familyi={C\bibinitperiod},
+           given={Camille},
+           giveni={C\bibinitperiod}}}%
+        {{hash=b58b782806ec15222ca08732b16dd6e4}{%
+           family={Najman},
+           familyi={N\bibinitperiod},
+           given={Laurent},
+           giveni={L\bibinitperiod}}}%
+        {{hash=6a1aa6b7eab12b931ca7c7e3f927231d}{%
+           family={LeCun},
+           familyi={L\bibinitperiod},
+           given={Yann},
+           giveni={Y\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {IEEE}%
+      }
+      \strng{namehash}{8a81ae7e39f05d82f59129e0dd317edf}
+      \strng{fullhash}{05e756d9ffd75c5bd4897b4534842a86}
+      \strng{bibnamehash}{8a81ae7e39f05d82f59129e0dd317edf}
+      \strng{authorbibnamehash}{8a81ae7e39f05d82f59129e0dd317edf}
+      \strng{authornamehash}{8a81ae7e39f05d82f59129e0dd317edf}
+      \strng{authorfullhash}{05e756d9ffd75c5bd4897b4534842a86}
+      \field{sortinit}{F}
+      \field{sortinithash}{fb0c0faa89eb6abae8213bf60e6799ea}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{IEEE transactions on pattern analysis and machine intelligence}
+      \field{number}{8}
+      \field{title}{Learning hierarchical features for scene labeling}
+      \field{volume}{35}
+      \field{year}{2012}
+      \field{pages}{1915\bibrangedash 1929}
+      \range{pages}{15}
+    \endentry
     \entry{multichannelCorrFilters}{inproceedings}{}
       \name{author}{3}{}{%
         {{hash=52cfc694963f422c97b36a40b9e438db}{%

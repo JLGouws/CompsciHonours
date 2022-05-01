@@ -1,20 +1,20 @@
 [0] Config.pm:311> INFO - This is Biber 2.16
 [0] Config.pm:314> INFO - Logfile is 'main.blg'
-[59] biber:340> INFO - === Wed Apr 27, 2022, 22:17:12
-[69] Biber.pm:415> INFO - Reading 'main.bcf'
-[121] Biber.pm:952> INFO - Found 25 citekeys in bib section 0
-[131] Biber.pm:4340> INFO - Processing section 0
-[138] Biber.pm:4531> INFO - Looking for bibtex format file 'references.bib' for section 0
-[140] bibtex.pm:1689> INFO - LaTeX decoding ...
-[173] bibtex.pm:1494> INFO - Found BibTeX data source 'references.bib'
-[263] Utils.pm:384> WARN - legacy month field 'Oct' in entry 'VOT2017' is not an integer - this will probably not sort properly.
-[380] Utils.pm:384> WARN - legacy month field 'June' in entry 'CNNTracking' is not an integer - this will probably not sort properly.
-[398] Utils.pm:384> WARN - legacy month field 'December' in entry 'multichannelCorrFilters' is not an integer - this will probably not sort properly.
-[411] Utils.pm:384> WARN - legacy month field 'June' in entry 'Ma2015Correlation' is not an integer - this will probably not sort properly.
-[444] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
-[444] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
-[444] Biber.pm:4168> INFO - Sorting list 'nty/global//global/global' of type 'entry' with template 'nty' and locale 'en-US'
-[444] Biber.pm:4174> INFO - No sort tailoring available for locale 'en-US'
-[465] bbl.pm:654> INFO - Writing 'main.bbl' with encoding 'UTF-8'
-[526] bbl.pm:757> INFO - Output to main.bbl
-[526] Biber.pm:128> INFO - WARNINGS: 4
+[85] biber:340> INFO - === Sun May  1, 2022, 17:40:16
+[101] Biber.pm:415> INFO - Reading 'main.bcf'
+[182] Biber.pm:952> INFO - Found 26 citekeys in bib section 0
+[196] Biber.pm:4340> INFO - Processing section 0
+[206] Biber.pm:4531> INFO - Looking for bibtex format file 'references.bib' for section 0
+[209] bibtex.pm:1689> INFO - LaTeX decoding ...
+[263] bibtex.pm:1494> INFO - Found BibTeX data source 'references.bib'
+[392] Utils.pm:384> WARN - legacy month field 'Oct' in entry 'VOT2017' is not an integer - this will probably not sort properly.
+[561] Utils.pm:384> WARN - legacy month field 'June' in entry 'CNNTracking' is not an integer - this will probably not sort properly.
+[580] Utils.pm:384> WARN - legacy month field 'December' in entry 'multichannelCorrFilters' is not an integer - this will probably not sort properly.
+[598] Utils.pm:384> WARN - legacy month field 'June' in entry 'Ma2015Correlation' is not an integer - this will probably not sort properly.
+[645] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[645] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
+[645] Biber.pm:4168> INFO - Sorting list 'nty/global//global/global' of type 'entry' with template 'nty' and locale 'en-US'
+[645] Biber.pm:4174> INFO - No sort tailoring available for locale 'en-US'
+[676] bbl.pm:654> INFO - Writing 'main.bbl' with encoding 'UTF-8'
+[759] bbl.pm:757> INFO - Output to main.bbl
+[760] Biber.pm:128> INFO - WARNINGS: 4
