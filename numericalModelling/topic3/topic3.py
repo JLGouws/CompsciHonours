@@ -44,33 +44,54 @@ for i, res in enumerate([1000, 2000, 4000]):
     u += [analytic(time[-1])]
     E += [u[-1] - solution[-1]]
     ax[0].plot(time[-1], E[-1])
-    ax[1].semilogy(time[-1], E[-1])
+    ax[1].semilogy(time[-1], np.abs(E[-1]))
     #ax[2].plot(time, solution)
 #ax[0].plot(time, u)
 fig.savefig("1a.pdf")
+################################################################################
+V_r = (solution[-2] - 2 * solution[-1][::2]) / (1 - 2)
+fig, ax = plt.subplots(figsize=(10,5))
+ax.plot(time[-2], V_r)
+fig.savefig("1b.pdf")
+fig, ax = plt.subplots(1, 2, figsize=(12,5))
+ax[0].plot(time[-2], E[-2], linewidth = 8)
+ax[0].plot(time[-2], V_r - solution[-2], linewidth = 3)
+ax[1].plot(time[-2], (V_r - solution[-2])/E[-2])
+fig.savefig("1c.pdf")
 
-points = np.array(taylors_method(logistic, 0, 10, 1000, 0.05))
-timen = points[:, 0]
-solutionn = points[:, 1]
-
-points = np.array(taylors_method(logistic, 0, 10, 2000, 0.05))
-time2n = points[:, 0]
-solution2n = points[:, 1]
 ################################################################################
 #2a.
 fig, ax = plt.subplots(1, 2, figsize=(10,5))
-for res in [1000, 2000, 4000]:
+time = []
+solution = []
+u = []
+E = []
+for i, res in enumerate([1000, 2000, 4000]):
     points = np.array(runge_kutta2(logistic, 0, 10, res, 0.05))
-    time = points[:, 0]
-    solution = points[:, 1]
-    u = analytic(time)
-    E = u - solution
-    ax[0].plot(time, E)
-    ax[1].semilogy(time, E)
+    time += [points[:, 0]]
+    solution += [points[:, 1]]
+    u += [analytic(time[-1])]
+    E += [u[-1] - solution[-1]]
+    ax[0].plot(time[-1], E[-1])
+    ax[1].semilogy(time[-1], np.abs(E[-1]))
     #ax[2].plot(time, solution)
 #ax[0].plot(time, u)
 fig.savefig("2a.pdf")
 
+V_r = (solution[-2] - 2 **2 * solution[-1][::2]) / (1 - 2 ** 2)
+fig, ax = plt.subplots(figsize=(10,5))
+ax.plot(time[-2], V_r)
+fig.savefig("2b.pdf")
+fig, ax = plt.subplots(1, 2, figsize=(12,5))
+ax[0].plot(time[-2], E[-2], lw = 8)
+ax[0].plot(time[-2], V_r - solution[-2], lw = 3)
+ax[1].plot(time[-2], (V_r - solution[-2])/E[-2])
+fig.savefig("2c.pdf")
+
+#V_r = (solution[-2] - 2**2 * solution[-1][::2]) / (1 - 2**2)
+#fig, ax = plt.subplots(figsize=(10,5))
+#ax.plot(time[-2], V_r)
+#fig.savefig("2b.pdf")
 ################################################################################
 #4.
 fig, ax = plt.subplots(1, figsize=(10,10))

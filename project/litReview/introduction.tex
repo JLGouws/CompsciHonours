@@ -1,33 +1,34 @@
 \section{Introduction}
   This document is a literature review for the associated Honours project.
-  The document also serves to revise the proposal.
-  Below is an ammended introduction to the project.
+  This paper also serves to revise the proposal.
+  Below is an amended introduction to the project.
 
-  Consider a continuous video stream in which a set of faces appears, each face might appear at different times.
+  Consider a continuous video stream where a set of faces appears, and each face might appear at different times.
   The individual faces might move and change orientation in the video stream.
-  Imagine that there exists some subset of these faces that is of interest--the target faces.
-  A set of pictures of these faces must exist, these pictures may be unrelated to the video, or frames of the video.
-  With these ideas in mind, the goal of this research is to develop a system that can automatically identify and track the target faces in the video stream.
+  Imagine that some subset of these faces is of interest--the target faces.
+  A set of pictures of these faces must exist; these pictures may be unrelated to the video or frames within it.
+  This research aims to develop a system that solves the problem of automatic identification and tracking of target faces in the video stream.
 
-  The intial input given to the system is images that have uniquely labelled regions of interest or bounding boxes which define individual faces.
-  The input images are required to contain at least one instance of each target face, but there is no maximum limit.
-  This constitutes the initialization of operation, after which the system functions autonomously.
+  The initial input given to the system is images that have uniquely labelled regions of interest or bounding boxes which define individual faces.
+  The input images must contain at least one instance of each target face, but there is no maximum limit.
+  This process constitutes the initialisation of operation, after which the system functions autonomously.
 
-  When given an arbitrary video the system detects the presence or absence of any of the target faces within the video as the video progresses with time.
-  Subsequently, the system labels every target face that it detects with the label that was associated with the face in the initialization of the system.
-  Once a face is labelled, the system follows the motion of the face, and any other target faces appearing in the current frame, for as long as the face is visible.
-  This constitutes the running phase of the system, where the system identifies and tracks faces in the supplied video stream.
+  Given an arbitrary video, the system searches for the presence of any target faces.
+  The tracker proceeds to label detected target faces with the label provided in the initialisation of the system.
+  Once a target face is labelled, the tracker follows its motion, and all other targets appearing in the current frame.
+  This process constitutes the running phase of the system, where the system identifies and tracks faces in the supplied video stream.
 
-  While the system is running it determines information about the target faces.
-  It can, hence, extract the the number of times each target face appears, the amount of time for which each target appears and the trajectory of each face while it is apparent in the video.
-  This is the output stage of the operation, which concludes the operation of the system.
+  While the system is running, it determines information about the target faces.
+  It can, hence, extract the number of times each target face appears, the amount of time for which each target appears and the trajectory of each face while it is apparent in the video.
+  This process is the output stage, which concludes the system's operation.
 
-  The system is designed to operate with minimal input data supplied in the initialization stage.
-  With this constraint, it is desirable for the system to use all the data it can get access to. 
-  The system, thus, uses the the video in the running phase to learn more about each target face--in this way it can identify and track faces with better accuracy as the video progresses.
+  The system operates with minimal input data supplied in the initialisation stage.
+  With this constraint, the system should use all the data it can access. 
+  Thus, the system uses the video to learn more about each target face in the running phase.
+  In this way, the system can identify and track faces with better accuracy as the video progresses.
 
-  The next section of this document gives a revision of the formal research statement.
-  Following this, there are three sections that introduce works that are related to this research.
+  The next section of this document reviews the formal research statement.
+  Following this, three sections introduce works that are related to this research.
   This section serves as the literature review of the project. 
-  The literature review is followed by a section discussing the methodology that the project will follow.
-  Finally the conclusion(not quite yet) summarises the findings of the literature review and details of the project.
+  The literature review is followed by a section discussing the project's methodology.
+  Finally, the conclusion summarises the literature review findings and details of the project.
