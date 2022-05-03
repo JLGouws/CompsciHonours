@@ -187,6 +187,45 @@
       \field{volume}{6}
       \field{year}{1993}
     \endentry
+    \entry{danelljan2019}{inproceedings}{}
+      \name{author}{4}{}{%
+        {{hash=d677155b50f1f1836c11fe2ffcf82285}{%
+           family={Danelljan},
+           familyi={D\bibinitperiod},
+           given={Martin},
+           giveni={M\bibinitperiod}}}%
+        {{hash=47da2823c04e6193acbc7c35e4978b13}{%
+           family={Bhat},
+           familyi={B\bibinitperiod},
+           given={Goutam},
+           giveni={G\bibinitperiod}}}%
+        {{hash=a40e1228783564f44861095bd68df4f7}{%
+           family={Khan},
+           familyi={K\bibinitperiod},
+           given={Fahad\bibnamedelima Shahbaz},
+           giveni={F\bibinitperiod\bibinitdelim S\bibinitperiod}}}%
+        {{hash=e7723f0d4f24d8ed6206851f5c46f936}{%
+           family={Felsberg},
+           familyi={F\bibinitperiod},
+           given={Michael},
+           giveni={M\bibinitperiod}}}%
+      }
+      \strng{namehash}{c53f1c664a40c2fc7783a9ca5c6d8a2b}
+      \strng{fullhash}{1c9709a78d3a025170fedb7d7580808c}
+      \strng{bibnamehash}{c53f1c664a40c2fc7783a9ca5c6d8a2b}
+      \strng{authorbibnamehash}{c53f1c664a40c2fc7783a9ca5c6d8a2b}
+      \strng{authornamehash}{c53f1c664a40c2fc7783a9ca5c6d8a2b}
+      \strng{authorfullhash}{1c9709a78d3a025170fedb7d7580808c}
+      \field{sortinit}{D}
+      \field{sortinithash}{c438b3d5d027251ba63f5ed538d98af5}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition}
+      \field{title}{Atom: Accurate tracking by overlap maximization}
+      \field{year}{2019}
+      \field{pages}{4660\bibrangedash 4669}
+      \range{pages}{10}
+    \endentry
     \entry{duchi2011}{article}{}
       \name{author}{3}{}{%
         {{hash=b8fbef1897da5bf46822ced31bc865c6}{%

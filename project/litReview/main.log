@@ -1,4 +1,4 @@
-This is LuaHBTeX, Version 1.12.0 (TeX Live 2020/Debian)  (format=lualatex 2022.3.19)  3 MAY 2022 08:13
+This is LuaHBTeX, Version 1.12.0 (TeX Live 2020/Debian)  (format=lualatex 2022.3.28)  3 MAY 2022 11:34
  restricted system commands enabled.
 **main.tex
 (./main.tex
@@ -1612,19 +1612,19 @@ LaTeX Font Info:    Font shape `TU/LibertinusMath(3)/m/n' will be
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}<./download.jpg>] (./introdu
 ction.tex) (./researchStatement.tex) (./faceRecog.tex [2] (./eigenFaces.tex) (.
 /multiPoseFaceRecog.tex)) (./learning.tex (./onlineLearning.tex [3]) (./rl.tex) (./templateUpdating.tex [4]) (./pnlearning.tex)) (./tracking.tex (./comparison.tex [5]) (./cnn.tex
-<MDNet.png, id=189, 600.2425pt x 246.9225pt>
+<MDNet.png, id=191, 600.2425pt x 246.9225pt>
 File: MDNet.png Graphic file (type png)
 <use MDNet.png>
 Package luatex.def Info: MDNet.png  used on input line 31.
 (luatex.def)             Requested size: 300.12051pt x 123.46094pt.
-[6<./MDNet.png>]
-<convSiamese.pdf, id=211, 432.61626pt x 199.74625pt>
+[6]
+<convSiamese.pdf, id=214, 432.61626pt x 199.74625pt>
 File: convSiamese.pdf Graphic file (type pdf)
 <use convSiamese.pdf>
 Package luatex.def Info: convSiamese.pdf  used on input line 58.
 (luatex.def)             Requested size: 259.57176pt x 119.84866pt.
-) (./correlationTracking.tex [7<./convSiamese.pdf>]) (./tld.tex [8])) (./method
-ology.tex (./methodOverview.tex
+) (./correlationTracking.tex [7<./MDNet.png><./convSiamese.pdf>]) (./tld.tex)) 
+(./methodology.tex [8] (./methodOverview.tex
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tik
 zlibraryshapes.geometric.code.tex
 File: tikzlibraryshapes.geometric.code.tex 2020/12/27 v3.1.8b (3.1.8b)
@@ -1651,15 +1651,15 @@ Package logreq Info: Writing requests to 'main.run.xml'.
 )
 
 Here is how much of LuaTeX's memory you used:
- 53460 strings out of 478824
+ 53463 strings out of 478824
  125176,2373549 words of node,token memory allocated
- 1856 words of node memory still in use:
-   7 hlist, 2 vlist, 2 rule, 2 glue, 186 kern, 1 glyph, 84 attribute, 76 glue_sp
-ec, 84 attribute_list, 2 write, 3 pdf_action nodes
-   avail lists: 1:1,2:2189,3:1259,4:90,5:472,6:45,7:8532,8:125,9:958,10:12,11:61
+ 1898 words of node memory still in use:
+   7 hlist, 2 vlist, 2 rule, 2 glue, 192 kern, 1 glyph, 87 attribute, 76 glue_sp
+ec, 87 attribute_list, 2 write, 3 pdf_action nodes
+   avail lists: 1:1,2:2723,3:1457,4:90,5:475,6:48,7:8532,8:125,9:869,10:12,11:61
 1
- 71247 multiletter control sequences out of 65536+600000
- 133 fonts using 24514535 bytes
+ 71249 multiletter control sequences out of 65536+600000
+ 133 fonts using 24514615 bytes
  98i,11n,116p,1532b,1701s stack positions out of 5000i,500n,10000p,200000b,200000s
 </usr/share/texmf/fonts/opentype/public/lm/lmmono12-regular.otf></usr/share/texm
 f/fonts/opentype/public/lm/lmromancaps10-regular.otf></usr/share/texmf/fonts/ope
@@ -1674,10 +1674,10 @@ lmroman12-regular.otf>{/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc
 }</usr/share/texlive/texmf-dist/fonts/type1/urw/palatino/uplb8a.pfb></usr/share/
 texlive/texmf-dist/fonts/type1/urw/palatino/uplr8a.pfb></usr/share/texlive/texmf
 -dist/fonts/type1/urw/palatino/uplri8a.pfb>
-Output written on main.pdf (14 pages, 293436 bytes).
+Output written on main.pdf (14 pages, 294926 bytes).
 
-PDF statistics: 402 PDF objects out of 1000 (max. 8388607)
- 341 compressed objects within 4 object streams
- 76 named destinations out of 1000 (max. 131072)
+PDF statistics: 408 PDF objects out of 1000 (max. 8388607)
+ 347 compressed objects within 4 object streams
+ 77 named destinations out of 1000 (max. 131072)
  216 words of extra memory for PDF output out of 10000 (max. 100000000)
 
