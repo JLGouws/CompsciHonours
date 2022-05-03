@@ -187,6 +187,42 @@
       \field{volume}{6}
       \field{year}{1993}
     \endentry
+    \entry{duchi2011}{article}{}
+      \name{author}{3}{}{%
+        {{hash=b8fbef1897da5bf46822ced31bc865c6}{%
+           family={Duchi},
+           familyi={D\bibinitperiod},
+           given={John},
+           giveni={J\bibinitperiod}}}%
+        {{hash=0b3d32703edd2b7248e8e8f33c5893db}{%
+           family={Hazan},
+           familyi={H\bibinitperiod},
+           given={Elad},
+           giveni={E\bibinitperiod}}}%
+        {{hash=300d4990e626d975e0c28630444f63c3}{%
+           family={Singer},
+           familyi={S\bibinitperiod},
+           given={Yoram},
+           giveni={Y\bibinitperiod}}}%
+      }
+      \strng{namehash}{b8b34bd771a4e5e8cbaec4bd55417929}
+      \strng{fullhash}{21039f1d6e97f13dbd40c187a8131cf0}
+      \strng{bibnamehash}{b8b34bd771a4e5e8cbaec4bd55417929}
+      \strng{authorbibnamehash}{b8b34bd771a4e5e8cbaec4bd55417929}
+      \strng{authornamehash}{b8b34bd771a4e5e8cbaec4bd55417929}
+      \strng{authorfullhash}{21039f1d6e97f13dbd40c187a8131cf0}
+      \field{sortinit}{D}
+      \field{sortinithash}{c438b3d5d027251ba63f5ed538d98af5}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Journal of Machine Learning Research}
+      \field{month}{07}
+      \field{title}{Adaptive Subgradient Methods for Online Learning and Stochastic Optimization}
+      \field{volume}{12}
+      \field{year}{2011}
+      \field{pages}{2121\bibrangedash 2159}
+      \range{pages}{39}
+    \endentry
     \entry{farabet2012}{article}{}
       \name{author}{4}{}{%
         {{hash=7d8373375787570177a6e577b3ef6e31}{%
@@ -1096,6 +1132,103 @@
       \field{pages}{547\bibrangedash 601}
       \range{pages}{55}
     \endentry
+    \entry{Kristan2020a}{misc}{}
+      \name{author}{16}{}{%
+        {{hash=bb63d3eb4cc28ddda10c2df01e0c907b}{%
+           family={Kristan},
+           familyi={K\bibinitperiod},
+           given={Matej},
+           giveni={M\bibinitperiod}}}%
+        {{hash=d631587f800137919945a5b6b0b93352}{%
+           family={Leonardis},
+           familyi={L\bibinitperiod},
+           given={Ales},
+           giveni={A\bibinitperiod}}}%
+        {{hash=7df17ebc3cfb4cf295bff60b579d5638}{%
+           family={Matas},
+           familyi={M\bibinitperiod},
+           given={Jiri},
+           giveni={J\bibinitperiod}}}%
+        {{hash=e7723f0d4f24d8ed6206851f5c46f936}{%
+           family={Felsberg},
+           familyi={F\bibinitperiod},
+           given={Michael},
+           giveni={M\bibinitperiod}}}%
+        {{hash=62f2825866742ff218deaf0bb7bf99a8}{%
+           family={Pflugfelder},
+           familyi={P\bibinitperiod},
+           given={Roman},
+           giveni={R\bibinitperiod}}}%
+        {{hash=9736ba1ad8085de6ac5488c585d39949}{%
+           family={Kamarainen},
+           familyi={K\bibinitperiod},
+           given={Joni-Kristian},
+           giveni={J\bibinithyphendelim K\bibinitperiod}}}%
+        {{hash=48dc5aabc81a4444abec8da1ce99c8e1}{%
+           family={Zajc},
+           familyi={Z\bibinitperiod},
+           given={Luka\bibnamedelima Čehovin},
+           giveni={L\bibinitperiod\bibinitdelim Č\bibinitperiod}}}%
+        {{hash=d677155b50f1f1836c11fe2ffcf82285}{%
+           family={Danelljan},
+           familyi={D\bibinitperiod},
+           given={Martin},
+           giveni={M\bibinitperiod}}}%
+        {{hash=a65f6f1cb75c62efddbc768053635b4d}{%
+           family={Lukezic},
+           familyi={L\bibinitperiod},
+           given={Alan},
+           giveni={A\bibinitperiod}}}%
+        {{hash=975f353d221b168313529edd2e3d48ad}{%
+           family={Drbohlav},
+           familyi={D\bibinitperiod},
+           given={Ondrej},
+           giveni={O\bibinitperiod}}}%
+        {{hash=8c6618f9abab4d10ec1c08bb4e6c37c5}{%
+           family={He},
+           familyi={H\bibinitperiod},
+           given={Linbo},
+           giveni={L\bibinitperiod}}}%
+        {{hash=d79f5664c6545a7192ed35cdb787d264}{%
+           family={Zhang},
+           familyi={Z\bibinitperiod},
+           given={Yushan},
+           giveni={Y\bibinitperiod}}}%
+        {{hash=e728562b3096f5a7fa16f227691b7c1b}{%
+           family={Yan},
+           familyi={Y\bibinitperiod},
+           given={Song},
+           giveni={S\bibinitperiod}}}%
+        {{hash=597856ebd67c4f0de39a29e0e4aed93b}{%
+           family={Yang},
+           familyi={Y\bibinitperiod},
+           given={Jinyu},
+           giveni={J\bibinitperiod}}}%
+        {{hash=89b0e3a39070033c42865a5b2cee4db3}{%
+           family={Fernandez},
+           familyi={F\bibinitperiod},
+           given={Gustavo},
+           giveni={G\bibinitperiod}}}%
+        {{hash=38026ba4ee6b102b47bf3ffb41325c8f}{%
+           family={al.},
+           familyi={a\bibinitperiod},
+           prefix={et},
+           prefixi={e\bibinitperiod}}}%
+      }
+      \strng{namehash}{707779c376688fcb273afea188159242}
+      \strng{fullhash}{48fe19be69179563d1e47770b78efb10}
+      \strng{bibnamehash}{707779c376688fcb273afea188159242}
+      \strng{authorbibnamehash}{707779c376688fcb273afea188159242}
+      \strng{authornamehash}{707779c376688fcb273afea188159242}
+      \strng{authorfullhash}{48fe19be69179563d1e47770b78efb10}
+      \field{extraname}{2}
+      \field{sortinit}{K}
+      \field{sortinithash}{d3edc18d54b9438a72c24c925bfb38f4}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{The Eighth Visual Object Tracking VOT2020 Challenge Results}
+      \field{year}{2020}
+    \endentry
     \entry{VOT2017}{inproceedings}{}
       \name{author}{11}{}{%
         {{hash=bb63d3eb4cc28ddda10c2df01e0c907b}{%
@@ -1160,7 +1293,7 @@
       \strng{authorbibnamehash}{707779c376688fcb273afea188159242}
       \strng{authornamehash}{707779c376688fcb273afea188159242}
       \strng{authorfullhash}{ba15f98c1c028239f2ea336a660ee236}
-      \field{extraname}{2}
+      \field{extraname}{3}
       \field{sortinit}{K}
       \field{sortinithash}{d3edc18d54b9438a72c24c925bfb38f4}
       \field{labelnamesource}{author}

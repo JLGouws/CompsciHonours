@@ -1,7 +1,7 @@
 \subsection{Convolutional Neural Networks}
   Convolutional Neural networks(CNN) have been prominent in the field of Computer vision in recent years.
   CNNs have been used in field of computer vision in order to classify images with high accuracy and speed \cite{razavian2014}.
-  CNNs come at the cost of requiring long times to train using GPUs \cite{krizhevsky2012}.
+  CNNs come at the cost of requiring long times to train, in most cases using GPUs \cite{krizhevsky2012}.
   This makes standard use of CNNs impractical for tracking unknown objects, training a CNN online results in impairment of the system's speed \cite{bertinetto2016}.
 
   \subsubsection{Crowd Segmentation with CNNs}
@@ -16,8 +16,7 @@
 
   This technique uses appearance to segment the crowd--this reduces the false positives which occur when motion cues are used to segment crowds.
   Another advantage of scanning the whole input image once is the availability of more contextual appearance information which can be used in segmentation \cite{eigenFacesRecog, farabet2012}.
-  Segmentation can be used as an input stage to other systems which further analyze the segments.
-
+  Once an image of a crowd is segmented, more specific analyisis can be done, for example identification of people in the crowd.
 
 
   \subsubsection{Multi-domain CNN}
@@ -60,4 +59,8 @@
     \caption{The architecture of the Fully Convolutional Siamese Neural Network, from \protect\cite{bertinetto2016}}
     \label{fig:convSiamese}
   \end{figure}
+
+  This architecture can be seen as an advanced template tracker.
+  The CNN is equivalent to the preprocessing needed to create a tracking template.
+  The metric $g$ compares the template and a search window--the sum of squares metric is often used in template trackers.
 

@@ -1,7 +1,25 @@
 \subsection{Online Learning}
-  One option for solving the problem of online learning is Stochastic Gradient Descent.
-  Stochastic gradient descent aims to minimize a cost function, $f(\mathbf{\theta})$, by changing the parameters, $\mathbf{\theta}$.
+  Online learning is learning done as data becomes available.
+  This form of training machine learning models is required to handle streaming data, for example stock-prices and videos.
+  Online learning can also be used to train models offline, for example when a dataset is too big to load into a computer's memory.
+
+  One option for training a classifier online is Stochastic Gradient Descent(SGD).
+  SGD aims to minimize a cost function: 
+  \begin{equation*}
+    J(\pmb{\theta}) = J^*\left(f(\pmb{\theta}, \pmb{z}_1), f(\pmb{\theta}, \pmb{z}_2),\hdots, f(\pmb{\theta}, \mathbf{z}_N))\right)
+  \end{equation*}
+  by changing the model parameters $\pmb{\theta}$ \cite{murphy2012}.
+  The $f(\pmb{\theta}, \pmb{z}_i)$ are functions that give the cost of some data point $\pmb{z}_i$ for the parameters $\pmb{\theta}$
   The parameters are updated in sequential steps of the form:
   \begin{equation*}
-    \mathbf{\theta}_{k + 1} = G(\mathbf{\theta}, f())
+    \pmb{\theta}_{k + 1} = G(\pmb{\theta}_k, \nabla f(\pmb{\theta}, z_k))
   \end{equation*}
+  The gradient descent can be implemented in many ways, and can be improved with adaptive step sizes \cite{duchi2011}.
+
+  Another option for an online learning classifier uses Bayesian inference.
+  The posterior probability of the Bayesian classifier can be updated according to:
+  \begin{equation*}
+    p(\pmb{\theta} | \mathcal{D}_{1:k}) \propto p(\mathcal{D}_k | \pmb{\theta})p(\pmb{\theta} | \mathcal{D}_{1:k-1})
+  \end{equation*}
+  Where $\mathcal{D}_{1:n}$ indicates that the classifier has been given data points $1$ to $n$.
+  Bayes classifiers, in most cases, can be trained faster than classifiers using SGD \cite{murphy2012}.

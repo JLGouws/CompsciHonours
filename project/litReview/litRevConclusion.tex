@@ -1,0 +1,16 @@
+  \subsection{Conclusion of the Literature Review}
+    The Visual Object Tracking Challenge(VOT) ranks many current tracking systems every year \cite{VOT2017, Kristan2020a}.
+    The challenge ranks trackers in different categories, the two main categories are long-term and short-term tracking.
+    VOT ranks the trackers based on various metrics that indicate the accuracy of the tracker. 
+    VOT does not, however, require trackers to run at real-time frame rates, some trackers run at less than one frame a second.
+
+    There are, at present, two main approaches to solve the problem of long-term tracking in real time.
+    The first approach uses correlation tracking and training a classifier online \cite{Ma2015Correlation, Enriques2014, Kalal2011}.
+    These methods require little set-up time, and can track single unkown objects in a video stream.
+
+    The second approach uses CNNs \cite{bertinetto2016}.
+    This approach requires an offline training stage, but the offline training stage need not be repeated.
+    CNNs allow for high accuracy tracking \cite{CNNTracking, bertinetto2016}, and provided that online learning is not required, the trackers can process videos at high frame rates \cite{Kristan2020a}.
+
+    From a user's point of view, the operation of the CNN approach and the correlation approach seem identical.
+    After the CNN has undergone offline learning, the CNN tracking systems only require a single image with a bounding box to track an unkown object.
