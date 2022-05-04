@@ -1,4 +1,4 @@
-This is LuaHBTeX, Version 1.12.0 (TeX Live 2020/Debian)  (format=lualatex 2022.3.28)  3 MAY 2022 11:34
+This is LuaHBTeX, Version 1.12.0 (TeX Live 2020/Debian)  (format=lualatex 2022.3.19)  4 MAY 2022 09:33
  restricted system commands enabled.
 **main.tex
 (./main.tex
@@ -1659,7 +1659,7 @@ ec, 87 attribute_list, 2 write, 3 pdf_action nodes
    avail lists: 1:1,2:2723,3:1457,4:90,5:475,6:48,7:8532,8:125,9:869,10:12,11:61
 1
  71249 multiletter control sequences out of 65536+600000
- 133 fonts using 24514615 bytes
+ 133 fonts using 24514375 bytes
  98i,11n,116p,1532b,1701s stack positions out of 5000i,500n,10000p,200000b,200000s
 </usr/share/texmf/fonts/opentype/public/lm/lmmono12-regular.otf></usr/share/texm
 f/fonts/opentype/public/lm/lmromancaps10-regular.otf></usr/share/texmf/fonts/ope

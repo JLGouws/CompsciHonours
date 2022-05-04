@@ -1,0 +1,76 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage{physics, amsmath,amsfonts,amsthm,amssymb, mathtools,steinmetz, gensymb, siunitx}	
+\usepackage{bm}
+\usepackage[top=42pt,bottom=42pt,left=70pt,right=70pt]{geometry}  % to make pages wider
+\usepackage{setspace}
+\usepackage{caption}
+\usepackage{tikz}
+\usepackage{pgf,tikz,pgfplots,wrapfig}
+\usepackage{mathrsfs}
+\usepackage{fancyhdr}
+\usepackage{float}
+\usepackage{array}
+\usepackage{unicode-math}
+\usepackage{booktabs,multirow}
+
+\usepackage{graphicx}  % need this for figures etc.
+\usepackage{url}  % to handle urls 
+\usepackage[comma,authoryear]{natbib}  % for authordate ref style --  allows \citet (textual), and \citep (parenthesized)
+\usepackage[hidelinks]{hyperref}
+%\hypersetup{colorlinks,citecolor=MidnightBlue, linkcolor=Navy}
+%\hypersetup{allcolors=[rgb]{0.6, 0, 0},colorlinks=true}
+\hypersetup{allcolors=[rgb]{0, 0, 0.33},colorlinks=true}
+
+\usetikzlibrary{decorations.text, calc}
+\pgfplotsset{compat=1.7}
+
+\usetikzlibrary{decorations.pathreplacing,decorations.markings}
+\usepgfplotslibrary{fillbetween}
+
+\renewcommand {\cite} {\citep}  % default for cite is citet in natbib - so change it
+\renewcommand\bibname{References}    % if not using newrucsthesis sty file
+%\usepackage[style= ACM-Reference-Format, maxbibnames=6, minnames=1,maxnames = 1]{biblatex}
+%\addbibresource{references.bib}
+
+\newcommand{\vect}[1]{\boldsymbol{#1}}
+
+\title{
+\textsc{Literature Review of the Tracking and Detection of Human Facial Features and project revision}
+}
+\author{\textsc{J L Gouws}
+\\Supervisor: \textsc{Mr. J Connan}
+\\ \emph{Computer Science Department, Rhodes University}}
+\date{\today
+\\[1cm]}
+
+\begin{document}
+
+\maketitle
+
+%In some sections you have to make a best guess (hypothesis), since you haven't done your MSc yet. 
+\input{abstract}
+\newpage
+\input{introduction}
+%\input{researchstatement}
+%\input{researchobjectives}
+%\input{relatedworks}
+%\input{researchApproach}
+\input{researchstatement}
+\input{faceRecog}
+\input{learning}
+\input{tracking}
+\input{methodology}
+%\input{limitations}
+%\input{applications}
+\input{conclusion}
+
+\bibliographystyle{ruauthordate}
+ 
+\bibliography{references}   	% load in the citation info from ref.bib
+
+%\printbibliography
+
+\end{document}
+
+
+
