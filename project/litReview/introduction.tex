@@ -7,15 +7,15 @@
   The individual faces might move and change orientation in the video stream.
   Imagine that some subset of these faces is of interest--the target faces.
   A set of pictures of these faces must exist; these pictures may be unrelated to the video or frames within it.
-  This research aims to develop a system that solves the problem of automatic identification and tracking of target faces in the video stream.
+  This research aims to develop a system that automatically identifies and tracks target faces in a video stream.
 
   The initial input given to the system is images that have uniquely labelled regions of interest or bounding boxes which define individual faces.
   The input images must contain at least one instance of each target face, but there is no maximum limit.
   This process constitutes the initialisation of operation, after which the system functions autonomously.
 
-  Given an arbitrary video, the system searches for the presence of any target faces.
+  Given an arbitrary video as input, the system searches the video for the presence of any target faces.
   The tracker proceeds to label detected target faces with the label provided in the initialisation of the system.
-  Once a target face is labelled, the tracker follows its motion, and all other targets appearing in the current frame.
+  Once the tracker identifies a target face, the tracker follows its motion.
   This process constitutes the running phase of the system, where the system identifies and tracks faces in the supplied video stream.
 
   While the system is running, it determines information about the target faces.

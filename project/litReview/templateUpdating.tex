@@ -1,18 +1,18 @@
 \subsection{Updating Template Trackers}
-  Template tracking \cite{templateUpdate} assumes that the appearace of the target object does not undergo changes.
-  The results in simplistic tracking and the tracker will fail if the target undergoes a change in orientation or a change of view.
-  \citeauthor{templateUpdate} propose solutions to this, and discuss the problems around the solutions.
-  The problems are a result of what is known as the stability-plasticity dilema \cite{grossberg1987}.
+  Template tracking \cite{templateUpdate} assumes that the appearance of the target object does not change.
+  This methodology results in simplistic tracking, and the tracker will fail if the orientation or view of the target changes.
+  \citet{templateUpdate} propose solutions to this and discuss the concerned problems.
+  The problems result from what is known as the stability-plasticity dilemma \cite{grossberg1987}.
 
-  Everytime a tracker template is updated, some error in the template is introduced.
-  This causes the tracker to drift, and evetually cause the tracker to fail \cite{templateUpdate}.
+  Every template update introduces some form of error in the template.
+  This scheme causes the tracker to drift and eventually fail \cite{templateUpdate}.
 
-  Suppose that $\mathbf{x}$ is the coordinate vector of a pixel in the $n^{\text{th}}$ frame $I_n(\mathbf{x})$ of a video.
-  Let $T(\mathbf{x})$ be the template of the target image, and $T_n(\mathbf{x})$ be the template of the object in the $n^\text{th}$ frame of a video sequence.
-  The warp of the image $\mathbf{W}(\mathbf{x};\mathbf{p})$ represents the allowed deformations of the template given a set of parameters $\mathbf{p}$ which define a deformation.
+  Suppose that $\mathbf{x}$ is a pixel's coordinate vector in the $n^{\text{th}}$ frame, $I_n(\mathbf{x})$, of a video.
+  Let $T(\mathbf{x})$ be the template of the target image, and $T_n(\mathbf{x})$ be the object's template in the $n^\text{th}$ frame of the video sequence.
+  The warp of the image $\mathbf{W}(\mathbf{x};\mathbf{p})$ represents the allowed deformations of the template given a set of parameters $\mathbf{p}$, which define a deformation.
   The warp maps a pixel from the template frame to the coordinates of the video frame $I_n(\mathbf{x})$.
 
-  Given these defintions, the problem of tracking formally reduces to computing the parameters for the deformation of the object:
+  Given these definitions, the problem of tracking formally reduces to computing the parameters for the deformation of the object:
   \begin{equation}
     \mathbf{p}_n = \arg \min_\mathbf{p} \sum_{\mathbf{x} \in T_n}\left[I_n(\mathbf{W}(\mathbf{x};\mathbf{p})) - T_n(\mathbf{x})\right]^2
     \label{eq:newTempParams}
@@ -22,18 +22,18 @@
     \forall n \geq 1, T_{n+1}(\mathbf{x}) = I_n(\mathbf{W}(\mathbf{x};\mathbf{p}_n))
   \end{equation*}
 
-  Implementing this requires a gradient descent algorithm for non-linear optimizations.
-  Equation \ref{eq:newTempParams} now becomes:
+  Implementing this requires a gradient descent algorithm for non-linear optimisations.
+  Equation~\ref{eq:newTempParams} now becomes:
   \begin{equation}
     \mathbf{p}_n^* = \mathrm{gd} \min_{\mathbf{p} = \mathbf{p}_{n-1}} \sum_{\mathbf{x} \in T_n}\left[I_n(\mathbf{W}(\mathbf{x};\mathbf{p})) - T_n(\mathbf{x})\right]^2
     \label{eq:paramUpdate}
   \end{equation}
-  With $\mathrm{gd} \min_{\mathbf{p}}$ indicating a gradient descent minimization starting from the warp parameters of the $(n-1)^\text{th}$ frame.
+  With $\mathrm{gd} \min_{\mathbf{p}}$ indicating a gradient descent minimisation starting from the warp parameters of the $(n-1)^\text{th}$ frame.
   
   Using Equation~\ref{eq:paramUpdate}, \citeauthor{templateUpdate} suggest a template update with drift correction given by:
   \begin{align*}
     &\text{If } \norm{\mathbf{p_n}^* - \mathbf{p_n}} \leq \varepsilon \text{ Then } T_{n+1} (\mathbf{x}) = I_n(\mathbf{W}(\mathbf{x};\mathbf{p}_n^*))\\
     &\text{else } T_{n+1}(\mathbf{x}) = T_n(\mathbf{x})
   \end{align*}
-  Given some small threshold $\varepsilon > 0$.
-  This updates the template if retaining the template would cause tracker drift, otherwise the template is not updated.
+  Where $\varepsilon > 0$ is some small threshold.
+  This algorithm updates the template if template retention causes tracker drift; otherwise, the algorithm does not update the template.

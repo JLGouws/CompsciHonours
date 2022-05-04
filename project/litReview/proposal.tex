@@ -1,4 +1,4 @@
-\documentclass[11pt,a4paper]{article}
+\documentclass[11pt,a4paper,titlepage]{article}
 \usepackage{physics, amsmath,amsfonts,amsthm,amssymb, mathtools,steinmetz, gensymb, siunitx}	
 \usepackage{bm}
 \usepackage[top=42pt,bottom=42pt,left=70pt,right=70pt]{geometry}  % to make pages wider
@@ -8,6 +8,9 @@
 \usepackage{pgf,tikz,pgfplots,wrapfig}
 \usepackage{mathrsfs}
 \usepackage{fancyhdr}
+\usepackage{titling}
+\renewcommand\maketitlehooka{\null\mbox{}\vfill}
+\renewcommand\maketitlehookd{\vfill\null}
 \usepackage{float}
 \usepackage{array}
 \usepackage{unicode-math}
@@ -29,6 +32,8 @@
 
 \renewcommand {\cite} {\citep}  % default for cite is citet in natbib - so change it
 \renewcommand\bibname{References}    % if not using newrucsthesis sty file
+\bibpunct[, ]{(}{)}{;}{a}{,}{,}
+
 %\usepackage[style= ACM-Reference-Format, maxbibnames=6, minnames=1,maxnames = 1]{biblatex}
 %\addbibresource{references.bib}
 
@@ -45,11 +50,13 @@
 
 \begin{document}
 
-\maketitle
+\begin{titlepage}
+  \maketitle
+  \input{abstract}
+\end{titlepage}
 
 %In some sections you have to make a best guess (hypothesis), since you haven't done your MSc yet. 
-\input{abstract}
-\newpage
+%\newpage
 \input{introduction}
 %\input{researchstatement}
 %\input{researchobjectives}

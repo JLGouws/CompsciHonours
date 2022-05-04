@@ -449,13 +449,16 @@
       \field{pages}{583\bibrangedash 596}
       \range{pages}{14}
     \endentry
-    \entry{KalalPHD}{online}{}
+    \entry{KalalPHD}{thesis}{}
       \name{author}{1}{}{%
         {{hash=07650b929bf7f6682596fd0ebc42096c}{%
            family={Kalal},
            familyi={K\bibinitperiod},
            given={Zdenek},
            giveni={Z\bibinitperiod}}}%
+      }
+      \list{institution}{1}{%
+        {University Of Surrey}%
       }
       \list{publisher}{2}{%
         {Centre for Vision, Speech}%
@@ -472,6 +475,7 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{title}{Tracking Learning Detection}
+      \field{type}{phdthesis}
       \field{year}{2011}
       \verb{urlraw}
       \verb http://www.ee.surrey.ac.uk/CVSSP/Publications/papers/Kalal-PhD_Thesis-2011.pdf
@@ -1588,9 +1592,11 @@
       \field{sortinithash}{ff8d4eeb5101e3cf3809959b3592d942}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{month}{06}
+      \field{booktitle}{2007 IEEE Conference on Computer Vision and Pattern Recognition}
       \field{title}{Fast Keypoint Recognition in Ten Lines of Code}
       \field{year}{2007}
+      \field{pages}{1\bibrangedash 8}
+      \range{pages}{8}
       \verb{doi}
       \verb 10.1109/CVPR.2007.383123
       \endverb

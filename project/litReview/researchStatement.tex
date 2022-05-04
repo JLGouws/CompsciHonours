@@ -1,18 +1,18 @@
-\section{Reseach Statement}
-  This section revises of the problem statement stated in the project proposal.
-  The problem statement has been restated for clarity, but the content of the statement is the same.
+\section{Research Statement}
+  This section revises the problem statement of the project proposal.
+  The problem statement has changed for clarity, but the statement's content remains the same.
   \begin{itemize}
     \item
       The design and implementation of a long-term tracking system--given minimal input data, the system can count the number and measure the duration of appearances of multiple target faces in a single video stream--can use machine learning and computer vision techniques.
   \end{itemize}
 
-  The central computer vision technique that is tested is the Tracking, Learning, and Detection framework--discussed in Section~\ref{sec:tld}.
+  The primary computer vision technique tested is the Tracking, Learning, and Detection framework--discussed in Section~\ref{sec:tld}.
   This framework allows for long-term tracking with minimal input data. 
   
-  Long-term tracking(LT) is tracking of objects that can undergo partial oclusions, change appearance, and disappear and reappear from the field of view.
-  This is opposed to short-term tracking(ST) where the object remains fully in the field of view for the whole duration of tracking.
+  Long-term tracking (LT) the is tracking of objects that can undergo partial occlusions, change appearance, and disappear and reappear from the field of view.
+  This form of tracking is opposed to short-term tracking (ST), where the entire object is in the field of view for the whole duration of the video.
   ST can be used as a basis for LT, as is done in the case of TLD.
 
-  The definition of minimal input data, in the context of this research, is a single image for each face that is required to be tracked, where each image includes at least one bounding box.
-  The bounding box defines the location of the face in the image and a label for the face.
-  The goal of this research is to implement a working system that meets the conditions specified by the Research Statement.
+  This research defines minimal input data as a single bounding box around each target face.
+  The bounding box gives a target's name and location in an image.
+  This study aims to implement a working system that meets the conditions specified by the Research Statement.

@@ -1,13 +1,12 @@
 \subsection{P-N Learning} \label{sec:pnlearning}
   Training a tracker on a video stream is, in effect, bootstrapping a classifier online.
-  \citeauthor{PNLearning} \cite{PNLearning} offers a solution to training a binary classifier in a stable way.
-  It is important that the tracker's learning is stable, so that tracker does not drift as the video progresses.
+  \citet{PNLearning} offer a solution to training a binary classifier in a stable way.
+  Stability in the tracker's learning is essential in avoiding tracker drift during the video progression.
 
-  P-N learning consists of two components that evaluate the errors of the classifier every instant that new data become available, for example every frame of a video.
-  The first component is the P-expert which attempts to recognize the false negatives that classifier makes.
-  The second component is the N-expert which attempts to recognize false positives of the classifier.
-  These components make errors, otherwise the components would make a perfect classifer by themselves.
-  The errors of one component, however, compensate for the errors of the other component leading to stable learning \cite{Kalal2011}.
+  P-N learning consists of two components that evaluate the errors of the classifier every instant that new data become available, for example, every frame of a video.
+  The first component is the P-expert which attempts to recognise the false negatives made by the classifier; the second component is the N-expert which identifies the classifier's false positives.
+  These experts make errors; otherwise, they would make a perfect classifier by themselves.
+  One component's mistakes can, with proper implementation, compensate for the other's mistakes which leads to stable learning \cite{Kalal2011}.
 
-  The P-N learning system can be modelled as a two dimensional dynamical system \cite{PNLearning} \cite{Kalal2011}.
+  Two-dimensional dynamical systems can model the P-N learning system \citep{PNLearning}.
   This model can be used to determine the stability of the learning.

@@ -1,17 +1,17 @@
 \subsection{Eigenfaces}
-  \citeauthor{eigenFacesRecog} \cite{eigenFacesRecog} describe how to use principle component analysis(PCA) to determine features for facial recognition.
+  \citet{eigenFacesRecog} describe how to use principal component analysis (PCA) to determine features for facial recognition.
   PCA is used to determine eigenvectors, referred to as ``eigenfaces", that form a basis for the faces of concern.
-  Any face in a given set of faces can be decomposed into a linear combination of these basis vectors, as an example, this is equivalent to mathematical eigenvectors in a Euclidean space.
-  The compononents of the decomposition can be used to recognize faces.
+  PCA can decompose any face, from a given set, into a linear combination of basis vectors; this is equivalent to representing a vector in Euclidean space in an eigenvector basis.
+  A facial recognition system can use the decomposition's components to identify faces.
   
   This usage of eigenfaces allows for a more compact representation of a face.
-  PCA finds a set of features that account for the largest amount of variation in some set of faces.
-  This allowed \citeauthor{eigenFacesRecog} to acheive a method for recognizing faces that is ``fast, relatively simple, and has been shown to work well in a constrained environment \cite{eigenFacesRecog}.'' 
+  PCA finds a set of features that account for the most significant variation in a given collection of faces.
+  This method allows \citet{eigenFacesRecog} to achieve facial recognition that is ``fast, relatively simple, and has been shown to work well in a constrained environment \cite{eigenFacesRecog}.'' 
 
-  \citeauthor{ICAFaceRecog} \cite{ICAFaceRecog} suggest the use of Independent Component Analysis(ICA) instead of PCA.
-  ICA is a generalization of PCA that takes the relationship of distant pixels into account.
-  This allows ICA to encode more information, in comparison to PCA, in the eigenvectors.
+  \citet{ICAFaceRecog} suggest using Independent Component Analysis (ICA) instead of PCA.
+  ICA is a generalisation of PCA that considers the relationship of distant pixels.
+  This mechanism allows ICA to encode more information in the eigenvectors compared to PCA.
 
-  A machine learning model can be trained on this set of features in order to identify a given face.
+  A machine learning model can use this set of features to identify a given face.
   One option is to use a neural network which offers high accuracy and quick recognition \cite{eigenFacesRecog, ICAFaceRecog}.
-  Another option is to use a naive bayes classifier which is amenable to online learning \cite{murphy2012}.
+  Alternatively, a naive Bayes classifier which amenable to online learning \cite{murphy2012} can do the recognition.

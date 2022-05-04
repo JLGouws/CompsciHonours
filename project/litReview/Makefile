@@ -1,4 +1,4 @@
-DOCNAME=main
+DOCNAME=proposal
 
 all: report
 
@@ -6,7 +6,7 @@ all: report
 
 report:   
 	lualatex --draftmode --interaction=batchmode $(DOCNAME).tex 
-	biber $(DOCNAME).bcf --onlylog
+	bibtex $(DOCNAME).aux
 	lualatex --draftmode --interaction=batchmode $(DOCNAME).tex 
 	lualatex --interaction=batchmode $(DOCNAME).tex 
 

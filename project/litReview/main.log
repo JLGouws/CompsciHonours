@@ -1,4 +1,4 @@
-This is LuaHBTeX, Version 1.12.0 (TeX Live 2020/Debian)  (format=lualatex 2022.3.19)  4 MAY 2022 09:33
+This is LuaHBTeX, Version 1.12.0 (TeX Live 2020/Debian)  (format=lualatex 2022.2.15)  4 MAY 2022 14:33
  restricted system commands enabled.
 **main.tex
 (./main.tex
@@ -1611,7 +1611,13 @@ LaTeX Font Info:    Font shape `TU/LibertinusMath(3)/m/n' will be
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}<./download.jpg>] (./introdu
 ction.tex) (./researchStatement.tex) (./faceRecog.tex [2] (./eigenFaces.tex) (.
-/multiPoseFaceRecog.tex)) (./learning.tex (./onlineLearning.tex [3]) (./rl.tex) (./templateUpdating.tex [4]) (./pnlearning.tex)) (./tracking.tex (./comparison.tex [5]) (./cnn.tex
+/multiPoseFaceRecog.tex)) (./learning.tex (./onlineLearning.tex [3]) (./rl.tex) (./templateUpdating.tex
+Overfull \hbox (2.39091pt too wide) in paragraph at lines 2--6
+\T1/ppl/m/n/12 Tem-plate track-ing [[]21[]] as-sumes that the ap-pear-ance of th
+e tar-get ob-ject does not un-dergo changes.
+ []
+
+[4]) (./pnlearning.tex)) (./tracking.tex (./comparison.tex [5]) (./cnn.tex
 <MDNet.png, id=191, 600.2425pt x 246.9225pt>
 File: MDNet.png Graphic file (type png)
 <use MDNet.png>
@@ -1644,22 +1650,22 @@ File: pgflibraryarrows.code.tex 2020/12/27 v3.1.8b (3.1.8b)
 ))) (./researchApproach.tex [9] [10]) (./timeline.tex)) (./conclusion.tex (./li
 tRevConclusion.tex [11]) (./projectConclusion.tex)) [12] [13] [14] (./main.aux)
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 945977B0303184825EEDAFEC22ABF512;4013.
+(rerunfilecheck)             Checksum: 59DB85A5FED821D6127200D242655B05;4018.
 Package logreq Info: Writing requests to 'main.run.xml'.
 
 \openout1 = main.run.xml
 )
 
 Here is how much of LuaTeX's memory you used:
- 53463 strings out of 478824
+ 53464 strings out of 478824
  125176,2373549 words of node,token memory allocated
- 1898 words of node memory still in use:
-   7 hlist, 2 vlist, 2 rule, 2 glue, 192 kern, 1 glyph, 87 attribute, 76 glue_sp
-ec, 87 attribute_list, 2 write, 3 pdf_action nodes
-   avail lists: 1:1,2:2723,3:1457,4:90,5:475,6:48,7:8532,8:125,9:869,10:12,11:61
-1
- 71249 multiletter control sequences out of 65536+600000
- 133 fonts using 24514375 bytes
+ 1869 words of node memory still in use:
+   7 hlist, 2 vlist, 2 rule, 2 glue, 185 kern, 1 glyph, 87 attribute, 76 glue_sp
+ec, 87 attribute_list, 2 write, 4 pdf_action nodes
+   avail lists: 1:1,2:2722,3:1457,4:90,5:487,6:47,7:8402,8:125,9:869,10:12,11:60
+5
+ 71250 multiletter control sequences out of 65536+600000
+ 133 fonts using 24514455 bytes
  98i,11n,116p,1532b,1701s stack positions out of 5000i,500n,10000p,200000b,200000s
 </usr/share/texmf/fonts/opentype/public/lm/lmmono12-regular.otf></usr/share/texm
 f/fonts/opentype/public/lm/lmromancaps10-regular.otf></usr/share/texmf/fonts/ope
@@ -1674,10 +1680,10 @@ lmroman12-regular.otf>{/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc
 }</usr/share/texlive/texmf-dist/fonts/type1/urw/palatino/uplb8a.pfb></usr/share/
 texlive/texmf-dist/fonts/type1/urw/palatino/uplr8a.pfb></usr/share/texlive/texmf
 -dist/fonts/type1/urw/palatino/uplri8a.pfb>
-Output written on main.pdf (14 pages, 294926 bytes).
+Output written on main.pdf (14 pages, 294939 bytes).
 
-PDF statistics: 408 PDF objects out of 1000 (max. 8388607)
- 347 compressed objects within 4 object streams
+PDF statistics: 409 PDF objects out of 1000 (max. 8388607)
+ 348 compressed objects within 4 object streams
  77 named destinations out of 1000 (max. 131072)
  216 words of extra memory for PDF output out of 10000 (max. 100000000)
 

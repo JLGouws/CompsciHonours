@@ -1,23 +1,24 @@
 \subsection{Online Learning}
   Online learning is learning done as data becomes available.
-  This form of training machine learning models is required to handle streaming data, for example stock-prices and videos.
-  Online learning can also be used to train models offline, for example when a dataset is too big to load into a computer's memory.
+  This form of model training is required to handle streaming data, for example, stock prices and videos.
+  Offline learning can also use online learning methods.
+  This technique is applicable, for example, when a dataset is too big to load into a computer's memory.
 
   One option for training a classifier online is Stochastic Gradient Descent(SGD).
-  SGD aims to minimize a cost function: 
+  SGD aims to minimise a cost function given by: 
   \begin{equation*}
     J(\pmb{\theta}) = J^*\left(f(\pmb{\theta}, \pmb{z}_1), f(\pmb{\theta}, \pmb{z}_2),\hdots, f(\pmb{\theta}, \mathbf{z}_N))\right)
   \end{equation*}
-  by changing the model parameters $\pmb{\theta}$ \cite{murphy2012}.
+  Changing the model's parameters $\pmb{\theta}$ achieves minimisation \cite{murphy2012}.
   The $f(\pmb{\theta}, \pmb{z}_i)$ are functions that give the cost of some data point $\pmb{z}_i$ for the parameters $\pmb{\theta}$
-  The parameters are updated in sequential steps of the form:
+  SGD updates the parameters in sequential steps of the form:
   \begin{equation*}
     \pmb{\theta}_{k + 1} = G(\pmb{\theta}_k, \nabla f(\pmb{\theta}, z_k))
   \end{equation*}
-  The gradient descent can be implemented in many ways, and can be improved with adaptive step sizes \cite{duchi2011}.
+  There are many ways to implement gradient descent, and adaptive step sizes can improve the optimisation results \cite{duchi2011}.
 
   Another option for an online learning classifier uses Bayesian inference.
-  The posterior probability of the Bayesian classifier can be updated according to:
+  Training the Bayesian classifier updates its posterior probability according to:
   \begin{equation*}
     p(\pmb{\theta} | \mathcal{D}_{1:k}) \propto p(\mathcal{D}_k | \pmb{\theta})p(\pmb{\theta} | \mathcal{D}_{1:k-1})
   \end{equation*}
