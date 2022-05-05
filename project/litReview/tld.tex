@@ -23,17 +23,16 @@
      \label{fig:tld}
   \end{figure}
 
-  In 2011 \citeauthor{Kalal2011} invented the Tracking, Learning and Detection(TLD) framework for the long-term tracking of objects in a video stream.
+  \citet{Kalal2011} invented the Tracking, Learning and Detection(TLD) framework for the long-term tracking of objects in a video stream.
   Kalal's original implementation uses a median flow tracker, P-N learning, and a random forest and nearest neighbour based detector \cite{KalalPHD}.
-  These three components give the respective tracking, learning and detection components of the system.
+  These three components give the system its tracking, learning and detection capabilities in that order.
 
   The learning component of TLD forms the backbone of the system, governing the interaction between the detector and tracker.
-  The three components exchange information as shown in Figure~\ref{fig:tld}, this allows the tracker to improve its performance as time progresses \cite{Kalal2011}.
-  By the nature of TLD, online learning is required for the learning component.
+  The three components exchange information, as shown in Figure~\ref{fig:tld}; this allows the tracker to improve its performance as time progresses \cite{Kalal2011}.
+  TLD's learning component requires online learning, owing to the nature of the framework.
   Kalal developed the P-N Learning paradigm \cite{PNLearning}, a semi-supervised bootstrapping model \cite{murphy2012}, tailored to the needs of TLD.
 
-  The tracker of TLD outputs a bounding box for the target object in every frame.
-  A second bounding box for the target object is also produced by the detector.
-  The P-experts and N-experts of the learning component use these bounding boxes to determine the false positives and the false negatives of the detector.
-  This is used to update the detector, as described in Section \ref{sec:pnlearning}.
-  An integrator is then used to combine the bounding boxes given by the tracker and detector \cite{Kalal2011}.
+  The tracker of TLD outputs a bounding box for the target object in every frame; The detector produces a second bounding box for the target object.
+  The P-experts and N-experts of the learning component use these bounding boxes to determine the detector's false positives and false negatives.
+  The learning mechanism updates the detector with this error information, as described in Section \ref{sec:pnlearning}.
+  An integrator combines the bounding boxes given by the tracker and detector to provide better target location estimation \cite{Kalal2011}.
