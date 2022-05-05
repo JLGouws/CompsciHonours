@@ -5,10 +5,10 @@ The implementation of KCF by \citeauthor{Enriques2014} uses a Gaussian kernel, w
 The calculations involved with the linear kernel are less computationally complex than for the Gaussian kernel. 
 Therefore, DCF can be processed faster at the cost of some tracking precision.
 
-Work by \citeauthor{multichannelCorrFilters} \cite{multichannelCorrFilters} allows KCF and DCF to exploit modern and useful feature descriptors.
+Work by \citet{multichannelCorrFilters} allows KCF and DCF to exploit modern and useful feature descriptors.
 \citeauthor{Enriques2014} show that KCF and DCF can be applied to the Histogram of Oriented Gradients (HOG) descriptor to track and detect objects in a video stream with lower computation times and better accuracy.
 Table~\ref{tab:trackers} shows that KCF and DCF applied to HOG features outperform many tracking systems.
-The results shown in Table~\ref{tab:trackers} give the trackers's performance on a standard four core desktop processor from 2014.
+The results shown in Table~\ref{tab:trackers} give the tracker's performance on a standard four core desktop processor from 2014.
 
 \begin{table}
   \centering
@@ -41,7 +41,7 @@ In other words, \citeauthor{Enriques2014} only explore KCF in the domain of ST.
 This approach contrasts the original TLD system that provides a failure recovery mechanism in the detection component \cite{Kalal2011}.
 The TLD framework can employ \citeauthor{Enriques2014}s' short-term KCF or DCF tracking system  to build a long-term tracker.
 
-\citeauthor{Ma2015Correlation} \cite{Ma2015Correlation} investigate the problem of single object LT using correlation tracking.
+\citet{Ma2015Correlation} investigate the problem of single object LT using correlation tracking.
 \citeauthor{Ma2015Correlation} use two Gaussian ridge regression \cite{murphy2012} models for tracking.
 One model uses the relative change in background and target as time progresses; the other model tracks by using the target's appearance.
 The first model tracks the object's trajectory through fast motion and occlusions, and the second tracks scale changes.
