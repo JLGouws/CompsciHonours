@@ -1,4 +1,4 @@
-\documentclass[11pt,a4paper,titlepage]{article}
+\documentclass[11pt,a4paper]{article}
 \usepackage{physics, amsmath,amsfonts,amsthm,amssymb, mathtools,steinmetz, gensymb, siunitx}	
 \usepackage{bm}
 \usepackage[top=42pt,bottom=42pt,left=70pt,right=70pt]{geometry}  % to make pages wider
@@ -8,9 +8,6 @@
 \usepackage{pgf,tikz,pgfplots,wrapfig}
 \usepackage{mathrsfs}
 \usepackage{fancyhdr}
-\usepackage{titling}
-\renewcommand\maketitlehooka{\null\mbox{}\vfill}
-\renewcommand\maketitlehookd{\vfill\null}
 \usepackage{float}
 \usepackage{array}
 \usepackage{unicode-math}
@@ -39,21 +36,22 @@
 
 \newcommand{\vect}[1]{\boldsymbol{#1}}
 
-\title{
+\title{\vspace{\fill}
 \textsc{Literature Review of the Tracking and Detection of Human Facial Features and project revision}
 }
 \author{\textsc{J L Gouws}
 \\Supervisor: \textsc{Mr. J Connan}
 \\ \emph{Computer Science Department, Rhodes University}}
-\date{\today
-\\[1cm]}
+\date{\today\\
+[1cm]
+}
 
 \begin{document}
 
-\begin{titlepage}
-  \maketitle
-  \input{abstract}
-\end{titlepage}
+\maketitle
+\input{abstract}
+\vspace{\fill}
+\newpage
 
 %In some sections you have to make a best guess (hypothesis), since you haven't done your MSc yet. 
 %\newpage

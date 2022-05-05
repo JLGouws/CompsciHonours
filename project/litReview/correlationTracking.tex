@@ -1,14 +1,14 @@
 \subsection{Tracking with Correlation Filters}
-\citeauthor{Enriques2014} \cite{Enriques2014} propose Kernelized Correlation Filters(KCF) and the novel Dual Correlation filter(DCF).
-Both KCF and DCF use circulant matrices and the kernel Trick.
-The implementation of KCF by \citeauthor{Enriques2014} uses a Gaussian Kernel, whereas the DCF implementation uses a linear kernel.
-The calculations involved with the linear kernel are less computationally complex than KCF. 
-DCF can, hence, be processed faster, but, at the cost of some tracking precision.
+\citet{Enriques2014} propose Kernelized Correlation Filter(KCF) and the novel Dual Correlation Filter(DCF).
+Both KCF and DCF use circulant matrices and the kernel trick.
+The implementation of KCF by \citeauthor{Enriques2014} uses a Gaussian kernel, whereas the DCF implementation uses a linear kernel.
+The calculations involved with the linear kernel are less computationally complex than for the Gaussian kernel. 
+Therefore, DCF can be processed faster at the cost of some tracking precision.
 
-Work by \citeauthor{multichannelCorrFilters} \cite{multichannelCorrFilters} allows KCF and DCF to be applied to modern and useful feature descriptors.
+Work by \citeauthor{multichannelCorrFilters} \cite{multichannelCorrFilters} allows KCF and DCF to exploit modern and useful feature descriptors.
 \citeauthor{Enriques2014} show that KCF and DCF can be applied to the Histogram of Oriented Gradients (HOG) descriptor to track and detect objects in a video stream with lower computation times and better accuracy.
-KCF and DCF applied to HOG features are shown to outperform many tracking systems Table~\ref{tab:trackers}.
-The results shown in Table~\ref{tab:trackers} are obtained from running the algorithms on a standard four core desktop processor from 2014.
+Table~\ref{tab:trackers} shows that KCF and DCF applied to HOG features outperform many tracking systems.
+The results shown in Table~\ref{tab:trackers} give the trackers's performance on a standard four core desktop processor from 2014.
 
 \begin{table}
   \centering
@@ -36,16 +36,16 @@ The results shown in Table~\ref{tab:trackers} are obtained from running the algo
   \label{tab:trackers}
 \end{table}
 
-The system implemented by \citeauthor{Enriques2014} does not, however, incorporate a failure recovery mechanism--section 8 of \cite{Enriques2014}.
+The system implemented by \citeauthor{Enriques2014} does not incorporate a failure recovery mechanism--section 8 of \cite{Enriques2014}.
 In other words, \citeauthor{Enriques2014} only explore KCF in the domain of ST.
-This is in contrast to the original TLD system which provides a failure recovery mechanism in the detection component \cite{Kalal2011}.
-The ST using KCF and DCF done by \citeauthor{Enriques2014} can be used in a TLD framework for LT.
+This approach contrasts the original TLD system that provides a failure recovery mechanism in the detection component \cite{Kalal2011}.
+The TLD framework can employ \citeauthor{Enriques2014}s' short-term KCF or DCF tracking system  to build a long-term tracker.
 
 \citeauthor{Ma2015Correlation} \cite{Ma2015Correlation} investigate the problem of single object LT using correlation tracking.
 \citeauthor{Ma2015Correlation} use two Gaussian ridge regression \cite{murphy2012} models for tracking.
-One model uses the relative change in background and target as time progresses, the other model tracks by using the target's appearance.
-The first model is used to track the object's trajectory through fast motion and occlusions, and the second is used for scale change.
-Using both tracking models they train an online detector that is both flexible(from the first tracker model) and stable(from the second tracker model).
+One model uses the relative change in background and target as time progresses; the other model tracks by using the target's appearance.
+The first model tracks the object's trajectory through fast motion and occlusions, and the second tracks scale changes.
+Using both tracking models, they train an online detector that is both flexible(from the first tracker model) and stable(from the second tracker model).
 
-\citeauthor{Ma2015Correlation} train a random fern classifier \cite{ferns2007, Kalal2011} online in order to handle tracker failure.
-This solves the LT problem in a similar way to \citeauthor{KalalPHD} \cite{KalalPHD}.
+\citeauthor{Ma2015Correlation} train a random fern classifier \cite{ferns2007, Kalal2011} online to handle tracker failure.
+This solution for long-term tracking is similar to what \citeauthor{KalalPHD} does with TLD.
