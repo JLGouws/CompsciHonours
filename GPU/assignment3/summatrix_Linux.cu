@@ -74,6 +74,17 @@ __global__ void sumMatrixOnGPU2D(float *A, float *B, float *C, int NX, int NY)
         C[idx] = A[idx] + B[idx];
 }
 
+// grid 1D block 2D
+__global__ void sumMatrixOnGPU1D(float *A, float *B, float *C, int NX, int NY)
+{
+    unsigned int ix = blockIdx.x * blockDim.x + threadIdx.x;
+    unsigned int iy = threadIdx.y;
+    unsigned int idx = iy * NX + ix;
+
+    if (ix < NX && iy < NY)
+      C[idx] = A[idx] + B[idx];
+}
+
 //******************************************************************************
 // grid 2D block 2D
 __global__ void sumMatrixSixteenOnGPU2D(float *A, float *B, float *C, int NX, int NY)
@@ -145,6 +156,7 @@ int main(int argc, char **argv)
 	
   	dim3 block(dimx, dimy);
     dim3 grid((nx + block.x - 1) / block.x, (ny + block.y - 1) / block.y);
+    int blocksPerGrid1D = (nxy + block.x * block.y - 1) / (block.x * block.y);
 
     // transfer data from host to device
     checkCudaErrors(cudaMemcpy(d_MatA, h_A, nBytes, cudaMemcpyHostToDevice));
@@ -165,6 +177,28 @@ int main(int argc, char **argv)
     cudaEventElapsedTime(&milli, start, stop);  // time random generation
 
     printf("sumMatrixOnGPU2D <<<(%d,%d), (%d,%d)>>> (ms): %f \n", grid.x, grid.y,
+           block.x, block.y, milli);
+
+    checkCudaErrors(cudaGetLastError());
+
+    // copy kernel result back to host side
+    checkCudaErrors(cudaMemcpy(gpuRef, d_MatC, nBytes, cudaMemcpyDeviceToHost));
+
+    // checkCudaErrors device results
+    checkResult(hostRef, gpuRef, nxy);
+
+    cudaEventCreate(&start);
+    cudaEventCreate(&stop);
+    cudaEventRecord(start);  // start timing
+
+    // execute the kernel
+    checkCudaErrors(cudaDeviceSynchronize());
+    sumMatrixOnGPU1D<<<blocksPerGrid1D, block>>>(d_MatA, d_MatB, d_MatC, nx, ny);
+    cudaEventRecord(stop);
+    checkCudaErrors(cudaEventSynchronize(stop));
+    cudaEventElapsedTime(&milli, start, stop);  // time random generation
+
+    printf("sumMatrixOnGPU1D <<<%d, (%d,%d)>>> (ms): %f \n", blocksPerGrid1D,
            block.x, block.y, milli);
 
     checkCudaErrors(cudaGetLastError());
