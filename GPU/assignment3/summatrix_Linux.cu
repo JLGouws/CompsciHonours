@@ -70,19 +70,35 @@ __global__ void sumMatrixOnGPU2D(float *A, float *B, float *C, int NX, int NY)
     unsigned int iy = blockIdx.y * blockDim.y + threadIdx.y;
     unsigned int idx = iy * NX + ix;
 
-    if (ix < NX && iy < NY)
-        C[idx] = A[idx] + B[idx];
+    if(ix < NX && iy < NY)
+      C[idx] = A[idx] + B[idx]; 
 }
 
 // grid 1D block 2D
 __global__ void sumMatrixOnGPU1D(float *A, float *B, float *C, int NX, int NY)
 {
+  /*
     unsigned int ix = blockIdx.x * blockDim.x + threadIdx.x;
-    unsigned int iy = threadIdx.y;
+    unsigned int idx = gridDim.x * blockDim.x * threadIdx.y + ix;
+    */
+    unsigned int ix = blockIdx.x * blockDim.x + threadIdx.x;
+    unsigned int iy = blockIdx.y * blockDim.y + threadIdx.y;
     unsigned int idx = iy * NX + ix;
 
-    if (ix < NX && iy < NY)
+    //if (blockDim.y * (ix + NX) + iy * NX < NX * NY)
+    if (idx < NX * NY)
       C[idx] = A[idx] + B[idx];
+}
+
+// grid 1D block 2D
+__global__ void sumMatrixOnGPU1DSixteen
+                                  (float *A, float *B, float *C, int NX, int NY)
+{
+    unsigned int ix = blockIdx.x * blockDim.x + threadIdx.x;
+    unsigned int idx = 16 * (gridDim.x * blockDim.x * threadIdx.y + ix);
+
+    for(int i = idx; i < 16 + idx && i < NX * NY; i++)
+      C[i] = A[i] + B[i];
 }
 
 //******************************************************************************
@@ -123,9 +139,10 @@ int main(int argc, char **argv)
     int nBytes = nxy * sizeof(float);
 
     // malloc host memory
-    float *h_A, *h_B, *hostRef, *gpuRef;
+    float *h_A, *h_B, *h_C, *hostRef, *gpuRef;
     h_A = (float *)malloc(nBytes);
     h_B = (float *)malloc(nBytes);
+    h_C = (float *)malloc(nBytes);
     hostRef = (float *)malloc(nBytes);
     gpuRef = (float *)malloc(nBytes);
 
@@ -187,6 +204,12 @@ int main(int argc, char **argv)
     // checkCudaErrors device results
     checkResult(hostRef, gpuRef, nxy);
 
+    //1D grid
+//******************************************************************************
+    initialData(h_C, nxy); //randomize C again to make sure matrix addition is
+                           //correct
+    checkCudaErrors(cudaMemcpy(d_MatC, h_C, nBytes, cudaMemcpyHostToDevice));
+
     cudaEventCreate(&start);
     cudaEventCreate(&stop);
     cudaEventRecord(start);  // start timing
@@ -208,6 +231,39 @@ int main(int argc, char **argv)
 
     // checkCudaErrors device results
     checkResult(hostRef, gpuRef, nxy);
+//______________________________________________________________________________
+
+    //1D grid
+//******************************************************************************
+    initialData(h_C, nxy); //randomize C again to make sure matrix addition is
+                           //correct
+    checkCudaErrors(cudaMemcpy(d_MatC, h_C, nBytes, cudaMemcpyHostToDevice));
+
+    blocksPerGrid1D = (nxy + block.x * block.y - 1) / (block.x * block.y) / 16;
+
+    cudaEventCreate(&start);
+    cudaEventCreate(&stop);
+    cudaEventRecord(start);  // start timing
+
+    // execute the kernel
+    checkCudaErrors(cudaDeviceSynchronize());
+    sumMatrixOnGPU1DSixteen<<<blocksPerGrid1D, block>>>
+                                              (d_MatA, d_MatB, d_MatC, nx, ny);
+    cudaEventRecord(stop);
+    checkCudaErrors(cudaEventSynchronize(stop));
+    cudaEventElapsedTime(&milli, start, stop);  // time random generation
+
+    printf("sumMatrixOnGPU1DSixteen<<<%d, (%d,%d)>>> (ms): %f \n", blocksPerGrid1D,
+           block.x, block.y, milli);
+
+    checkCudaErrors(cudaGetLastError());
+
+    // copy kernel result back to host side
+    checkCudaErrors(cudaMemcpy(gpuRef, d_MatC, nBytes, cudaMemcpyDeviceToHost));
+
+    // checkCudaErrors device results
+    checkResult(hostRef, gpuRef, nxy);
+//______________________________________________________________________________
 
     // free device global memory
     checkCudaErrors(cudaFree(d_MatA));
@@ -217,6 +273,7 @@ int main(int argc, char **argv)
     // free host memory
     free(h_A);
     free(h_B);
+    free(h_C);
     free(hostRef);
     free(gpuRef);
 
