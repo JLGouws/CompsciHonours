@@ -89,19 +89,11 @@ __global__ void sumMatrixOnGPU1D(float *A, float *B, float *C, int NX, int NY)
 __global__ void sumMatrixOnGPU1DSixteen
                                   (float *A, float *B, float *C, int NX, int NY)
 {
-  /*
     unsigned int ix = blockIdx.x * blockDim.x + threadIdx.x;
     unsigned int idx = 16 * (gridDim.x * blockDim.x * threadIdx.y + ix);
 
     for(int i = idx; i < 16 + idx && i < NX * NY; i++)
       C[i] = A[i] + B[i];
-  */
-    unsigned int ix = blockIdx.x * blockDim.x + threadIdx.x;
-    unsigned int stride = gridDim.x * blockDim.x * blockDim.y;
-    unsigned int idx = gridDim.x * blockDim.x * threadIdx.y + ix;
-
-    for(int i = 0; i < 16 && i < NX * NY; i++, idx += stride)
-      C[idx] = A[idx] + B[idx];
 }
 
 int main(int argc, char **argv)

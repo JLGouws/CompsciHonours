@@ -77,10 +77,8 @@ __global__ void sumMatrixOnGPU2D(float *A, float *B, float *C, int NX, int NY)
 // grid 1D block 2D
 __global__ void sumMatrixOnGPU1D(float *A, float *B, float *C, int NX, int NY)
 {
-    unsigned int ix = blockIdx.x * blockDim.x + threadIdx.x;
-    unsigned int idx = gridDim.x * blockDim.x * threadIdx.y + ix;
+    unsigned idx = blockIdx.x * blockDim.x * blockDim.y + threadIdx.y * blockDim.x + threadIdx.x;
 
-    //if (blockDim.y * (ix + NX) + iy * NX < NX * NY)
     if (idx < NX * NY)
       C[idx] = A[idx] + B[idx];
 }
@@ -89,18 +87,21 @@ __global__ void sumMatrixOnGPU1D(float *A, float *B, float *C, int NX, int NY)
 __global__ void sumMatrixOnGPU1DSixteen
                                   (float *A, float *B, float *C, int NX, int NY)
 {
-  /*
-    unsigned int ix = blockIdx.x * blockDim.x + threadIdx.x;
-    unsigned int idx = 16 * (gridDim.x * blockDim.x * threadIdx.y + ix);
+    unsigned int blockSize = blockDim.x * blockDim.y;
+    unsigned idx = blockIdx.x * blockSize * 16 + threadIdx.y * blockDim.x + threadIdx.x;
 
-    for(int i = idx; i < 16 + idx && i < NX * NY; i++)
-      C[i] = A[i] + B[i];
-  */
-    unsigned int ix = blockIdx.x * blockDim.x + threadIdx.x;
-    unsigned int stride = gridDim.x * blockDim.x * blockDim.y;
-    unsigned int idx = gridDim.x * blockDim.x * threadIdx.y + ix;
+    for(int i = 0; i < 16 && idx < NX * NY; i++, idx += blockSize)
+      C[idx] = A[idx] + B[idx];
+}
 
-    for(int i = 0; i < 16 && i < NX * NY; i++, idx += stride)
+// grid 1D block 2D
+__global__ void sumMatrixOnGPU1DEight
+                                  (float *A, float *B, float *C, int NX, int NY)
+{
+    unsigned int blockSize = blockDim.x * blockDim.y;
+    unsigned idx = blockIdx.x * blockSize * 8 + threadIdx.y * blockDim.x + threadIdx.x;
+
+    for(int i = 0; i < 8 && idx < NX * NY; i++, idx += blockSize)
       C[idx] = A[idx] + B[idx];
 }
 
@@ -113,8 +114,8 @@ int main(int argc, char **argv)
     checkCudaErrors(cudaSetDevice(dev));
 
     // set up data size of matrix
-    int nx = 1 << 12;  // 14
-    int ny = 1 << 12;
+    int nx = 1 << 14;  // 14
+    int ny = 1 << 13;
 
     int nxy = nx * ny;
     int nBytes = nxy * sizeof(float);
@@ -168,8 +169,10 @@ int main(int argc, char **argv)
     cudaEventRecord(start);  // start timing
 
     // execute the kernel
-    checkCudaErrors(cudaDeviceSynchronize());
-    sumMatrixOnGPU2D<<<grid, block>>>(d_MatA, d_MatB, d_MatC, nx, ny);
+    for(int i = 0; i < 10; i ++){
+      checkCudaErrors(cudaDeviceSynchronize());
+      sumMatrixOnGPU2D<<<grid, block>>>(d_MatA, d_MatB, d_MatC, nx, ny);
+    }
     cudaEventRecord(stop);
     checkCudaErrors(cudaEventSynchronize(stop));
     cudaEventElapsedTime(&milli, start, stop);  // time random generation
@@ -196,8 +199,10 @@ int main(int argc, char **argv)
     cudaEventRecord(start);  // start timing
 
     // execute the kernel
-    checkCudaErrors(cudaDeviceSynchronize());
-    sumMatrixOnGPU1D<<<blocksPerGrid1D, block>>>(d_MatA, d_MatB, d_MatC, nx, ny);
+    for(int i = 0; i < 10; i ++){
+      checkCudaErrors(cudaDeviceSynchronize());
+      sumMatrixOnGPU1D<<<blocksPerGrid1D, block>>>(d_MatA, d_MatB, d_MatC, nx, ny);
+    }
     cudaEventRecord(stop);
     checkCudaErrors(cudaEventSynchronize(stop));
     cudaEventElapsedTime(&milli, start, stop);  // time random generation
@@ -227,14 +232,49 @@ int main(int argc, char **argv)
     cudaEventRecord(start);  // start timing
 
     // execute the kernel
-    checkCudaErrors(cudaDeviceSynchronize());
-    sumMatrixOnGPU1DSixteen<<<blocksPerGrid1D, block>>>
-                                              (d_MatA, d_MatB, d_MatC, nx, ny);
+    for(int i = 0; i < 10; i ++){
+      checkCudaErrors(cudaDeviceSynchronize());
+      sumMatrixOnGPU1DSixteen<<<blocksPerGrid1D, block>>>
+                                                (d_MatA, d_MatB, d_MatC, nx, ny);
+    }
     cudaEventRecord(stop);
     checkCudaErrors(cudaEventSynchronize(stop));
     cudaEventElapsedTime(&milli, start, stop);  // time random generation
 
     printf("sumMatrixOnGPU1DSixteen<<<%d, (%d,%d)>>> (ms): %f \n", blocksPerGrid1D,
+           block.x, block.y, milli);
+
+    checkCudaErrors(cudaGetLastError());
+
+    // copy kernel result back to host side
+    checkCudaErrors(cudaMemcpy(gpuRef, d_MatC, nBytes, cudaMemcpyDeviceToHost));
+
+    // checkCudaErrors device results
+    checkResult(hostRef, gpuRef, nxy);
+//______________________________________________________________________________
+
+//******************************************************************************
+    initialData(h_C, nxy); //randomize C again to make sure matrix addition is
+                           //correct
+    checkCudaErrors(cudaMemcpy(d_MatC, h_C, nBytes, cudaMemcpyHostToDevice));
+
+    blocksPerGrid1D = (nxy + block.x * block.y - 1) / (block.x * block.y) / 8;
+
+    cudaEventCreate(&start);
+    cudaEventCreate(&stop);
+    cudaEventRecord(start);  // start timing
+
+    // execute the kernel
+    for(int i = 0; i < 10; i ++){
+    checkCudaErrors(cudaDeviceSynchronize());
+    sumMatrixOnGPU1DEight<<<blocksPerGrid1D, block>>>
+                                              (d_MatA, d_MatB, d_MatC, nx, ny);
+    }
+    cudaEventRecord(stop);
+    checkCudaErrors(cudaEventSynchronize(stop));
+    cudaEventElapsedTime(&milli, start, stop);  // time random generation
+
+    printf("sumMatrixOnGPU1DEight<<<%d, (%d,%d)>>> (ms): %f \n", blocksPerGrid1D,
            block.x, block.y, milli);
 
     checkCudaErrors(cudaGetLastError());
