@@ -1,0 +1,126 @@
+Shared memory on chip
+
+use local memory if too may registers used
+local static arrays use local memory -> slow.
+
+memory fence threads going to same point threads use data of other threads.
+
+Sahred memory much faster than global memory.
+
+Shared memory
+O ship memor allocated with block scope
+Higher bandwidht and lower latency than local and global memory
+
+Similar ot CPU L1 chache 
+Limited amount per SMM 48 K -partitioned among blocks. -- potential for only one block per SMM
+Max shared memory per block
+Accessible by all rhreads in the same block
+Decleared in the scope of the kernel function- but shares lifetime with threads in a blockb
+Shared space 48KB statically configured but dynamically programmed --same amount of shared memory for each block.
+
+Need to specify that shared memory is being used
+Launch configuration---how much shared
+<<<Block, Threads, X, SharedMemory>>>
+X what stream is being worked with, for shared memory, for now, X must be zero -- default stream
+
+Avoids reduntant computation
+__syncthreads(); read after write hazards.
+
+All threads can continue
+
+Constant memory
+Special area of device memory
+64 KB
+read-only from kernel
+ -- cache (10 KB per SMM)
+Constants are declared at file scope
+Constants values set from host code
+ --cudaMemcpyToSymbol() for example all threads need to know the dimensions of the array or matrix
+
+Inteded to be breadcast to all threads in a warb -NB for performances.
+
+if all threads read the value from constant memory - constant memory broadcasts the value to all threads in warp
+
+Short-latency, high-bandwidth, read-only access by  device when all threads access the same location.
+
+Makes it efficient to read one value.
+Put into constant cache -- once a warp reads from constant memory value stored in constant cache to be accessed later with low latency
+
+Texture memory 
+Read-only
+Texture memory - 24KB per SMM 
+Allocate and manage global memory
+Qualify kernel pointer argument as const__restrict__
+Optimized for 2D spatial locality - good performance for threads in a warp accessing 2D data
+L1 Cache shares the space on maxwell.
+
+
+Declaring variables
+
+int //register thread scope 
+int LocalArray[10];
+__device__ __shared__ int SharedVar; //shared block scope and lifetime
+__device__ int GlobalVar; //Golbal memory grid scope application lifetime
+__device__ __constant__ int Const // Constant memory grid scope lifetime of application
+
+__device__ is optional when using __constant__ and __shared__
+
+
+Atomic variables reside in a register
+Except per-thread arrays that reside in local memory that is located in global memory.
+
+Playing with memory constraints Per SMM:64 K registers and 48 KB shared memory
+To allow a second block to execute on same SMM, each block must use at most 32 K registers. 24 KB shared memory
+To allow a third block ot execute on same SMM each block must use 21.3 regs and 16KB shared memory
+And so on
+Tradeoff between memory use and parallelism
+
+Warp execution and divergence:
+Blocks divided inot threads
+Threads further grouped inot warps
+32 threads per warp
+All threads in a warp executed in SIMT fashion--all threads execute same instruction on different data
+Irrespective of logical block partition (1D, 2D, 3D) -- hardware view of a thread block is 1-dimensional
+So, each thread has a unique ID within a particular block
+Thread ID = thredaIdx.z * blockDim.y * blockDim.x + thread Idx.y * blokcDim.x _ threadIdx.x
+
+Warps in multi-dimensional thread blocks
+The thread blocks are first linearized into 1D in row major order
+ I x-dimension first, y-dimention next, and z-dimension last
+
+ Do not rely on any ordering within or between warps
+ If there are any dependencis between threads, you must __syncthreads() to get correct resutlst
+
+ Warps per block number =ceil (ThreadsPerBlock / warpsize)
+ Warps never split accross
+ if ThreadserBlock is not a multiple of 32 some threads in last warp are inavtive
+Inactive threads still consume SMM resources (registers, local memroy)
+
+make block dim a mulitple of 32.
+
+GPU branching
+No branch prediction + all threads in a warp ust execute identical insructions
+If threads in a warp diverge eg when processing an if statement-the warp executes each branch path serially
+Threads that do not need to execute current path are disabled
+However, execution cost is sum of both branches
+Potentially large loss of performance
+So avoid different execution paths within the same warp, if possible
+
+Do all the instructions one branch stores the instructions, the other branch doesn't write
+Hence both branches get executed.
+Scheduler checks for divergence.
+Scheduler does a poll of threads in the warp, if all threads need to do the same route of a branch -- then the scheduler only executes one branch.
+
+Control divergence:
+Threads in a warp take different control flow paths by making different control decisions
+Some take then-path others take the else part of if-else statement
+Some threads take different number of loop iterations than others.
+
+The execution of 
+
+Divergence can arrise when branch or loop condition is a function of thread indices.
+eg if (threadIdx.x > 2 ){}
+
+Example without divergence:
+ if (blockId.x > 2) {}
+

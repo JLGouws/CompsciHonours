@@ -1,0 +1,89 @@
+Check for API errors in host code:
+
+cudaError_t err = cudaMalloc((void**) &d_A, size);
+
+if(err != cudaSuccess){
+  //handle error
+}
+
+
+more useful hello world
+
+__global__ void hellofromGPU(void)
+{
+  inti = threadIdx.x;
+  printf("Hello world from GPU %d \n", i);
+}
+
+
+no block can contain more than 1024 threads. Hardware limitiation on number of registers
+
+NVIDIA lauches 32 threads at a time.
+If asked to launch 10 threads, NVIDIA will launch 32 threads.
+this is why length of arrays need to be checked:
+
+__global__ void sumArraysOnGPU(float *A, float *B, float *C, const int N){
+  int i = threadIdx.x;
+  if (i<N) C[i] = A[i] + B[i]; //check if more threads have been launched than data items
+}
+
+CUDA threads are conceptually similar to data-parallel tasks
+-- each thread performs the same operations on a subset of the data stucture
+-- threads keeps it context and registers
+
+CUDA threads are extremely lightweight
+(not like CPU threads)
+Little creation overhead
+--instant context switching
+
+No limit on number of blcoks
+
+32 threads execute in lockstep
+
+Threads executing in warp but not asked to launch will got give output
+
+GPU can handle thousands of cuncurrent threads
+CUDA programming model allows a kernel launch to specify more threads than the GPU can execute concurrently
+Two-level hierarchy
+--Grid containing mulitple blocks
+--Block containing multiple threads
+All threads spawned by a single kernel launch
+
+Arraysof parallel threads
+A CUDA kernel is executed by a grid (array) of threads
+-- all threads in a grid run the same kernel code (single program multiple data)
+-- each thread has indexes that it uses to compute memory addresses amn make control decisions
+
+//block dim is how many  threads in the block
+ident = blockIdx.x * blockDim.x + thredIdx.x;
+C[i] = A[i] + B[i];
+
+
+B0      
+threadIdx.x: 0, 1, 2
+
+B1
+threadIdx.x: 0, 1, 2
+
+Thread:
+--exists within a thread block
+--executes an instance of the kernel
+--has a thread ID within its block, program counter, registers, and per-thread private memory
+Thread blokc (co-operative thread array):
+--set of concurrently executing threads that can cooperate amoung themselves through barrier synchronization and shared memory
+--has a block id within its grid
+Grid (kernel):
+--array of thread blocks that execute same kernel
+--read inputs from and write ouptus to global memory
+--synchronize between dependent kernel calls
+
+each thread block can have three dimensions worth of threads
+blocks can also be in three dimensions
+
+Match thread configuration to datastuctures
+Solving PDEs on volumes
+
+built in types to support these dimensions
+
+blockDim -- block size in threads
+Grid dim -- number of blocks in grid each have x, y, and z field
