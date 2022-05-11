@@ -1,0 +1,151 @@
+Three ways to access GPUs
+Ease of use: using libraries enables GPU acceleration without in-depth knowledge of GPU programming.
+
+Drop-in Many GPU-accelerated libraries follow standard API's thus enabling acceleration with minimal code
+
+Deep Learning
+Linear Algebra
+Signal, image, video
+Parallel algorithms - nvGRAPH, Thrust
+
+Compiler directives -- easy to use portable code
+Compilers translate directives into GPU code
+NUMBA jit code allows compiler directives
+
+Easy to use: Compiler takes care of details of parallelism
+
+some compilers will not parallelize the code if the compiler is weary about dependencies
+
+OpenAcc:
+#pragma acc parallel loop
+
+CUDA tools
+NVIDIA Nsight IDE
+CUDA-GDB comman line debugger
+Visual and command line profilers (nvprof, nvvp) --- being phased out
+Nsight compute and Nsight systems - replacement profilers
+CUDA-MEMCHECK memory analyser
+GPU device management tools
+
+Programming languages
+
+always create GPU kernels from the perspective that one thread is going to execute on it
+
+include runtme
+#include <stdio.h>
+#include "cuda_runtime.h" //the api for gpu
+
+__global__ void hellofromGPU(void) {
+  printf("Helo world from GPU!\n"); //still goes through cpu buffer
+}
+
+int main (void)
+{
+  printf("Hellow world from CPU!\n");
+  //one block 10 threads
+  hellofromGPU<<<1, 10>>>();
+  cudaDeviceReset(); //Synchronization mechanism
+                     //tells CPU to wait on GPU 
+                     //halts CPU until GPU is finished
+  return 0;`
+}
+
+nvcc separates CUDA C and device code
+Host code standard C
+Device code
+
+CUDA programming model
+Abstraction between code threads and GPU threads
+Model is typically embedded in programming language or programming environment
+
+In addition to normal programming model features, CUDA provides
+  -- organize threads on GPU
+  -- access memory on GPU
+
+Program control flow
+Host: CPU with its memory
+Device: GPU with its memory
+
+Key component is the kernel code that runs on GPU
+Program the kernel from the point of view of a single thread. all local variables are private to that thread
+Begind the scenes CUDA manages schudling kernels on GPU threads
+
+Each streaming multiprocessors has there own scheduler, the schedulers try to keep all the cores busy at the same time.
+
+Host defines how kernel should be mapped to the device
+Once a kernels has been launched control returns immediately
+
+Basic CUDA Program structure
+//normally the kernel is not lauched immediately
+Allocate GPU memory //almost always data to work on
+// for example can create an array statically or dynamically
+copy data from CPU memory to GPU memory // this step is not necesarily required //generally copy to global memory on device
+
+invoke the CUDA kernel to perform program specific computation
+Copy data back from GPU memory  to CPU memory  //get the calculated data back don't copy back before computations are complete
+destroy GPU memory
+
+vector addition
+
+A[0] | A[1] | A[2] | ... | A[N - 1]
+B[0] | B[1] | B[2] | ... | B[N - 1]
+ 
+  +  |  +   |  +   | ... |     +
+
+C[0] | C[1] | C[2] | ... | C[N - 1] //embarassingly parallel problem
+
+standard c code: for(int i = 0; i, n; i++) h_C[i] = h_A[i] + h_B[i];
+
+Device code can: R/W per thread registers
+                 R/W all-shared global memory
+
+Host code can: Tansfer data to/from per grid global memory
+
+Thread -- software of executation
+Core   -- hard ware of executaion
+Scheduler matches threads to cores
+
+GPU does sub execution in parallel and then left over execution sequentially
+
+do not have to allocate the same number of threads as amount of data,
+As many threads as possible, but still limited
+Local variables stored in thread registers
+
+cudaMalloc() 
+  --Allocates an object in the device global memory
+  --two parameters
+    -- address of a pointer to the allocated object
+    --size of allocated object in terms of bytes
+
+cudaFree()
+  --Frees object from device blobal memory
+  --One parameter pointer to freed object
+
+cudamemCpy() //can copy between GPU devices
+  -- memory data transfer
+  -- Four parameters
+    = pointer to destination
+    = pointer of source
+    = number of bytes copied
+    = Type/direction transfer
+
+  -- Transfer to device is synchronous with respeect to the host.
+  -- CPU and GPU are both locked while this happens
+
+void vecAdd(float *h_A, float *h_B, float *h_C, int n)
+{
+    int size = n * sizeof(float); //literal size of memory
+    float *d_A, *d_B, *d_C;
+    cudaMalloc((void **) &d_A, size);
+    cudaMalloc((void **) &d_B, size);
+    cudaMalloc((void **) &d_C, size);
+    cudaMemcpy(d_A, h_A, size, cudaMemcpyHostToDevice);
+    cudaMemcpy(d_B, h_B, size, cudaMemcpyHostToDevice);
+
+    //invoke kernel
+
+    cudaMemcpy(h_C, d_C, size, cudaMemcpyDeviceToHost);
+    cudaFree(d_A);
+    cudaFree(d_B);
+    cudaFree(d_C);
+}
