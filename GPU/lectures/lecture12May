@@ -1,0 +1,206 @@
+Latency hiding
+Latency and throughput
+
+Occupancy
+Sunchronization Scalability
+
+resource partitioning
+Local execution context of warp includes: registers, program counters, shared memory
+remains on chip for lifetime of warp -- no cost context switch
+No. of 'resident' thread blocks and warps on SM
+depends on amount of shared resources
+'Resident' means residing on sm sumultaneously
+Block is active when resources allocated
+Acitve warps can be classified as:
+  --Selected = actively executing
+  --Stalled = not ready for execution
+  --Eligible = ready for execution, but not currently executing
+
+**********************************************************
+**SM setup
+Selected warps:
+Active warp -- all threads sitting on cores of SM
+
+eligible
+Waiting queue : warp
+                warp
+                warp
+Stalled
+'Latency queue'
+Warps can be kicked out and waiting for something to happen, eg memmory access
+Eligible but waiting queue
+
+____________________________________________________________
+
+Need many warps in eligible wainting queue. This hides the latency of warps in stalled queue for memory reads.
+GPU needs more threads to keep it busy
+
+GPU queue of warps
+Waiting warps: going to be put on SM
+
+There are limits on GPU resources
+Maximum threads per block -- can't give reasonable number of registers per thread if too many threads in a block
+
+Latency Hiding
+
+Thread level parallelism used to maximise utilisatoin of cores
+Linked to number of resident warps
+Instruction latency is number of clock cycles between instruction being issued and completed.
+Full core ruilisatoin achieved when all all warp schedulers have eligible warp at each clock cycles
+Unlike CPU attempts to minize latency for a few threads, GPU attempts to maximise throughput with many lightweight threads.
+
+Lots of warps so that throughput through cores is as large as possible
+
+Arithmetic instruction 10-20 cycles latency
+Memory instruction: 400-800 cycles for global access
+
+Little's law can be applied to calculate how many active warps needed to hide latency:
+  No. of warps required = latency x throughput
+  throughput is the number of warps being processed.
+  Latency is the instruction latency
+  1 warp of cores
+  20 cycle latency
+
+  a + b x c
+
+  instruction latency 20 cycles
+  Throughput(operations/cycle)
+  128 cores SMP Maxwell SM
+  128 cores/SMP Pascal SM
+
+  Parallel operations = 2560 (Maxwell or Pascal)
+  Need 2560 / 32 = 80 warps (Maxwell or pascal)
+
+One simple calculation -- aren't going to keep SM busy if fewer than 2560 threads are used
+
+Covering 4 cycles of latency
+
+Warp 1 | Warp 2 | Warp 3 | Warp 4 | Warp 1
+  1        2        3        4        5
+
+Threads needed = 4 times number of cores to hide latency
+
+If latency is 20 cycles, threads neede = 20 times the number of cores
+
+Full memory utilisation
+
+Maxwell 800 cycles for memory instruction
+
+If a read is to fetch 1 floating point per thread, 3250 threads are need to hide latency on maxwell
+
+Occupancy
+Ratio of active warps to maximum number of warps per SM
+occupacny = active warps / max warps
+
+If there is huge latency cannot achieve high occupancy because only 64 total warps in SM
+
+Synchronization
+Barrier synchronization commons in most parallel languages
+Two level
+  System-level: cudaDeviceSynchronize(); -- holds cpu and GPU and same place
+  Block-level: __synchthreads(); makes all threads in blocks get to same point
+
+-- puts warps on stalled queue
+
+Import to ensure all threads can reach a barrier - otherwise deadlock
+Can use syncthreads() multiple times - but affects performance
+
+All memory changes by threads will be visible to all threads after the sync
+Race conditions, or hazards, are unordered accesses to multiple threads in different warps to the same memory
+-- read after-write
+--write--after write
+--write-after read
+No thread synchronization between threads in different blocks-- need to use multiple kernels and system-level synchronization
+
+
+application of block synchronization:
+//load in data to shared memory
+
+//synchronization to ensure load has finished
+  __syncthreads();
+// now do computation using shared data.
+Scalability
+Implies the providing addional parallel resources yields speedup relative to the added amount
+Desirable for any parallel application
+Serial code is inherently not scalable
+Parallel code is potentially scalable, but by how much depends on actual algorithm
+Cuda programs naturally scale well because thread blocks can be distributed across a number of SMs and executed in any order.
+Profiler can be used to obtain metrics
+
+magnifying glass extra metrics
+
+Optimizing global memory read access
+Do not want to do multiple reads that are unencessary--similar to writing
+Aligned and coalesced access
+Cached access
+
+Memory acces patterns
+Most GPU applications tend to be limited by memory bandwidht
+Since most device data access begins in global memory, optimizing bandwidth is important
+Memory operations are issued per warp
+Each thread provides a single address and the warp presents a single memory access request containing the 32 addresses
+Depending on distribution of addresses in warp, memory accesses are classified into different patterns
+
+All accesses to global memory go through L2 cache -- some also go through L1 cache -- by default turned off on 750s and (maybe) 1050s
+If both L1 and L2 used - memory access serviced by 128-byte transaction
+If only L2 used - 32-byte transactoin used
+L1 cache line is 128 bytes mapping to a 128 byte aligned-segment in memory
+
+If each thread in warp requests 4-byte value - this resutls in 128 bytes per request
+
+Memory access patterns:
+Aligned vs unaligned: Load is aligned if the first address is a multiple of 32
+Coalesced vs. uncoalesced: Load is coalisced if warp accesses a contiguous chunch of data. -- coalesced data is next to each other
+
+Cached vs uncached: Load is cached if L1 cache is enabled.
+
+Aligned / coalesced access
+Aligned memory access occurs when firest address of memory transaction is an even multiple of cache granularity
+Misaligned access will cause wasted bandwidth
+
+Coalesced memory access occurs when all threads in warp access contiguous chunck of memory
+
+aligned example:
+  eg access to bytes 128 to 256 in cache
+
+misaligned and uncoalesced will take multiple memory reads.
+  eg access to bytes 120-124, 128-132  136 -200, 208-256, 268-276 in cache
+
+memory reads are always aligned.
+
+
+Global memory reads
+all data pipelined through
+
+complier flags enable the use of complier cache
+
+Cached load patterns
+Cached load ops service at granularit of cache
+
+Metric for the use of the memory 'shovel'
+Bus utilization BU = #bytes requested / #loaded (bytes requested typically number of threads)
+
+non consecutive reads are not important as long as the data is alligned and coalesced
+
+Not aligned but consecutive
+Eg 128 bytes read consecutively, but two groups unaligned BU = 50%
+Same address for all 32 threads (BU = 3.125% 4B), all other data items in bus wasted. <- could use the L2 cache 1/32
+
+32 Random addresses across memory (worst case)
+
+Uncached load patterns
+Performed at granularity of memory 
+
+not aligned by consecutive get greater 80% BU
+Same address for all 32 threads -> higher Buss utilization, only need one read
+32 random addresses improved worse case, do not need to fetch as much memory
+
+Optimising memory access
+Fixing uncoalesced reads: not always possible as depends on the algorithm
+Fixing misaligned reads
+--offset data structures
+--pad data structures to keep within multiples
+--use uncached reads
+--direct global reads via read-only cache rather than L1 cache
+
+Global memory efficiency = requested global memory load throughput/required golable memory load through put.

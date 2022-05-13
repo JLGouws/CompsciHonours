@@ -1,4 +1,5 @@
-// Hands-on Lab 2 2021 for linux 
+// J L Gouws
+// Hands-on Lab 2 2022 for linux 
 // Compile: nvcc -I \usr etc summatrix.cu -o summ
 // NB: check your own path for the common\inc directory to include as -I 
 // Run: ./summ
@@ -74,10 +75,12 @@ __global__ void sumMatrixOnGPU2D(float *A, float *B, float *C, int NX, int NY)
       C[idx] = A[idx] + B[idx]; 
 }
 
+//******************************************************************************
 // grid 1D block 2D
 __global__ void sumMatrixOnGPU1D(float *A, float *B, float *C, int NX, int NY)
 {
-    unsigned idx = blockIdx.x * blockDim.x * blockDim.y + threadIdx.y * blockDim.x + threadIdx.x;
+    unsigned idx = blockIdx.x * blockDim.x * blockDim.y + threadIdx.y 
+                    * blockDim.x + threadIdx.x;
 
     if (idx < NX * NY)
       C[idx] = A[idx] + B[idx];
@@ -88,7 +91,8 @@ __global__ void sumMatrixOnGPU1DSixteen
                                   (float *A, float *B, float *C, int NX, int NY)
 {
     unsigned int stride = gridDim.x * blockDim.x * blockDim.y;
-    unsigned idx = blockIdx.x * blockDim.x * blockDim.y + threadIdx.y * blockDim.x + threadIdx.x;
+    unsigned idx = blockIdx.x * blockDim.x * blockDim.y + threadIdx.y 
+                    * blockDim.x + threadIdx.x;
 
     for(; idx < NX * NY; idx += stride)
       C[idx] = A[idx] + B[idx];
@@ -99,11 +103,13 @@ __global__ void sumMatrixOnGPU1DEight
                                   (float *A, float *B, float *C, int NX, int NY)
 {
     unsigned int blockSize = blockDim.x * blockDim.y;
-    unsigned idx = blockIdx.x * blockSize * 8 + threadIdx.y * blockDim.x + threadIdx.x;
+    unsigned idx = blockIdx.x * blockSize * 8 + threadIdx.y * blockDim.x 
+                    + threadIdx.x;
 
     for(int i = 0; i < 8 && idx < NX * NY; i++, idx += blockSize)
       C[idx] = A[idx] + B[idx];
 }
+//______________________________________________________________________________
 
 int main(int argc, char **argv)
 {
@@ -170,7 +176,8 @@ int main(int argc, char **argv)
 
     // execute the kernel
     for(int i = 0; i < 1000; i++){
-      checkCudaErrors(cudaDeviceSynchronize());
+      checkCudaErrors(cudaDeviceSynchronize());//I only want one kernel to run
+                                               // at a time for this experiment
       sumMatrixOnGPU2D<<<grid, block>>>(d_MatA, d_MatB, d_MatC, nx, ny);
     }
     cudaEventRecord(stop);

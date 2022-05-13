@@ -98,10 +98,10 @@ for r in rs:
   xstarnew += [np.flip(np.unique(np.round(xstar[-extraPoints:], 4)))]
   rnewnew += [r]
   rnew += [r] * extraPoints
-ax.plot(rnew, xstar, 'bo', ms = 0.1)
+ax.plot(rnew, xstar, 'bo', ms = 0.3)
 ax.set_xlabel("$r$")
 ax.set_ylabel("$x^*$")
-fig.savefig("figs/furtherEquilibriumPointsBifurcations.pdf")
+fig.savefig("figs/furtherEquilibriumPointsBifurcations.png")
 
 def finish_path(r_list, xstar_list, r_plot, xstar_plot, ax, index):
     if len(r_list) == 0:
