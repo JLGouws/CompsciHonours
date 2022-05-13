@@ -1,0 +1,73 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage{amsmath,amsfonts,amsthm,amssymb, mathtools,steinmetz, gensymb, siunitx}	% LOADS USEFUL MATH STUFF
+\usepackage{xcolor,graphicx}
+\usepackage[left=2cm, top=2cm, right=2cm, bottom=1cm ,a4paper]{geometry} 				% ADJUSTS PAGE
+\usepackage{setspace}
+\usepackage{caption}
+\usepackage{tikz}
+\usepackage{pgf,tikz,pgfplots}
+\usepackage{mathrsfs}
+\usepackage{fancyhdr}
+\usepackage{float}
+\usepackage{array}
+\usepackage{unicode-math}
+\usepackage{booktabs}
+\usepackage{multirow}
+\setmathfont{Libertinus Math}
+
+\usetikzlibrary{decorations.pathreplacing,decorations.markings}
+\usepgfplotslibrary{fillbetween}
+
+\newcommand{\defeq}{\vcentcolon=}
+\newcommand\block[1]{\hspace*{#1}}
+\newcommand{\rpm}{\sbox0{$1$}\sbox2{$\scriptstyle\pm$}
+	  \raise\dimexpr(\ht0-\ht2)/2\relax\box2 }
+\pgfplotsset{compat=1.11}
+	  
+\newlength{\QNo}
+\settowidth{\QNo}{2.}
+
+\newlength{\QLetter}
+\settowidth{\QLetter}{(a)}
+
+\pagestyle{fancy}
+\rhead{CS Honours GPUs}
+\lhead{J L Gouws}
+
+\begin{document}
+\fontencoding{T1}
+\fontfamily{ppl}\selectfont
+\thispagestyle{empty}
+
+{\Large \textbf{GPUs Hands On 3}} \hfill {\Large \textbf{J L Gouws}}\\
+\block{1.0cm} {\large \textbf{\today}} \hfill {\large \textbf{19G4436}}\\
+
+  \begin{table}[H]
+    \resizebox{\textwidth}{!}{
+    \begin{tabular}{ccccccc}
+      \toprule
+          \multicolumn{1}{p{4em}}{\textbf{Block Size}} & \multicolumn{1}{p{5em}}{\textbf{Kernel Execution Time(ms)}} & 
+          \multicolumn{1}{p{5em}}{\textbf{Achieved occupancy(\%)}} & \multicolumn{1}{p{5em}}{\textbf{Global Memory Load Throughput(GB/S)}} & 
+          \multicolumn{1}{p{5em}}{\textbf{Global Memory Load Efficiency (\%)}} &
+          \multicolumn{1}{p{5em}}{\textbf{Global Memory Store Throughput (GB/S)}}&
+          \multicolumn{1}{p{5em}}{\textbf{Global Memory Store Efficiency (\%)}} 
+          \\ \midrule
+      $64 \times  8$ & 2.66404          & 87.8    & 50.334 & 100      & 25.167& 100 \\ 
+      \hline
+      $2  \times 64$ & 5.88941          & 87.2    & 93     & 100      & 46.5  & 100 \\ 
+      \hline
+      $16 \times 16$ & 2.67481          & 89.3    & 50.028 & 100      & 25.014& 100 \\ 
+      \hline
+      $32 \times 32$ & 2.76861          & 83.9    & 49.929 & 100      & 24.964& 100 \\ 
+      \hline
+      $2  \times 64$ & 7.04664          & 72.1    & 156.709& 12.5     & 78.354& 12.5\\ 
+      \hline
+      $64 \times 16$ & 7.41846          & 91.4    & 152.988& 12.5     & 76.494& 12.5\\ 
+      \bottomrule
+    \end{tabular}
+  }
+    \caption{Average execution times of Kernel}
+    \label{table2}
+  \end{table}
+  Observations:\\
+\end{document}
