@@ -52,7 +52,7 @@
           \multicolumn{1}{p{5em}}{\textbf{Global Memory Store Throughput (GB/S)}}&
           \multicolumn{1}{p{5em}}{\textbf{Global Memory Store Efficiency (\%)}} 
           \\ \midrule
-      $64 \times  8$ & 2.66404          & 87.8    & 50.334 & 100      & 25.167& 100 \\ 
+      \multicolumn{1}{p{4em}}{$64 \times  8$ \newline 2D Grid} & 2.66404          & 87.8    & 50.334 & 100      & 25.167& 100 \\ 
       \hline
       $2  \times 64$ & 5.88941          & 87.2    & 93     & 100      & 46.5  & 100 \\ 
       \hline
@@ -63,6 +63,10 @@
       $2  \times 64$ & 7.04664          & 72.1    & 156.709& 12.5     & 78.354& 12.5\\ 
       \hline
       $64 \times 16$ & 7.41846          & 91.4    & 152.988& 12.5     & 76.494& 12.5\\ 
+      \hline
+      $32 \times 32$ & 2.79042          & 95.2    &  48.149& 100      & 24.074& 100 \\ 
+      \hline
+      $16 \times 64$ & 2.83848          & 94.9    &  48.675& 100      & 24.337& 100 \\ 
       \bottomrule
     \end{tabular}
   }
@@ -70,4 +74,7 @@
     \label{table2}
   \end{table}
   Observations:\\
+  Doing sixteen consecutive data items per thread results in low load and store efficiency.
+  Striding solves this problem and acheives the same memory efficiency as the single datum per thread approach.
+
 \end{document}
