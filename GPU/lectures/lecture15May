@@ -1,0 +1,66 @@
+uncached loads can give a better bus utilization -- finer grained cache steps
+optimising memory read access:
+Fixing uncoalesced reads: Not always possible--dependent on algorithm.
+
+Fixing misaligned reads:
+--offset data structures: dummy data structures
+--pad data structures to kkep within 128-byte multiples use uncached reads.
+--Direct global reads via read-only (texture) cache rather than L1 cache
+
+Global memory efficiency = (requested global memory load throughput) / (required global memory load throughput
+
+Optimizing memory write access
+Aligned vs unalinged: load is anligned if the first address is a multiple of 32
+Coalesced vs uncoalesched
+Global writes cannot use L1 Cache
+
+Writes only pass through l2 cache
+
+performed at 32 byte granularity
+
+one, two, or four segments can be written in one time
+If two addresses fall within the same 128-byte region but not within the same 64-byt region, one 4-segment transaction will be issued
+One 4-segment transaction is better than 2 one-segment transaction
+
+This arrises from GPU threads typically working with 4 byte integer or 8 byte float. Need to write 128 or 256 bytes for each warp.
+Focus on read optimization first.
+Eg. if optimized reading damages writing performance, optimize reads in priority.
+
+All access in one consecutive 64 byte range.
+
+Array of sturctures vs structure of arrays
+
+Consider storing x  and y coordinates
+Array of structures:
+struct innerStruct{float x; float y;};
+struct innerStruct myPoints[10];
+Sensible for for sequential programming.
+Difficulties arise in memory coalescing
+e.g. x = idx
+Will get x and y values out of memory for every memory access.
+The y's will essentially be garbage for this operation.
+
+Structure of arrays:
+struct innerArray{float x[10]; float y[10];};
+Data for each point is separated into two arrays.
+More suited to global memory access read and write patterns.
+
+Memory performance tuning
+maximizing device memory bandwidth utilization:
+Aligned and coalesced accesses reduce wasted bandwidth
+Sufficient concurrent memory operations to hide memory latency.
+Plenty of concurrent warps to hide memory access latency of stalled warps
+
+Maximising concurrent memory access:
+Increaasing number of independent memory operations performed in each kernel.
+Experimenting with the execution configureation of the kernel to expose parallelism to each SM
+Lots of blocks, so that each SM can be given enough blocks and threads to be kept busy
+
+What badwidth ca kernel achieve?
+Theoretical bandwidth - absolute maximum hardware limit
+
+Effetive badwidth = measured bandwidth that a kernel actually achieves
+//only the parts used in calculations
+Effective bandwidth = (read and used bytes + actually written bytes) / (time elapsed)
+equivalent to occupancy for memory usage
+
