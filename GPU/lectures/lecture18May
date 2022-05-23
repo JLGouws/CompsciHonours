@@ -1,0 +1,138 @@
+Streams and concurrency
+
+Streams exploiting grid level concurrency multiple kernels to GPU
+Overlapping kernel execution and data transfer
+Overlapping CPU and GPU execution
+
+Two levels of concurrency in CUDA
+Kernel level and grid level
+Kernel concurrency single kernel executed in parallel by multiple threads on the GPU
+Techniques for optimizing kernel performance
+--Programming model (change block and grid configuration)
+--Execution model (minimize warp divergence; ensure scalability)
+--Memory model (change global memory access patters; use shared memory instead)
+--Profiling (find bottlenecks)
+
+Grid-level concurrency
+Multiple kernels are launched on a signle device simultaneously
+Often leads to better utilization
+Use cuda streams to implement
+
+All of the commands that come in a stream are accessed in series
+
+Memcopy -> Launch Kernel -> Memcopy
+
+Synchronous Memcopies
+
+Cuda stream
+Refers to a sequence of asynchronous CUDA operations that execute on a device in the order defined by the host code.
+
+Stream encapsulates these operations, maintains their ordering, permits operations to be added to the end of the queue, and allows querying of the status of the stream.
+
+Execution of operation in stream is asynchronous with respect to host
+
+Operations in different streams have no ordering restrictions
+
+Default stream always take priority. Normally either use only default stream or other numbered streams
+
+CUDA memcopy blocks host
+Execute commands in order which commands are sent through a given stream.
+
+IMplementing grid level concurrency
+
+Use multiple streams to launch multiple simultaneous kernels-grid-level concurrency
+Asynchronous nature of operations in stream, allows their execution to be overlapped with other operations in host-device system
+Can hide latency of certain operations
+
+From software point of view, streams operate concurrently but hardware limits eg PCI
+
+PCI bus can only allow a single read and a single write simultaneously
+
+Synchronous function in CUDA API block the host thread until they complete
+
+Asynchronous functions -- host can proceed immediately
+
+Thus, asynchronous function calls and streams are basic pillar of grid-level concurrency
+
+Async calls allow the CPU to carry on with execution.
+
+puts instruction on PCIe and moves to next instruction.
+
+implicitly declared stream (NULL stream)
+
+We have been using all along
+All kernel launches and data transfers have been implicitly run in this stream
+
+cudaMempy();
+
+Overlapping execution
+Host computation with device computation simultaneously
+Host computation with host-device transfer
+Host-device transfer with device computation
+Concurrent device computation
+
+Always consdier behaviour of CUDA Program from host and device;
+cudaMemcpy(...);
+kernel<<<grid,block>>>(...);
+cudaMemcpy(...);
+
+Stream 1: cudaMemcpy(...) 1/2 data;
+  -> Kernel execution 1/2 data; -> might not be using full capabilties of GPU always with smaller problem
+    -> cudaMemcpy(...) 1/2 data back;
+  Stream 2: -> cudaMemcpy(...) 1/2 data; // PCIE cannot happen in parallel
+    -> Kernel execution 1/2 data;
+      -> cudaMemcpy(...) 1/2 data back;
+
+Stream1: cudaMemcpy(...) 1/3 data;
+  -> Kernel execution 1/3 data; -> might not be using full capabilties of GPU always with smaller problem
+    -> cudaMemcpy(...) 1/3 data back;
+  Stream2: cudaMemcpy(...) 1/3 data; // PCIE cannot happen in parallel
+    -> Kernel execution 1/3 data;
+      -> cudaMemcpy(...) 1/3 data back;
+  Stream3: cudaMemcpy(...) 1/3 data; // PCIE read and write in parallel
+      -> Kernel execution 1/3 data;
+        -> cudaMemcpy(...) 1/3 data back;
+
+Host to device copy at same time as execution.
+
+Non-null streams
+
+cudaStream_t mystream;
+Created using cudaStreamCreate(cudaStream_t * pStream)
+
+cudaStreamRelease()
+
+Check stream operations:
+
+if a stream is destroyed before it has finished , the call returns immediately but resources are released when execution is done.
+
+cudaStreamSynchronize(stream)
+forces host to wait until all streams operations terminate
+
+cudaStreamQuery(stream) check if all ops ahve completed -- does not block host
+returns cudaSuccess if all done
+else, cudaErrorNotReady
+
+-> requires stream
+cudaMemcpyAsync(dest, src, count, type, stream);
+
+Call is Asynchronous to host - so control returns to host immediately after function call
+muste be done using pinned memory -- not pageable
+Allocate using: using
+int *h_a;
+cudaMallocHost(&h_a, size).
+
+Host most data structures are pageable
+
+Device
+                      DRAM
+                        ^
+Host                    |
+Pageable Memory -> Pinned Memory
+
+Device
+                      DRAM
+                        ^
+Host                    |
+                   Pinned Memory <- cudaMallocHost
+Needs to be in memory the whole time during transfer.

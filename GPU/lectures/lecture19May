@@ -1,0 +1,135 @@
+Atomics have threads work sequentially
+eg add 1 to a variable.
+
+Unified memory and Cuda libraries
+
+Memory transfer host <-> device
+Allocation on device - cudMalloc()
+Copy to/from deivice - cudaMemcpy()
+Initialize memory on device -- cudaMemset(), initialize all of array to zeros
+Deallocation on device - cudaFree()
+
+Pageable host memory causes problems when copying to device
+can cause serious problems when working with streams.
+
+Pinned memory on host
+Use cudaMallocHost() and cudaFreeHOst()
+
+Allocates bytes of host memory that are page locked.
+CAn be read and written with much higher bandwidth than pageable
+Bore expensive to allocate and deallocate
+
+Generally beneficial for > 10 MB data transfers
+
+CAVEAT: allocating excessive amounts of pinned memory can degrade host system performance (reduces amount of pageable memmory)
+
+CUDA 6.0 and above provides managed/unified memory
+
+CUDA UM
+Is a single memory address space accessible both from the host and from the device
+The hardware/software handles data migration automatically, maintaining consistency
+
+cudaMallocManaged()
+Allocates an object in the unified memory address space.
+Two parameters with an optional third parameter.
+Addresss of a pointer to the allocated object
+Size of allocated object in terms of bytes
+Optional flag indicating if memory can be accessed from any device stream
+
+cudaFree()
+--fress object from unified memory
+--one parameter
+ + pointer to freed object
+
+m_a, m_b -> cudaMallocManaged() can be accessed from both host and device
+there are copies in the background -> software and hardware ensures the data is transferred to the correct place.
+
+Moving data betwee two different arrays
+cudaMemcpy()
+--Memory data transfer
+--requires four parameter
+
+Unified memory this function is utilized to copy data between different arrays regardless of position
+
+Unified memory
+
+CUDA 6.0 and above provides unified memory support
+Creates a bool of managed memmory--where each allocation is accessible on both CPU and GPU through same pointer
+Underlying system automatically migrates data in unified memory space between device and host
+DAta movement is transparent to application and --hence simplified coding
+Managed memory = allocations managed by system
+unmangaed memory = allocatoins managed by application (explicit code_
+Host can also access managed memory
+No duplicated data structures
+
+Still needs to be checked with profiling
+
+
+No specialised hardware to handle managed memory in compute capability < 6.0 Maxwell like you are just using  single stream
+Compute capability < 6.0
+--Specialized hardware for handling page faults
+--more like streams
+--data migrated on damage -- data only gets copied on page fault
+
+Explicit barrier
+
+Must be careful to ensure all threads reach the same sync point
+
+if (threadID % 2 == 0)
+{ ..;
+ __syncthreads(); //this is a different sync point
+}
+else
+{ ...;
+  __syncthreads(); //this is a different sync point
+}
+
+Not all threads reach the same synchronization point -- undefined behaviour
+
+__syncthreads(); <-- synchronizes all threads in a block
+
+don't use syncthreads in if else statement might either the synchthreads is not needed or if else is not needed
+Might have different threads waiting at different barriers
+
+Cuda accelerated libraries
+Advantages of using these libraries
+  Already parallelized
+  Already implemented
+  Already debugged
+  Already optimized
+Disadvantages
+...
+Nvidia provides a handful of libraries and there are also a number of 3rd party
+
+NVIDIA CUDA libraries
+CUFFT
+CUBLAS
+CUSPARSE //sparse matrices
+Libm (math.h)
+CURAND <- random number generators
+NPP
+Thrust <- C++ stl
+
+the libraries can be used strait in a cpp cpu program. not reference to GPU
+
+Library for generating random numbers
+Features: XORWOW pseudo-random number 
+generate random numbers in bulk
+
+curandCreateGenerator()
+Set a seed:
+curandSetPsuedoRandomGeneratorSeed()
+Generate the data from a distribution
+curandGenerateUniform()
+curandGenerateLogNormal()
+
+Destroy generator
+curandDestroyGenerator()
+
+Need to link in libraries
+-L path to library
+
+Then must include the nvcc command the specific librries you are linking
+-lcurand
+
+
