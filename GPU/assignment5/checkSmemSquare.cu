@@ -8,8 +8,8 @@
  * optimizing using memory padding.
  */
 
-#define BDIMX 4
-#define BDIMY 4
+#define BDIMX 32
+#define BDIMY 32
 #define IPAD  1
 
 void printData(char *msg, int *in,  const int size)

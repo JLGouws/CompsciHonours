@@ -9,18 +9,19 @@
 #include <string.h>
 #include <curand_kernel.h>
 #define SEED 1234 
-#define ITER 200000000
-#define EPBLOCK 128
+#define ITER 30000000
+#define EPBLOCK 64
 #define REDEPBLOCK 64
 #define TPBLOCK 256
 #define WARPSIZE 32
 
 using namespace std;
 
-__global__ void setup_rng_states(curandState *const state)
+__global__ void setup_rng_states(curandState *state, const int n)
 {
   int id = threadIdx.x + blockIdx.x * blockDim.x;
-  curand_init(SEED, id, 0, &state[id]);
+  int stride = gridDim.x * blockDim.x;
+  for(; id < n; id += stride) curand_init(SEED, id, 0, &state[id]);
 }
 
 __global__ void generate_coordinates(curandState *state, float *x,
@@ -103,16 +104,16 @@ int main()//int argc, char* argv)
   float *x, *y, *averages, *redAverages, *hostPi;
 
   blocksPerGrid = ((ITER + EPBLOCK - 1) / EPBLOCK + TPBLOCK - 1) / TPBLOCK;
-  curandState *devStates = 0;
+  curandState *devStates;
 
   //space for state rng states
-  checkerror(cudaMalloc((void **) &devStates, blocksPerGrid * TPBLOCK * sizeof(curandState)));
+  checkerror(cudaMalloc((void **) &devStates, ITER * sizeof(curandState)));
 
   checkerror(cudaMalloc((void **) &x, ITER * sizeof(float)));
 
   checkerror(cudaMalloc((void **) &y, ITER * sizeof(float)));
 
-  setup_rng_states<<<blocksPerGrid, TPBLOCK>>>(devStates);
+  setup_rng_states<<<blocksPerGrid, TPBLOCK>>>(devStates, ITER);
   checkerror(cudaGetLastError());
 
 

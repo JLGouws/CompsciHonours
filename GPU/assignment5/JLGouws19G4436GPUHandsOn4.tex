@@ -1,4 +1,4 @@
-\documentclass[a4paper,12pt]{article}
+\documentclass[a4paper,9pt]{article}
 \usepackage{amsmath,amsfonts,amsthm,amssymb, mathtools,steinmetz, gensymb, siunitx}	% LOADS USEFUL MATH STUFF
 \usepackage{xcolor,graphicx}
 \usepackage[left=2cm, top=2cm, right=2cm, bottom=1cm ,a4paper]{geometry} 				% ADJUSTS PAGE
@@ -14,6 +14,7 @@
 \usepackage{textgreek}
 \usepackage{booktabs}
 \usepackage{multirow}
+\usepackage{setspace}
 \setmathfont{Libertinus Math}
 
 \usetikzlibrary{decorations.pathreplacing,decorations.markings}
@@ -45,17 +46,57 @@
 
   \begin{table}[H]
     \resizebox{\textwidth}{!}{
-      \begin{tabular}{lccccc}
+      \begin{tabular}{p{4.8em}cccp{10em}c}
       \toprule
-          \multicolumn{1}{p{4em}}{\textbf{Kernel executed}} & \multicolumn{1}{p{4em}}{\textbf{GPU execution time [\textmu s]}} & 
-          \multicolumn{1}{p{5em}}{\textbf{Load bank conflicts [Y/N]}} & \multicolumn{1}{p{5em}}{\textbf{Store bank conflicts [Y/N]}} & 
-          \multicolumn{1}{p{5em}}{\textbf{Reason for conflicts}} &
-          \multicolumn{1}{p{5em}}{\textbf{Output for 4 $\times$ 4 block}}
+          \multicolumn{1}{p{4em}}{\small\textbf{Kernel }} & \multicolumn{1}{p{2em}}{\small\textbf{Time [\textmu s]}} & 
+          \multicolumn{1}{p{2em}}{\textbf{\small Load conflicts [Y/N]}} & \multicolumn{1}{p{2em}}{\textbf{\small Store conflicts [Y/N]}} & 
+          \multicolumn{1}{p{10em}}{\textbf{\small Reason for conflicts}} &
+          \multicolumn{1}{p{5em}}{\textbf{\small Output for 4 $\times$ 4 block}}
           \\ \midrule
-          setColReadCol    & 3.84 & Y & Y & & \multicolumn{1}{p{5em}}{0    1    2    3    4    5    6    7    8    9   10   11   12   13   14   15}\\ \hline
-          setRowReadRow    & 2.24 & N & N & & \multicolumn{1}{p{5em}}{0    1    2    3    4    5    6    7    8    9   10   11   12   13   14   15}\\ \hline
-          setRowReadCol    & 2.72 & Y & N & & \multicolumn{1}{p{5em}}{0    4    8   12    1    5    9   13    2    6   10   14    3    7   11   15}\\ \hline
-          setRowReadColPad & 1.95 & N & N & & \multicolumn{1}{p{5em}}{0    4    8   12    1    5    9   13    2    6   10   14    3    7   11   15}\\
+          {\footnotesize setColReadCol }   & 3.84 & Y & Y & 
+                                            \begin{spacing}{0.6}
+                                              {\footnotesize
+                                              Every thread in a warp reads from and writes to the same column in the shared memory array.
+                                              This is evident since threadIdx.x is indexing the column of the shared memory array.
+                                              All the columns in the shared memory array are mapped directly to banks because the shared memory array has a width of 32.
+                                              Thus all threads in the warp are accessing the same bank for the execution of the instruction.
+                                              These access patterns result in the bank conflicts.}
+                                            \vspace*{-\baselineskip}
+                                            \end{spacing}
+                                            \vspace*{-\baselineskip}
+                                            & \multicolumn{1}{p{5em}}{0    1    2    3    4    5    6    7    8    9   10   11   12   13   14   15}\\ \hline
+          {\footnotesize setRowReadRow }   & 2.24 & N & N & 
+                                            \begin{spacing}{0.6}
+                                            {\footnotesize
+                                              Every thread in a warp reads from and writes to the same row in the shared memory array.
+                                              In other words, each thread in the warp is accessing a different column of the shared memory array.
+                                              Thus, all threads in the warp are accessing different banks for the execution of the instruction.
+                                            }
+                                            \vspace*{-\baselineskip}
+                                            \end{spacing}
+                                            \vspace*{-\baselineskip}
+                                            & \multicolumn{1}{p{5em}}{0    1    2    3    4    5    6    7    8    9   10   11   12   13   14   15}\\ \hline
+          {\footnotesize setRowReadCol}    & 2.72 & Y & N & 
+                                            \begin{spacing}{0.6}
+                                            {\footnotesize
+                                              Every thread in a warp reads from the same column in the shared memory array.
+                                              Thus, all threads in the warp are accessing the same bank while reading from the array.
+                                            }
+                                            \vspace*{-\baselineskip}
+                                            \end{spacing}
+                                            \vspace*{-\baselineskip}
+                                            & \multicolumn{1}{p{5em}}{0    4    8   12    1    5    9   13    2    6   10   14    3    7   11   15}\\ \hline
+          {\footnotesize setRowReadColPad} & 1.95 & N & N & 
+                                            \begin{spacing}{0.6}
+                                            {\footnotesize
+                                              Every thread in a warp reads from the same column in the shared memory array.
+                                              However, all the columns in the shared memory array are mapped to different banks, because the shared memory array has a width greater than 32.
+                                              Thus, all threads in the warp are accessing different banks for the execution of the read instruction.
+                                              This read pattern results in no bank conflicts.}
+                                            \vspace*{-\baselineskip}
+                                            \end{spacing}
+                                            \vspace*{-\baselineskip}
+                                          & \multicolumn{1}{p{5em}}{0    4    8   12    1    5    9   13    2    6   10   14    3    7   11   15}\\
       \bottomrule
     \end{tabular}
   }
