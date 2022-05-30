@@ -26,8 +26,8 @@
 #include <sys/time.h>
 
 // size of plate
-#define COLUMNS    1000
-#define ROWS       1000
+#define COLUMNS    5
+#define ROWS       33
 
 #ifndef MAX_ITER
 #define MAX_ITER 100
@@ -43,6 +43,15 @@ double Temperature_last[ROWS+2][COLUMNS+2]; // temperature grid from last iterat
 void initialize();
 void track_progress(int iter);
 
+void print_grid_last() {
+    for(int i = 0; i <= ROWS+1; i++){
+        printf("%03d ", i);
+        for (int j = 0; j <= COLUMNS+1; j++){
+            printf("%5f ", Temperature_last[i][j]);
+        }
+        fputs("\n", stdout);
+    }
+}
 
 int main(int argc, char *argv[]) {
 
@@ -86,6 +95,7 @@ int main(int argc, char *argv[]) {
 
 	iteration++;
     }
+    print_grid_last();
 
     gettimeofday(&stop_time,NULL);
 	timersub(&stop_time, &start_time, &elapsed_time); // Unix time subtract routine
