@@ -1,0 +1,105 @@
+\documentclass[12pt,a4]{article}
+\usepackage{physics, amsmath,amsfonts,amsthm,amssymb, mathtools,steinmetz, gensymb, siunitx}	% LOADS USEFUL MATH STUFF
+\usepackage{xcolor,graphicx}
+\usepackage[left=45pt, top=60pt, right=45pt, bottom=65pt ,a4paper]{geometry} 				% ADJUSTS PAGE
+\usepackage{setspace}
+\usepackage{caption}
+\usepackage{tikz}
+\usepackage{pgf,tikz,pgfplots,wrapfig}
+\usepackage{mathrsfs}
+\usepackage{fancyhdr}
+\usepackage{float}
+\usepackage{array}
+\usepackage{booktabs,multirow}
+\usepackage{bm}
+
+\usetikzlibrary{decorations.text, calc}
+\pgfplotsset{compat=1.7}
+
+\usetikzlibrary{decorations.pathreplacing,decorations.markings}
+\usepgfplotslibrary{fillbetween}
+
+\newcommand{\vect}[1]{\boldsymbol{#1}}
+
+\usepackage{hyperref}
+%\usepackage[style= ACM-Reference-Format, maxbibnames=6, minnames=1,maxnames = 1]{biblatex}
+%\addbibresource{references.bib}
+
+
+\AtBeginDocument{\hypersetup{pdfborder={0 0 0}}}
+
+\title{
+\textsc{Numerical Modelling final assessment}
+}
+\author{\textsc{J L Gouws}
+}
+\date{\today
+\\[1cm]}
+
+
+
+\usepackage{graphicx}
+\usepackage{array}
+
+
+
+
+\begin{document}
+\thispagestyle{empty}
+
+\maketitle
+
+\begin{enumerate}
+  \item
+    \begin{align*}
+                  & f(x + h) = f(x_0) + h \frac{\partial f(x_0)}{\partial x} + \frac{h^2}{2!} \frac{\partial^2 f(x_0)}{\partial x^2} + \frac{h^3}{3!} \frac{\partial^3 f(x_0)}{\partial x^3} + \frac{h^4}{4!} \frac{\partial^4 f(x_0)}{\partial x^4} + \frac{h^5}{5!} \frac{\partial^5 f(\xi ')}{\partial x^5}\\
+      \Rightarrow & \frac{h^3}{3!} \frac{\partial^3 f(x_0)}{\partial x^3} = f(x + h) - f(x_0) - h \frac{\partial f(x_0)}{\partial x} - \frac{h^2}{2!} \frac{\partial^2 f(x_0)}{\partial x^2} - \frac{h^4}{4!} \frac{\partial^4 f(x_0)}{\partial x^4} - \frac{h^5}{5!} \frac{\partial^5 f(\xi')}{\partial x^5}
+    \end{align*}
+    We also have
+    \begin{align*}
+                  & f(x - h) = f(x_0) - h \frac{\partial f(x_0)}{\partial x} + \frac{h^2}{2!} \frac{\partial^2 f(x_0)}{\partial x^2} - \frac{h^3}{3!} \frac{\partial^3 f(x_0)}{\partial x^3} + \frac{h^4}{4!} \frac{\partial^4 f(x_0)}{\partial x^4} - \frac{h^5}{5!} \frac{\partial^5 f(\xi'')}{\partial x^5}\\
+      \Rightarrow & \frac{h^3}{3!} \frac{\partial^3 f(x_0)}{\partial x^3} = f(x_0) - h \frac{\partial f(x_0)}{\partial x} + \frac{h^2}{2!} \frac{\partial^2 f(x_0)}{\partial x^2} - f(x - h) + \frac{h^4}{4!} \frac{\partial^4 f(x_0)}{\partial x^4} - \frac{h^5}{5!} \frac{\partial^5 f(\xi'')}{\partial x^5}
+    \end{align*}
+    Adding these expressions together, we get:
+    \begin{align}
+      & \frac{h^3}{3} \frac{\partial^3 f(x_0)}{\partial x^3} = f(x + h) - f(x - h) - 2 h \frac{\partial f(x_0)}{\partial x} + \frac{h^5}{5!} \frac{\partial^5 f(\mu')}{\partial x^5} \label{eq:thirdDevFirst}
+    \end{align}
+    From this it can be seen that this estimate is at best $O(h^2)$.
+    The estimate of $\frac{\partial f(x_0)}{\partial x}$ must be $O(h^4)$ or better for the third dertivative estimate to retain its accuracy.
+    Note:
+    \begin{align*}
+      f(x + h) = f(x_0) + h \frac{\partial f(x_0)}{\partial x} + \frac{h^2}{2} \frac{\partial^2 f(x_0)}{\partial x^2} + \frac{h^3}{6} \frac{\partial^3 f(x_0)}{\partial x^3} + \frac{h^4}{24} \frac{\partial^4 f(\chi_1)}{\partial x^4}
+    \end{align*}
+    \begin{align*}
+      f(x - h) = f(x_0) - h \frac{\partial f(x_0)}{\partial x} + \frac{h^2}{2} \frac{\partial^2 f(x_0)}{\partial x^2} - \frac{h^3}{6} \frac{\partial^3 f(x_0)}{\partial x^3} + \frac{h^4}{24} \frac{\partial^4 f(\chi_2)}{\partial x^4}
+    \end{align*}
+    \begin{align*}
+      f(x + 2 h) = f(x_0) + 2 h \frac{\partial f(x_0)}{\partial x} + 2 h^2 \frac{\partial^2 f(x_0)}{\partial x^2} + \frac{4 h^3}{3} \frac{\partial^3 f(x_0)}{\partial x^3} + \frac{2 h^4}{3} \frac{\partial^4 f(\chi_3)}{\partial x^4}
+    \end{align*}
+    \begin{align*}
+      f(x - 2 h) = f(x_0) - 2 h \frac{\partial f(x_0)}{\partial x} + 2 h^2 \frac{\partial^2 f(x_0)}{\partial x^2} - \frac{4 h^3}{3} \frac{\partial^3 f(x_0)}{\partial x^3} + \frac{2 h^4}{3} \frac{\partial^4 f(\chi_4)}{\partial x^4}
+    \end{align*}
+    Manipulation of these terms results in the cancellation of unwanted terms:
+    \begin{align*}
+      f(x + h) - f(x - h) =  2 h \frac{\partial f(x_0)}{\partial x} + \frac{h^3}{3} \frac{\partial^3 f(x_0)}{\partial x^3} + \frac{h^4}{24} \frac{\partial^4 f(\xi_1)}{\partial x^4}
+    \end{align*}
+    \begin{align*}
+      f(x + 2 h) - f(x - 2 h) = 4 h \frac{\partial f(x_0)}{\partial x} + \frac{8 h^3}{3} \frac{\partial^3 f(x_0)}{\partial x^3} + \frac{2 h^4}{3} \frac{\partial^4 f(\xi_2)}{\partial x^4}
+    \end{align*}
+    And finally:
+    \begin{align*}
+      f(x - 2 h)- 8 f(x - h) + 8 f(x + h) - f(x + 2 h) =  12 h \frac{\partial f(x_0)}{\partial x} + \frac{h^4}{24} \frac{\partial^4 f(\xi_3)}{\partial x^4}
+    \end{align*}
+    From this we can get a second order approximation of $f$'s first deriviative:
+    \begin{align*}
+      \frac{\partial f(x_0)}{\partial x} = \frac{f(x - 2 h)- 8 f(x - h) + 8 f(x + h) - f(x - 2 h)}{12 h} - \frac{h^4}{24} \frac{\partial^4 f(\xi_3)}{\partial x^4}
+    \end{align*}
+    This expression in combination with Eq.~\ref{eq:thirdDevFirst} gives the second order approximation of $u_{xxx}$:
+    \begin{align*}
+                  & \frac{h^3}{3} \frac{\partial^3 f(x_0)}{\partial x^3} = f(x + h) - f(x - h) - \frac{f(x - 2 h)- 8 f(x - h) + 8 f(x + h) - f(x + 2 h)}{6} + \frac{h^5}{5!} \frac{\partial^5 f(\mu')}{\partial x^5}\\
+      \Rightarrow & \frac{\partial^3 f(x_0)}{\partial x^3} = \frac{3 f(x + h) - 3 f(x - h)}{h^3} - \frac{f(x - 2 h)- 8 f(x - h) + 8 f(x + h) - f(x + 2 h)}{2 h^3} + \frac{h^5}{5!} \frac{\partial^5 f(\mu')}{\partial x^5}\\
+      \Rightarrow & \frac{\partial^3 f(x_0)}{\partial x^3} = \frac{- f(x - 2 h) + 2 f(x - h) - 2 f(x + h) + f(x +  2 h)}{2 h^3} + \frac{h^5}{5!} \frac{\partial^5 f(\mu')}{\partial x^5} 
+    \end{align*}
+\end{enumerate}
+
+\end{document}

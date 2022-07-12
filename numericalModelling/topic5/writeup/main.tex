@@ -1,0 +1,135 @@
+\documentclass[12pt,a4]{article}
+\usepackage{physics, amsmath,amsfonts,amsthm,amssymb, mathtools,steinmetz, gensymb, siunitx}	% LOADS USEFUL MATH STUFF
+\usepackage{xcolor,graphicx}
+\usepackage[left=45pt, top=60pt, right=45pt, bottom=65pt ,a4paper]{geometry} 				% ADJUSTS PAGE
+\usepackage{setspace}
+\usepackage{caption}
+\usepackage{tikz}
+\usepackage{pgf,tikz,pgfplots,wrapfig}
+\usepackage{mathrsfs}
+\usepackage{fancyhdr}
+\usepackage{float}
+\usepackage{array}
+\usepackage{booktabs,multirow}
+\usepackage{bm}
+
+\usetikzlibrary{decorations.text, calc}
+\pgfplotsset{compat=1.7}
+
+\usetikzlibrary{decorations.pathreplacing,decorations.markings}
+\usepgfplotslibrary{fillbetween}
+
+\newcommand{\vect}[1]{\boldsymbol{#1}}
+
+\usepackage{hyperref}
+%\usepackage[style= ACM-Reference-Format, maxbibnames=6, minnames=1,maxnames = 1]{biblatex}
+%\addbibresource{references.bib}
+
+
+\AtBeginDocument{\hypersetup{pdfborder={0 0 0}}}
+
+\title{
+\textsc{Topic 5}
+}
+\author{\textsc{J L Gouws}
+}
+\date{\today
+\\[1cm]}
+
+
+
+\usepackage{graphicx}
+\usepackage{array}
+
+
+
+
+\begin{document}
+\thispagestyle{empty}
+
+\maketitle
+
+\begin{enumerate}
+  \item
+    \begin{align*}
+                  & f(x_0 - h) = f(x_0) - h \frac{\partial f(x_0)}{\partial x} + \frac{h^2}{2!} \frac{\partial^2 f(\mu)}{\partial x^2}\\
+      \Rightarrow & \frac{\partial f(x_0)}{\partial x} = \frac{f(x_0) - f(x_0 - h)}{h} - \frac{h}{2} \frac{\partial^2 f(\mu)}{\partial x^2}
+    \end{align*}
+    \begin{align*}
+      f(x_0 + h) = f(x_0) + h \frac{\partial f(x_0)}{\partial x} + \frac{h^2}{2!} \frac{\partial^2 f(x_0)}{\partial x^2} + \frac{h^3}{3!} \frac{\partial^3 f(\xi')}{\partial x^3} 
+    \end{align*}
+    We also have
+    \begin{align*}
+      f(x_0 - h) = f(x_0) - h \frac{\partial f(x_0)}{\partial x} + \frac{h^2}{2!} \frac{\partial^2 f(x_0)}{\partial x^2} - \frac{h^3}{3!} \frac{\partial^3 f(\xi'')}{\partial x^3}
+    \end{align*}
+    Subtracting the second from the first:
+    \begin{align*}
+      & f(x_0 + h) - f(x_0 - h) = 2 h \frac{\partial f(x_0)}{\partial x} + \frac{h^3}{3!} \frac{\partial^3 f(\mu)}{\partial x^3} \\
+      \Rightarrow & \frac{\partial f(x_0)}{\partial x} = \frac{f(x_0 + h) - f(x_0 - h)}{ 2 h}  - \frac{h^2}{12} \frac{\partial^3 f(\mu)}{\partial x^3} 
+    \end{align*}
+    \begin{align*}
+      f(x_0 + h) = f(x_0) + h \frac{\partial f(x_0)}{\partial x} + \frac{h^2}{2!} \frac{\partial^2 f(x_0)}{\partial x^2} + \frac{h^3}{3!} \frac{\partial^3 f(x_0)}{\partial x^3} + \frac{h^4}{4!} \frac{\partial^4 f(\xi')}{\partial x^4}
+    \end{align*}
+    We also have
+    \begin{align*}
+      f(x_0 - h) = f(x_0) - h \frac{\partial f(x_0)}{\partial x} + \frac{h^2}{2!} \frac{\partial^2 f(x_0)}{\partial x^2} - \frac{h^3}{3!} \frac{\partial^3 f(x_0)}{\partial x^3} + \frac{h^4}{4!} \frac{\partial^4 f(\xi '')}{\partial x^4}
+    \end{align*}
+    Adding these expressions together, we get:
+    \begin{align*}
+                  & f(x_0 + h) + f(x_0 - h) =  2 f(x_0) + h^2 \frac{\partial^2 f(x_0)}{\partial x^2} + \frac{h^4}{12} \frac{\partial^4 f(\mu)}{\partial x^4}\\
+      \Rightarrow & \frac{\partial^2 f(x_0)}{\partial x^2} =\frac{f(x_0 + h) - 2 f(x_0) + f(x_0 - h)}{h^2}  + \frac{h^2}{12} \frac{\partial^4 f(\mu)}{\partial x^4}
+    \end{align*}
+  \item
+    \begin{figure}[!h]
+      \centering
+      \includegraphics[]{../figs/upwindEuler.pdf} 
+      \caption{Upwind Euler Evolution of an advection equation with $\Delta t = \Delta x$ and error}
+    \end{figure}
+
+    \begin{figure}[!h]
+      \centering
+      \includegraphics[]{../figs/upwindEuler1.1.pdf}
+      \caption{Upwind Euler Evolution of an advection equation with $\Delta t = 1.1\Delta x$ and error}
+    \end{figure}
+
+    \begin{figure}[!h]
+      \centering
+      \includegraphics[]{../figs/centeredEuler.pdf}
+      \caption{Centered derivative and Euler Evolution of an advection equation  with $\Delta t = \Delta x$ and error}
+    \end{figure}
+
+  \item
+    \iffalse
+    \begin{figure}[!h]
+      \centering
+      \includegraphics[]{../figs/centeredEuler.pdf}
+      \caption{Euler Evolution of a heat equation with $\Delta t = \Delta x$}
+    \end{figure}
+    \fi
+
+    \begin{figure}[!h]
+      \centering
+      \includegraphics[]{../figs/heatEuler01dx.pdf}
+      \caption{Euler Evolution of a heat equation with $\Delta t = 0.01 \Delta x$}
+    \end{figure}
+
+    \begin{figure}[!h]
+      \centering
+      \includegraphics[]{../figs/heatEulerdx.pdf}
+      \caption{Euler Evolution of a heat equation with $\Delta t = \Delta x$}
+    \end{figure}
+
+    \begin{figure}[!h]
+      \centering
+      \includegraphics[]{../figs/heatEulerMaxdx.pdf}
+      \caption{Maximum $\Delta t$ step size of Euler Evolution of a heat equation}
+    \end{figure}
+
+    \begin{figure}[!h]
+      \centering
+      \includegraphics[]{../figs/heatRK4Maxdx.pdf}
+      \caption{Maximum $\Delta t$ step size of Runge-Kutta Evolution of a heat equation}
+    \end{figure}
+\end{enumerate}
+
+\end{document}

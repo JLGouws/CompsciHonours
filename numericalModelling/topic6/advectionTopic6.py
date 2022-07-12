@@ -53,15 +53,35 @@ def runge_kutta4step(f, t, w, h = 0.1):
   K4 = h * f(t + h, w + K3)
   return [t + h], [w + (K1 + 2 * K2 + 2 * K3 + K4) / 6]
 
+def taylor_step(f, t, w, h = 0.1):
+  return [t + h], [w + h * f(t, w)]
+
 def setAdvection(k, dx):
     def advection(t, u):
         ux = derivative(u, dx)
         return k * ux 
     return advection
 
+def setLaxWendroff(k, dx):
+    def laxWendroff(t, u):
+        u = np.array(u)
+        ux = derivativePeriodic(u, dx)
+        secondTerm = dt / dx ** 2 / 2 * (
+            np.concatenate(([(u[1] - 2 * u[0] + u[-2])], 
+                (u[2:] - 2 * u[1: -1] + u[:-2]), [(u[1] - 2 * u[0] + u[-2])]))
+                )
+        return - k * ux + k ** 2 * secondTerm
+    return laxWendroff
+
 def setAdvectionPeriodic(k, dx):
     def advection(t, u):
         ux = derivativePeriodic(u, dx)
+        return k * ux 
+    return advection
+
+def setAdvectionUpwindPeriodic(k, dx):
+    def advection(t, u):
+        ux = derivativeUpwindPeriodic(u, dx)
         return k * ux 
     return advection
 
@@ -100,10 +120,20 @@ def derivative(fx, h):
     return np.concatenate(([(-3 * fx[0] + 4 * fx[1] - fx[2]) * .5 / h], 
         (fx[2:] - fx[:-2]) * .5 / h, [(3 * fx[-1] - 4 * fx[-2] + fx[-3]) * .5 / h]))
 
+def derivativeUpwind(fx, h):
+    fx = np.array(fx)
+    return np.concatenate(([(-3 * fx[0] + 4 * fx[1] - fx[2]) * .5 / h], 
+        (fx[2:] - fx[:-2]) * .5 / h, [(3 * fx[-1] - 4 * fx[-2] + fx[-3]) * .5 / h]))
+
 def derivativePeriodic(fx, h):
     fx = np.array(fx)
     return np.concatenate(([(fx[1] - fx[-2]) * .5 / h], 
         (fx[2:] - fx[:-2]) * .5 / h, [(fx[1] - fx[-2]) * .5 / h]))
+
+def derivativeUpwindPeriodic(fx, h):
+    fx = np.array(fx)
+    return np.concatenate((
+        (fx[1:] - fx[:-1]) / h, [(fx[1] - fx[0]) / h]))
 
 def xDerivativePeriodic(fx, h):
     fx = np.array(fx)
@@ -131,140 +161,75 @@ def evolvePde(F, u0, x, ti, tf, dt):
         t += ti
     return np.array(solution), np.array(t)
 
-def evolvePdeDirichlet(F, u0, x, ti, tf, dt):
+def evolvePdeEuler(F, u0, x, ti, tf, dt):
     t = [ti]
     solution = [u0]
     while t[-1] <= tf:
-        v0, vn = solution[-1][0], solution[-1][-1]
-        ti, y = runge_kutta4step(F, t[-1], solution[-1][1:-1], dt)
-        solution += [np.concatenate(([v0], y[0], [vn]))]
+        ti, y = taylor_step(F, t[-1], solution[-1], dt)
+        solution += y
         t += ti
     return np.array(solution), np.array(t)
 
-#def evolvePde2nd(F, u0, udot0, x, ti, tf, dt):
-#    t = [ti]
-#    solution = [u0]
-#    ti, y = runge_kutta4step(lambda t, x: udot0, ti, u0, dt)
-#    t += ti
-#    solution += y
-#    while t[-1] <= tf:
-#        ti, q = runge_kutta4step(F, t[-1], solution[-1], dt)
-#        ti, y = runge_kutta4step(lambda t, x: q[0], t[-1], solution[-1], dt)
-#        solution += y
-#        t += ti
-#    return np.array(solution), np.array(t)
-
-#
-#x = np.linspace(- 2.5 * np.pi, 1.5 * np.pi, 1000)
-#dx = x[1] - x[0]
-#dt = dx / 200
-#fx = np.exp(- 0.5 * x ** 2)
-#
-#advectionEquation = setAdvection(2, dx)
-#
-#solution, t = evolvePde(advectionEquation, fx, x, 0, 50000 * dt, dt)
-#
-#fig, ax = plt.subplots(1)
-#ax.plot(x, solution[0])
-#ax.plot(x, solution[25000])
-#ax.plot(x, solution[50000])
-#fig.savefig("advectionSteps.pdf")
-#
-#fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
-#
-#X, Y = np.meshgrid(x, t)
-#
-#surf = ax.plot_surface(X, Y, solution, cmap=cm.coolwarm,
-#                       linewidth=0, antialiased=False)
-#
-#ax.zaxis.set_major_locator(LinearLocator(10))
-#ax.zaxis.set_major_formatter('{x:.02f}')
-#
-#fig.colorbar(surf, shrink=0.5, aspect=5)
-#
-#fig.savefig("advection.pdf")
-#
-#x = np.linspace(- 2 * np.pi, 2 * np.pi, 1000)
-#dx = x[1] - x[0]
-#dt = dx / 300
-#fx = np.exp(- 0.5 * x ** 2)
-#
-#heatEquation = setHeat(3, dx)
-#
-#solution, t = evolvePde(heatEquation, fx, x, 0, 50000 * dt, dt)
-#
-#fig, ax = plt.subplots(1)
-#ax.plot(x, solution[0])
-#ax.plot(x, solution[25000])
-#ax.plot(x, solution[50000])
-#fig.savefig("heatSteps.pdf")
-#
-#fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
-#
-#X, Y = np.meshgrid(x, t)
-#
-#surf = ax.plot_surface(X, Y, solution, cmap=cm.coolwarm,
-#                       linewidth=0, antialiased=False)
-#
-#ax.zaxis.set_major_locator(LinearLocator(10))
-#ax.zaxis.set_major_formatter('{x:.02f}')
-#
-#fig.colorbar(surf, shrink=0.5, aspect=5)
-#
-#fig.savefig("heat.pdf")
-#
-#x = np.linspace(- 2 * np.pi, 2 * np.pi, 1000)
-#dx = x[1] - x[0]
-#dt = dx / 300
-#fx = np.exp(- x ** 2)
-#gx = np.zeros_like(x)
-#
-#waveEquation = setWave(0.5, dx)
-#
-#solution, t = evolvePde(waveEquation, np.array([fx, gx]), x, 0, 50000 * dt, dt)
-#
-#solution = solution[:,0,:]
-#
-#fig, ax = plt.subplots(1)
-#ax.plot(x, solution[0])
-#ax.plot(x, solution[50000])
-##ax.plot(x, solution[50000])
-#fig.savefig("waveSteps.pdf")
-#
-#fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
-#
-#X, Y = np.meshgrid(x, t)
-#
-#surf = ax.plot_surface(X, Y, solution, cmap=cm.coolwarm,
-#                       linewidth=0, antialiased=False)
-#
-#ax.zaxis.set_major_locator(LinearLocator(10))
-#ax.zaxis.set_major_formatter('{x:.02f}')
-#
-#fig.colorbar(surf, shrink=0.5, aspect=5)
-##plt.show()
-#fig.savefig("waveEq.pdf")
-#
 x = np.linspace(- np.pi, np.pi, 100)
 dx = x[1] - x[0]
-dt = dx / 8
-fx = np.cos(x / 2) ** 8
+dt = dx
+fx = 1 * (x > -np.pi/2) * (x < np.pi/ 2) #np.sin(x) * np.cos(x / 2) ** 8
 
-heatEquation = setHeat(1, dx)
+advecEquation = setAdvectionUpwindPeriodic(1, dx)
 
-solution, t = evolvePdeDirichlet(heatEquation, fx, x, 0, 500 * dt, dt)
+solution, t = evolvePdeEuler(advecEquation, fx, x, 0, 2 * np.pi, dt)
 
-#solution = solution[:,0,:] + solution[:,1,:]
+fig, ax = plt.subplots(1)
+ax.plot(x, solution[-1], lw = 4)
+ax.plot(x, fx)
+fig.savefig("figs/eulerdx.pdf")
+
+x = np.linspace(- np.pi, np.pi, 100)
+dx = x[1] - x[0]
+dt = 0.8 * dx
+fx = 1 * (x > -np.pi/2) * (x < np.pi/ 2) #np.sin(x) * np.cos(x / 2) ** 8
+
+advecEquation = setAdvectionUpwindPeriodic(1, dx)
+
+eulerSolution, t = evolvePdeEuler(advecEquation, fx, x, 0, 2 * np.pi, dt)
+
+fig, ax = plt.subplots(1)
+ax.plot(x, eulerSolution[-1], lw = 4)
+ax.plot(x, fx)
+fig.savefig("figs/euler.8dx.pdf")
+
+x = np.linspace(- np.pi, np.pi, 100)
+dx = x[1] - x[0]
+dt = dx * 0.8
+fx = 1 * (x > -np.pi/2) * (x < np.pi/ 2) #np.sin(x) * np.cos(x / 2) ** 8
+
+advecEquation = setLaxWendroff(1, dx)
+
+solution, t = evolvePdeEuler(advecEquation, fx, x, 0, 2 * np.pi, dt)
+
+fig, ax = plt.subplots(2)
+ax[0].plot(x, solution[-1], lw = 4, label = "Lax-Wendroff")
+ax[0].plot(x, fx, label = "Exact")
+ax[0].legend()
+
+ax[1].plot(x, solution[-1], lw = 4, label = "Lax-Wendroff")
+ax[1].plot(x, eulerSolution[-1], label = "upwind-Euler")
+ax[1].legend()
+fig.savefig("figs/laxWendroff.pdf")
+
+
+quit()
+
 
 fps = 1000
                                                                                 
 fig, ax = plt.subplots(1)                         
                                                                                 
-ax.set_ylim(-0.8, 0.8);                                                             
+ax.set_ylim(-1.6, 1.6);                                                             
                                                                                 
 def update(frame, solution, ax):                                              
     ax.clear()
-    ax.set_ylim(-0.8, 0.8);                                                             
+    ax.set_ylim(-2, 2);                                                             
     ax.plot(x, solution[frame])
                                                                                 
 ax.plot(x, solution[0])
@@ -295,49 +260,3 @@ ax.zaxis.set_major_formatter('{x:.02f}')
 fig.colorbar(surf, shrink=0.5, aspect=5)
 #plt.show()
 fig.savefig("waveEqPeriodic.pdf")
-#
-#x = np.linspace(- np.pi, np.pi, 100)
-#y = np.linspace(- np.pi, np.pi, 100)
-#dx = x[1] - x[0]
-#dy = y[1] - y[0]
-#x, y = np.meshgrid(x, y)
-#dt = dx / 200
-#fx = np.exp(- x ** 2 - y ** 2)
-#gx = np.zeros_like(fx)
-#
-#waveEquation = setWavePeriodic2D(25, dx, dy)
-#
-#solution, t = evolvePde(waveEquation, np.array([fx, gx]), x, 0, 900 * dt, dt)
-#
-#print(solution.shape)
-#solution = solution[:,0,:,:]
-##
-##fig, ax = plt.subplots(1)
-##ax.plot(x, solution[0])
-##ax.plot(x, solution[50000])
-###ax.plot(x, solution[50000])
-##fig.savefig("waveStepsPeriodic.pdf")
-##
-#fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
-#
-#surf = ax.plot_surface(x, y, solution[0], cmap=cm.coolwarm,
-#                       linewidth=0, antialiased=False)
-#
-#ax.zaxis.set_major_locator(LinearLocator(10))
-#ax.zaxis.set_major_formatter('{x:.02f}')
-#
-#fig.colorbar(surf, shrink=0.5, aspect=5)
-#
-#fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
-#
-#surf = ax.plot_surface(x, y, solution[-1], cmap=cm.coolwarm,
-#                       linewidth=0, antialiased=False)
-#
-#ax.zaxis.set_major_locator(LinearLocator(10))
-#ax.zaxis.set_major_formatter('{x:.02f}')
-#
-#fig.colorbar(surf, shrink=0.5, aspect=5)
-#
-#plt.show()
-#fig.savefig("waveEqPeriodic.pdf")
-#

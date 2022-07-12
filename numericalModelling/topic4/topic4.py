@@ -55,7 +55,7 @@ def lotka_volterra(a):
 fig, ax = plt.subplots(figsize=(10,10))
 points = runge_kutta4(logistic, 0, 25, 0.05, h = 0.05)
 ax.plot(points[0], points[1])
-fig.savefig('logistic.pdf')
+fig.savefig('figs/logistic.pdf')
 
 solution = []
 time = []
@@ -82,13 +82,13 @@ for x0 in [(1,4), (1,3), (1,2), (1, 1.5), (1, 1.2), (1, 1), (1, 0.8)]:
     ax[0].plot(solution[-1][:, 0], solution[-1][:, 1])
 ax[1].plot(time[2], solution[2][:, 0])
 ax[1].plot(time[2], solution[2][:, 1], '--')
-fig.savefig('Lotka_Volterra.pdf')
+fig.savefig('figs/Lotka_Volterra.pdf')
 
 fig, ax = plt.subplots(len(Lt), 1, figsize=(10,5 * len(Lt)))
 for i, L in enumerate(zip(Lt, L0)):
     ax[i].plot(time[i], L[0] - L[1])
     ax[i].plot(time2[i], Lt2[i] - L02[i])
-fig.savefig('error.pdf')
+fig.savefig('figs/LVError.pdf')
 
 solution = []
 time = []
@@ -105,7 +105,7 @@ for x0 in [(1,2)]:
     ax[0].plot(solution[-1][:, 0], solution[-1][:, 1])
 ax[1].plot(time[0], solution[0][:, 0])
 ax[1].plot(time[0], solution[0][:, 1], '--')
-fig.savefig('Lotka_Volterra0.1.pdf')
+fig.savefig('figs/Lotka_Volterra0.1.pdf')
 
 ################################################################################
 #2.
@@ -134,6 +134,10 @@ def lorenz(sigma, b, r):
 points = runge_kutta4(lorenz(10, 8 / 3, 28), 0, 40, np.array([2, 0, 0]), h = 0.005)
 timelorenz = np.array(points[0])
 solutionlorenz = np.array(points[1])
+
+points = runge_kutta4(lorenz(10, 8 / 3, 28), 0, 40, np.array([2.0001, 0, 0]), h = 0.005)
+solutionlorenz0001 = np.array(points[1])
+
 fig = plt.figure()
 ax = fig.add_subplot(1, 3, 1, projection='3d')
 ax.plot(solutionlorenz[:, 0], solutionlorenz[:, 1], solutionlorenz[:, 2])
@@ -148,3 +152,8 @@ ax3 = fig.add_subplot(1, 3, 3, projection='3d')
 ax3.plot(solutionlorenz[:, 0], solutionlorenz[:, 1], solutionlorenz[:, 2], alpha = 0.6)
 ax3.plot(solutionlorenz2[:, 0], solutionlorenz2[:, 1], solutionlorenz2[:, 2], alpha = 0.6)
 fig.savefig('lorenz.pdf')
+
+fig, ax = plt.subplots(1)
+ax.plot(timelorenz, solutionlorenz[:, 0], alpha = 0.7, c = 'r')
+ax.plot(timelorenz, solutionlorenz0001[:, 0], '--',  alpha = 0.7, c = 'b')
+fig.savefig('figs/yvtLorenz.pdf')

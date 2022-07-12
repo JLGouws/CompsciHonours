@@ -1,0 +1,81 @@
+\documentclass[12pt,a4]{article}
+\usepackage{physics, amsmath,amsfonts,amsthm,amssymb, mathtools,steinmetz, gensymb, siunitx}	% LOADS USEFUL MATH STUFF
+\usepackage{xcolor,graphicx}
+\usepackage[left=45pt, top=60pt, right=45pt, bottom=65pt ,a4paper]{geometry} 				% ADJUSTS PAGE
+\usepackage{setspace}
+\usepackage{caption}
+\usepackage{tikz}
+\usepackage{pgf,tikz,pgfplots,wrapfig}
+\usepackage{mathrsfs}
+\usepackage{fancyhdr}
+\usepackage{float}
+\usepackage{array}
+\usepackage{booktabs,multirow}
+\usepackage{bm}
+
+\usetikzlibrary{decorations.text, calc}
+\pgfplotsset{compat=1.7}
+
+\usetikzlibrary{decorations.pathreplacing,decorations.markings}
+\usepgfplotslibrary{fillbetween}
+
+\newcommand{\vect}[1]{\boldsymbol{#1}}
+
+\usepackage{hyperref}
+%\usepackage[style= ACM-Reference-Format, maxbibnames=6, minnames=1,maxnames = 1]{biblatex}
+%\addbibresource{references.bib}
+
+
+\AtBeginDocument{\hypersetup{pdfborder={0 0 0}}}
+
+\title{
+\textsc{Topic 5}
+}
+\author{\textsc{J L Gouws}
+}
+\date{\today
+\\[1cm]}
+
+
+
+\usepackage{graphicx}
+\usepackage{array}
+
+
+
+
+\begin{document}
+\thispagestyle{empty}
+
+\maketitle
+
+\begin{enumerate}
+  \item
+    The advection of a top hat function with an Euler integrator.
+    \begin{enumerate}
+      \item
+        \begin{figure}[H]
+          \centering
+          \includegraphics[]{../figs/eulerdx.pdf}
+          \caption{Euler Evolution of an advection equation with $\Delta t = 0.01 \Delta x$}
+        \end{figure}
+      \item
+        \begin{figure}[H]
+          \centering
+          \includegraphics[]{../figs/euler.8dx.pdf}
+          \caption{Euler Evolution of an advection equation with $\Delta t = 0.8 \Delta x$}
+        \end{figure}
+    \end{enumerate}
+  \item
+    The advection of a top hat function with an Euler integrator.
+    \begin{enumerate}
+      \item
+        \begin{figure}[H]
+          \centering
+          \includegraphics[]{../figs/laxWendroff.pdf}
+          \caption{Lax-Wendroff Evolution of an advection equation with $\Delta t = 0.8 \Delta x$}
+        \end{figure}
+    \end{enumerate}
+\end{enumerate}
+
+\end{document}

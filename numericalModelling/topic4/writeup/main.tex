@@ -1,0 +1,85 @@
+\documentclass[12pt,a4]{article}
+\usepackage{physics, amsmath,amsfonts,amsthm,amssymb, mathtools,steinmetz, gensymb, siunitx}	% LOADS USEFUL MATH STUFF
+\usepackage{xcolor,graphicx}
+\usepackage[left=45pt, top=20pt, right=45pt, bottom=45pt ,a4paper]{geometry} 				% ADJUSTS PAGE
+\usepackage{setspace}
+\usepackage{caption}
+\usepackage{tikz}
+\usepackage{pgf,tikz,pgfplots,wrapfig}
+\usepackage{mathrsfs}
+\usepackage{fancyhdr}
+\usepackage{float}
+\usepackage{array}
+\usepackage{booktabs,multirow}
+\usepackage{bm}
+
+\usetikzlibrary{decorations.text, calc}
+\pgfplotsset{compat=1.7}
+
+\usetikzlibrary{decorations.pathreplacing,decorations.markings}
+\usepgfplotslibrary{fillbetween}
+
+\newcommand{\vect}[1]{\boldsymbol{#1}}
+
+\usepackage{hyperref}
+%\usepackage[style= ACM-Reference-Format, maxbibnames=6, minnames=1,maxnames = 1]{biblatex}
+%\addbibresource{references.bib}
+
+
+\AtBeginDocument{\hypersetup{pdfborder={0 0 0}}}
+
+\title{
+\textsc{Topic 5}
+}
+\author{\textsc{J L Gouws}
+}
+\date{\today
+\\[1cm]}
+
+
+
+\usepackage{graphicx}
+\usepackage{array}
+
+
+
+
+\begin{document}
+\thispagestyle{empty}
+
+\maketitle
+
+\begin{enumerate}
+  \item
+    \begin{enumerate}
+      \item
+        Solutions to a Lotka-Volterra problem:
+        \begin{figure}[!h]
+          \centering
+          \includegraphics[scale = 0.6]{../figs/Lotka_Volterra.pdf} 
+          \caption{Upwind Euler Evolution of an advection equation with $\Delta t = \Delta x$ and error}
+        \end{figure}
+
+      \item
+        The value of:
+        \begin{equation*}
+          L = f x + d \ln x - cy - a \ln y
+        \end{equation*}
+
+        \begin{figure}[!h]
+          \centering
+          \includegraphics[scale = 0.6]{../figs/LVError.pdf}
+          \caption{The value of $L$ along solutions}
+        \end{figure}
+
+      \item
+        \begin{figure}[!h]
+          \centering
+          \includegraphics[scale = 0.6]{../figs/Lotka_Volterra0.1.pdf}
+          \caption{Centered derivative and Euler Evolution of an advection equation  with $\Delta t = \Delta x$ and error}
+        \end{figure}
+
+    \end{enumerate}
+\end{enumerate}
+
+\end{document}
