@@ -54,10 +54,10 @@
     \begin{enumerate}
       \item
         Solutions to a Lotka-Volterra problem:
-        \begin{figure}[!h]
+        \begin{figure}[H]
           \centering
           \includegraphics[scale = 0.6]{../figs/Lotka_Volterra.pdf} 
-          \caption{Upwind Euler Evolution of an advection equation with $\Delta t = \Delta x$ and error}
+          \caption{Orbits of a Lotka Volterra system}
         \end{figure}
 
       \item
@@ -66,20 +66,69 @@
           L = f x + d \ln x - cy - a \ln y
         \end{equation*}
 
-        \begin{figure}[!h]
+        \begin{figure}[H]
           \centering
           \includegraphics[scale = 0.6]{../figs/LVError.pdf}
           \caption{The value of $L$ along solutions}
         \end{figure}
 
       \item
-        \begin{figure}[!h]
+        Numerical soution to a slightly perturbed problem.
+        \begin{figure}[H]
           \centering
           \includegraphics[scale = 0.6]{../figs/Lotka_Volterra0.1.pdf}
           \caption{Centered derivative and Euler Evolution of an advection equation  with $\Delta t = \Delta x$ and error}
         \end{figure}
 
     \end{enumerate}
+  \item
+    \begin{enumerate}
+      \item
+        SIR model.
+        \begin{figure}[H]
+          \centering
+          \includegraphics[scale = 0.9]{../figs/SIR.pdf}
+          \caption{Evolution of an SIR model through time}
+        \end{figure}
+
+      \item
+        Figure~\ref{fig:SIRbetaHalved} shows that halving $\beta$ (the contagiousness parameter) has a large impact on the infection curve.
+        \begin{figure}[H]
+          \centering
+          \includegraphics[scale = 0.9]{../figs/SIRbetaHalved.pdf}
+          \caption{Evolution of an SIR model through time}
+          \label{fig:SIRbetaHalved}
+        \end{figure}
+  \end{enumerate}
+  \item
+    \begin{enumerate}
+      \item
+        Lorenz models are sensitive to initial conditions.
+        Figure~\ref{fig:xvtLorenz} illustrates the chaos exihited by a Lorenz model.
+        \begin{figure}[H]
+          \centering
+          \includegraphics[scale = 0.8]{../figs/xvtLorenz.pdf}
+          \caption{Sensitivity of Lorenz system to initial conditions}
+          \label{fig:xvtLorenz}
+        \end{figure}
+      \item
+        Figure~\ref{fig:LorenzChaosTimeStep} illustrates the sensitivity solving of Lorenz model.
+        The solution to the same problem results in substantially different solutions depending on the numerical integrator's time step.
+        \begin{figure}[H]
+          \centering
+          \includegraphics[scale = 0.4]{../figs/LorenzChaosTimeStep.pdf}
+          \caption{Chaos of Lorenz system when evolution time step is varied}
+          \label{fig:LorenzChaosTimeStep}
+        \end{figure}
+      \item
+        Figure~\ref{fig:lorenz} shows the lorenz model settling into two lobes.
+        \begin{figure}[H]
+          \centering
+          \includegraphics[scale = 0.7]{../figs/lorenz.pdf}
+          \caption{3D plots of a Lorenz model}
+          \label{fig:lorenz}
+        \end{figure}
+  \end{enumerate}
 \end{enumerate}
 
 \end{document}
