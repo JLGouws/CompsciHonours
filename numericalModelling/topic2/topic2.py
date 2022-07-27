@@ -35,8 +35,8 @@ time = points[:, 0]
 solution = points[:, 1]
 
 fig, ax = plt.subplots(figsize=(10,10))
-ax.plot(time, solution)
-fig.savefig("1a.pdf")
+ax.plot(time, solution, lw = 8, c = "hotpink")
+fig.savefig("figs/1a.pdf")
 
 ################################################################################
 #1b.
@@ -45,8 +45,8 @@ time = points[:, 0]
 solution = points[:, 1]
 
 fig, ax = plt.subplots(figsize=(10,10))
-ax.plot(time, solution, 'bo')
-fig.savefig("1b.pdf")
+ax.plot(time, solution, 'o', c = "lime")
+fig.savefig("figs/1b.pdf")
 
 ################################################################################
 #1c.
@@ -55,8 +55,8 @@ time = points[:, 0]
 solution = points[:, 1]
 
 fig, ax = plt.subplots(figsize=(10,10))
-ax.scatter(time, solution)
-fig.savefig("1c.pdf")
+ax.scatter(time, solution, c = "aqua")
+fig.savefig("figs/1c.pdf")
 
 ################################################################################
 #2.
@@ -75,7 +75,7 @@ fig= plt.figure(figsize=(10,10))
 ax = sns.lineplot(data = df, x = 'time', y = '$\\nu$', hue = 'u_0', palette = 'icefire', legend = 'full')
 ax.set(ylim = [-.75, 2.2], xlim = [0.0, 7.0])
 ax.legend(loc = 'upper right', title = '$u_0$')
-fig.savefig("2.pdf")
+fig.savefig("figs/2.pdf")
 
 ################################################################################
 #3.
@@ -109,4 +109,4 @@ for i, (method, name) in enumerate([(taylors_method, "Euler's Method"),
     ax[i].legend(title = 'Time step')
     ax[i].set(title = name, xlabel = 'time', ylabel = '$\\nu$')
 
-fig.savefig("3a.pdf")
+fig.savefig("figs/3a.pdf")

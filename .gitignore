@@ -8,4 +8,10 @@
 *.zip
 *.xls
 *.xlsx
-
+*.class
+*.bbl
+*.bcf
+*.blg
+*.toc
+*.nav
+*.vrb
