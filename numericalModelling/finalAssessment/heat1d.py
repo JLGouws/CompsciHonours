@@ -56,6 +56,9 @@ def runge_kutta4step(f, t, w, h = 0.1):
 def taylor_step(f, t, w, h = 0.1):
   return [t + h], [w + h * f(t, w)]
 
+def taylorStepGhost(f, t, w, h = 0.1):
+    return [t + h], [w[1:-1] + h * f(t, w)]
+
 def setAdvection(k, dx):
     def advection(t, u):
         ux = derivative(u, dx)
@@ -78,6 +81,25 @@ def setHeat(k, dx):
     def heat(t, u):
         uxx = derivative(derivative(u, dx), dx)
         return k * uxx
+    return heat
+
+def set2DHeatNeumann(D, dx, dy, vx1 = 0, vx2 = 0, vy1 = 0, vy2 = 0):
+    def heat(t, u):
+        uxx = xSecondDerivativeNeuman(u, dx, vx1, vx2)
+        uyy = ySecondDerivativeNeuman(u, dy, vy1, vy2)
+        return D * (uxx + uyy) 
+    return heat
+
+def set1DHeatNeumannGhost(D, dx, vx1 = 0, vx2 = 0):
+    def heat(t, u):
+        uxx = xSecondDerivativeGhost1D(u, dx, vx1, vx2)
+        return D * uxx
+    return heat
+
+def set1DHeatNeumann(D, dx, vx1 = 0, vx2 = 0):
+    def heat(t, u):
+        uxx = xSecondDerivativeNeuman1D(u, dx, vx1, vx2)
+        return D * uxx 
     return heat
 
 def setWave(k, dx):
@@ -143,6 +165,28 @@ def xDerivativePeriodic(fx, h):
     return np.concatenate((np.array([(fx[1,:] - fx[-2,:]) * .5 / h]), 
         (fx[2:,:] - fx[:-2,:]) * .5 / h, np.array([(fx[1,:] - fx[-2,:]) * .5 / h])))
 
+def xSecondDerivativeGhost1D(fx, h, v1, v2):
+    fx = np.array(fx)
+    return (fx[:-2] - 2 * fx[1:-1] + fx[2:]) / h ** 2
+    
+def xSecondDerivativeNeuman1D(fx, h, v1, v2):
+    fx = np.array(fx)
+    return np.concatenate(([0, (fx[0] / 12 - 2 * fx[1] / 3 + 2 * fx[3] / 3 - fx[4] / 12 - h * v1) * 0.5 / h **2 ], 
+        (fx[1:-3] - 2 * fx[2:-2] + fx[3:-1]) / h ** 2, 
+        [( h * v2 - fx[-5] / 12 + 2 * fx[-4] / 3 - 2 * fx[-2] / 3 + fx[-1] / 12) * 0.5 / h **2 , 0]))
+
+def xSecondDerivativeNeuman(fx, h, v1, v2):
+    fx = np.array(fx)
+    return np.concatenate(([np.zeros_like(fx[0,:]), (fx[0,:] / 12 - 2 * fx[1,:] / 3 + 2 * fx[3, :] / 3 - fx[4,:] / 12 - h * v1) * 0.5 / h **2 ], 
+        (fx[1:-3,:] - 2 * fx[2:-2,:] + fx[3:-1,:]) / h ** 2, 
+        [( h * v2 - fx[-5,:] / 12 + 2 * fx[-4,:] / 3 - 2 * fx[-2, :] / 3 + fx[-1,:] / 12) * 0.5 / h **2 , np.zeros_like(fx[0,:])]))
+
+def ySecondDerivativeNeuman(fx, h, v1, v2):
+    fx = np.array(fx)
+    return np.concatenate((np.concatenate((np.array([np.zeros_like(fx[:,0])]).T, np.array([fx[:,0] / 12 - 2 * fx[:,1] / 3 + 2 * fx[:,3] / 3 - fx[:,4] / 12 - h * v1]).T * 0.5 / h **2), axis = 1), 
+        (fx[:,1:-3] - 2 * fx[:,2:-2] + fx[:,3:-1]) / h ** 2, 
+        np.concatenate((np.array([h * v2 - fx[:,-5] / 12 + 2 * fx[:,-4] / 3 - 2 * fx[:,-2] / 3 + fx[:,-1] / 12]).T * 0.5 / h **2 , np.array([np.zeros_like(fx[:,0])]).T), axis = 1)), axis = 1)
+
 def yDerivativePeriodic(fx, h):
     fx = np.array(fx)
     #print(np.array([(fx[:,1] - fx[:,:-2]) * .5 / h]).T)
@@ -164,6 +208,18 @@ def evolvePde(F, u0, x, ti, tf, dt):
         t += ti
     return np.array(solution), np.array(t)
 
+def evolvePdeGhost(F, u0, x, ti, tf, dt):
+    t = [ti]
+    u0[0] = u0[1]
+    u0[-2] = u0[-1]
+    solution = [u0]
+    while t[-1] <= tf:
+        ti, y = taylorStepGhost(F, t[-1], solution[-1], dt)
+        y = [np.concatenate(([y[0][0]], y[0], [y[0][-1]]))]
+        solution += y
+        t += ti
+    return np.array(solution), np.array(t)
+
 def evolvePdeEuler(F, u0, x, ti, tf, dt):
     t = [ti]
     solution = [u0]
@@ -177,158 +233,87 @@ def integrateMass(u, dx):
     u = np.array(u)
     return np.sum(u * dx, axis = 1);
 
-x = np.linspace(- np.pi, np.pi, 151)
-dx = x[1] - x[0]
-dt = dx / 800
-totalTime = 19002 * dt
-
-fig1, ax1 = plt.subplots(1)                         
-
-ax1.set_ylim(0, 8);                                                       
-
-x = np.linspace(- np.pi, np.pi, 81)
-dx = x[1] - x[0]
-dt = dx / 200
-fx = 2 * np.cosh(x )**(-2)
-
-KdV = setKdV(dx)
-
-solution, t = evolvePde(KdV, fx, x, 0, totalTime, dt)
-
-mass = integrateMass(solution, dx)
-t = np.array(t)
-
-ax1.plot(t, mass, c = "aqua", label = "$\Delta t = \\frac{\Delta x}{200}$", ls = (0, [10, 20]))
-
-x = np.linspace(- np.pi, np.pi, 101)
+x = np.linspace(-0.005, 1.005, 203)
+print(x[:3])
+print(x[-3:])
 dx = x[1] - x[0]
 dt = dx / 400
-fx = 2 * np.cosh(x )**(-2)
-
-KdV = setKdV(dx)
-
-solution, t = evolvePde(KdV, fx, x, 0, totalTime, dt)
-
-mass = integrateMass(solution, dx)
-t = np.array(t)
-
-ax1.plot(t, mass, c = "mediumpurple", label = "$\Delta t = \\frac{\Delta x}{400}$", ls = (10, [10, 20]))
-
-
-x = np.linspace(- np.pi, np.pi, 151)
-dx = x[1] - x[0]
-dt = dx / 800
-fx = 2 * np.cosh(x )**(-2)
-#fx = (12 * (3 + 4 * np.cosh(2 * x) + np.cosh(4 * x)))  / ((3 * np.cosh(x) + np.cosh(3 * x))**2)
-
-KdV = setKdV(dx)
-
-solution, t = evolvePde(KdV, fx, x, 0, totalTime, dt)
-
-
-mass = integrateMass(solution, dx)
-t = np.array(t)
-                                                                                
-ax1.plot(t, mass, c = "gold", label = "$\Delta t = \\frac{\Delta x}{800}$", ls = (20, [10, 20]))
-ax1.set_xlabel("t")
-ax1.set_ylabel("M(t)")
-
-
-ax1.legend(handlelength = 5)
-
-fig1.savefig("figs/KDVmass1.pdf")
-
-fig1, ax1 = plt.subplots(4, figsize = (5.7, 12), tight_layout = True)
-
-ax1[0].plot(x, solution[3000], c = "tab:purple")
-ax1[0].set_title(f"$t = {t[3000]:.04f}$")
-ax1[0].set_xlabel("$x$")
-ax1[0].set_ylabel("$u(x,t)$")
-
-ax1[1].plot(x, solution[8000], c = "tab:purple")
-ax1[1].set_title(f"$t = {t[8000]:.04f}$")
-ax1[1].set_xlabel("$x$")
-ax1[1].set_ylabel("$u(x,t)$")
-
-ax1[2].plot(x, solution[13000], c = "tab:purple")
-ax1[2].set_title(f"$t = {t[13000]:.04f}$")
-ax1[2].set_xlabel("$x$")
-ax1[2].set_ylabel("$u(x,t)$")
-
-ax1[3].plot(x, solution[18000], c = "tab:purple")
-ax1[3].set_title(f"$t = {t[18000]:.04f}$")
-ax1[3].set_xlabel("$x$")
-ax1[3].set_ylabel("$u(x,t)$")
-
-fig1.savefig("figs/motion1.pdf")
-
-quit()
-x = np.linspace(- np.pi, np.pi, 200)
-dx = x[1] - x[0]
-dt = dx / 1000
 #fx = 2 * np.cosh(x )**(-2)
-fx = (12 * (3 + 4 * np.cosh(2 * x) + np.cosh(4 * x)))  / ((3 * np.cosh(x) + np.cosh(3 * x))**2)
+sigma = 0.005
+fx = 10 * np.exp(- 0.5 * ((x - 0.5) ** 2 ) / sigma)
 
-KdV = setKdV(dx)
+heat = set1DHeatNeumannGhost(1, dx)
 
-solution, t = evolvePde(KdV, fx, x, 0, 19002 * dt, dt)
+solution, t = evolvePdeGhost(heat, fx, x, 0, 5000 * dt, dt)
 
-fps = 1000
+fig, ax = plt.subplots(1)
 
-mass = integrateMass(solution, dx)
-t = np.array(t)
-                                                                                
-fig1, ax1 = plt.subplots(1)                         
+T = []
 
-ax1.set_ylim(0, 18);                                                       
+for s in solution:
+    T += [np.sum(s[1:-1]**2) * dx]
+T = np.array(T)
 
-ax1.plot(t, mass, c = "darkcyan")
-ax1.set_xlabel("t")
-ax1.set_ylabel("M(t)")
-
-fig1.savefig("figs/KDVmass2.pdf")
-
-fig1, ax1 = plt.subplots(4, figsize = (5.7, 12), tight_layout = True)
-
-ax1[0].plot(x, solution[7000], c = "mediumseagreen")
-ax1[0].set_title(f"$t = {t[7000]:.04f}$")
-ax1[0].set_xlabel("$x$")
-ax1[0].set_ylabel("$u(x,t)$")
-
-ax1[1].plot(x, solution[10100], c = "mediumseagreen")
-ax1[1].set_title(f"$t = {t[10100]:.04f}$")
-ax1[1].set_xlabel("$x$")
-ax1[1].set_ylabel("$u(x,t)$")
-
-ax1[2].plot(x, solution[14500], c = "mediumseagreen")
-ax1[2].set_title(f"$t = {t[14500]:.04f}$")
-ax1[2].set_xlabel("$x$")
-ax1[2].set_ylabel("$u(x,t)$")
-
-ax1[3].plot(x, solution[16000], c = "mediumseagreen")
-ax1[3].set_title(f"$t = {t[16000]:.04f}$")
-ax1[3].set_xlabel("$x$")
-ax1[3].set_ylabel("$u(x,t)$")
-
-fig1.savefig("figs/collision.pdf")
-
+ax.semilogy(t, T)
+plt.show()
 quit()
-fig, ax = plt.subplots(1)                         
-                                                                                
+
 fps = 1000
 
-ax.set_ylim(-2, 10);                                                             
+fig, ax = plt.subplots(1)
                                                                                 
-def update(frame, solution, ax):                                              
-    if 5 * frame < len(solution):
-        ax.clear()
-        ax.set_ylim(-2 , 10);                                                       
-        ax.plot(x, solution[5 * frame])
-        fig.savefig(f"figs/kdvframes2/{frame}.pdf")
+ax.set_ylim(-0.5, 1.5); 
+
+
+#print(T[-1])
                                                                                 
-ax.plot(x, solution[0])
-                                                                                
-ani = FuncAnimation(fig, update, len(t), fargs=(solution, ax),                
+def update(frame, solution, ax):
+    ax.clear()
+    ax.set_ylim(-0.5 , 1.5);
+    ax.plot(x, solution[frame])
+
+ax.plot(x[1:-1], fx[1:-1])
+
+ani = FuncAnimation(fig, update, len(t), fargs=(solution, ax), 
                     interval=1000/fps)                                          
 plt.show()  
+
 quit()
+
+fig, ax = plt.subplots(1)
+T = []
+
+for s in solution:
+    T += [np.sum(s**2, (0, 1)) * dx * dy]
+T = np.array(T)
+
+ax.plot(t, T)
+plt.show()
+print(T[-1])
+fig.savefig("figs/T.pdf")
+quit()
+
+x = np.linspace(0, 1, 200)
+y = np.linspace(0, 1, 200)
+dx = x[1] - x[0]
+dy = y[1] - y[0]
+dt = dx / 1000
+#fx = 2 * np.cosh(x )**(-2)
+X, Y = np.meshgrid(x, y)
+fx = np.exp(- 0.5 * ((X - 0.5) ** 2 + (Y - 0.5) ** 2) / sigma)
+
+heat = set2DHeatNeumann(1, dx, dy)#, 10, 10, 10, 10)
+
+solution, t = evolvePde(heat, fx, x, 0, 0.02, dt)
+
+T = []
+
+for s in solution:
+    T += [np.sum(s**2, (0, 1)) * dx * dy]
+T = np.array(T)
+
+ax.plot(t, T)
+
+print(T[-1])
+
+plt.show()

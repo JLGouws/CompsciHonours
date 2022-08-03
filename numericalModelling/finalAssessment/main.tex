@@ -51,55 +51,107 @@
 
 \begin{enumerate}
   \item
-    \begin{align*}
-                  & f(x + h) = f(x_0) + h \frac{\partial f(x_0)}{\partial x} + \frac{h^2}{2!} \frac{\partial^2 f(x_0)}{\partial x^2} + \frac{h^3}{3!} \frac{\partial^3 f(x_0)}{\partial x^3} + \frac{h^4}{4!} \frac{\partial^4 f(x_0)}{\partial x^4} + \frac{h^5}{5!} \frac{\partial^5 f(\xi ')}{\partial x^5}\\
-      \Rightarrow & \frac{h^3}{3!} \frac{\partial^3 f(x_0)}{\partial x^3} = f(x + h) - f(x_0) - h \frac{\partial f(x_0)}{\partial x} - \frac{h^2}{2!} \frac{\partial^2 f(x_0)}{\partial x^2} - \frac{h^4}{4!} \frac{\partial^4 f(x_0)}{\partial x^4} - \frac{h^5}{5!} \frac{\partial^5 f(\xi')}{\partial x^5}
-    \end{align*}
-    We also have
-    \begin{align*}
-                  & f(x - h) = f(x_0) - h \frac{\partial f(x_0)}{\partial x} + \frac{h^2}{2!} \frac{\partial^2 f(x_0)}{\partial x^2} - \frac{h^3}{3!} \frac{\partial^3 f(x_0)}{\partial x^3} + \frac{h^4}{4!} \frac{\partial^4 f(x_0)}{\partial x^4} - \frac{h^5}{5!} \frac{\partial^5 f(\xi'')}{\partial x^5}\\
-      \Rightarrow & \frac{h^3}{3!} \frac{\partial^3 f(x_0)}{\partial x^3} = f(x_0) - h \frac{\partial f(x_0)}{\partial x} + \frac{h^2}{2!} \frac{\partial^2 f(x_0)}{\partial x^2} - f(x - h) + \frac{h^4}{4!} \frac{\partial^4 f(x_0)}{\partial x^4} - \frac{h^5}{5!} \frac{\partial^5 f(\xi'')}{\partial x^5}
-    \end{align*}
-    Adding these expressions together, we get:
-    \begin{align}
-      & \frac{h^3}{3} \frac{\partial^3 f(x_0)}{\partial x^3} = f(x + h) - f(x - h) - 2 h \frac{\partial f(x_0)}{\partial x} + \frac{h^5}{5!} \frac{\partial^5 f(\mu')}{\partial x^5} \label{eq:thirdDevFirst}
-    \end{align}
-    From this it can be seen that this estimate is at best $O(h^2)$.
-    The estimate of $\frac{\partial f(x_0)}{\partial x}$ must be $O(h^4)$ or better for the third dertivative estimate to retain its accuracy.
-    Note:
-    \begin{align*}
-      f(x + h) = f(x_0) + h \frac{\partial f(x_0)}{\partial x} + \frac{h^2}{2} \frac{\partial^2 f(x_0)}{\partial x^2} + \frac{h^3}{6} \frac{\partial^3 f(x_0)}{\partial x^3} + \frac{h^4}{24} \frac{\partial^4 f(\chi_1)}{\partial x^4}
-    \end{align*}
-    \begin{align*}
-      f(x - h) = f(x_0) - h \frac{\partial f(x_0)}{\partial x} + \frac{h^2}{2} \frac{\partial^2 f(x_0)}{\partial x^2} - \frac{h^3}{6} \frac{\partial^3 f(x_0)}{\partial x^3} + \frac{h^4}{24} \frac{\partial^4 f(\chi_2)}{\partial x^4}
-    \end{align*}
-    \begin{align*}
-      f(x + 2 h) = f(x_0) + 2 h \frac{\partial f(x_0)}{\partial x} + 2 h^2 \frac{\partial^2 f(x_0)}{\partial x^2} + \frac{4 h^3}{3} \frac{\partial^3 f(x_0)}{\partial x^3} + \frac{2 h^4}{3} \frac{\partial^4 f(\chi_3)}{\partial x^4}
-    \end{align*}
-    \begin{align*}
-      f(x - 2 h) = f(x_0) - 2 h \frac{\partial f(x_0)}{\partial x} + 2 h^2 \frac{\partial^2 f(x_0)}{\partial x^2} - \frac{4 h^3}{3} \frac{\partial^3 f(x_0)}{\partial x^3} + \frac{2 h^4}{3} \frac{\partial^4 f(\chi_4)}{\partial x^4}
-    \end{align*}
-    Manipulation of these terms results in the cancellation of unwanted terms:
-    \begin{align*}
-      f(x + h) - f(x - h) =  2 h \frac{\partial f(x_0)}{\partial x} + \frac{h^3}{3} \frac{\partial^3 f(x_0)}{\partial x^3} + \frac{h^4}{24} \frac{\partial^4 f(\xi_1)}{\partial x^4}
-    \end{align*}
-    \begin{align*}
-      f(x + 2 h) - f(x - 2 h) = 4 h \frac{\partial f(x_0)}{\partial x} + \frac{8 h^3}{3} \frac{\partial^3 f(x_0)}{\partial x^3} + \frac{2 h^4}{3} \frac{\partial^4 f(\xi_2)}{\partial x^4}
-    \end{align*}
-    And finally:
-    \begin{align*}
-      f(x - 2 h)- 8 f(x - h) + 8 f(x + h) - f(x + 2 h) =  12 h \frac{\partial f(x_0)}{\partial x} + \frac{h^4}{24} \frac{\partial^4 f(\xi_3)}{\partial x^4}
-    \end{align*}
-    From this we can get a second order approximation of $f$'s first deriviative:
-    \begin{align*}
-      \frac{\partial f(x_0)}{\partial x} = \frac{f(x - 2 h)- 8 f(x - h) + 8 f(x + h) - f(x - 2 h)}{12 h} - \frac{h^4}{24} \frac{\partial^4 f(\xi_3)}{\partial x^4}
-    \end{align*}
-    This expression in combination with Eq.~\ref{eq:thirdDevFirst} gives the second order approximation of $u_{xxx}$:
-    \begin{align*}
-                  & \frac{h^3}{3} \frac{\partial^3 f(x_0)}{\partial x^3} = f(x + h) - f(x - h) - \frac{f(x - 2 h)- 8 f(x - h) + 8 f(x + h) - f(x + 2 h)}{6} + \frac{h^5}{5!} \frac{\partial^5 f(\mu')}{\partial x^5}\\
-      \Rightarrow & \frac{\partial^3 f(x_0)}{\partial x^3} = \frac{3 f(x + h) - 3 f(x - h)}{h^3} - \frac{f(x - 2 h)- 8 f(x - h) + 8 f(x + h) - f(x + 2 h)}{2 h^3} + \frac{h^5}{5!} \frac{\partial^5 f(\mu')}{\partial x^5}\\
-      \Rightarrow & \frac{\partial^3 f(x_0)}{\partial x^3} = \frac{- f(x - 2 h) + 2 f(x - h) - 2 f(x + h) + f(x +  2 h)}{2 h^3} + \frac{h^5}{5!} \frac{\partial^5 f(\mu')}{\partial x^5} 
-    \end{align*}
+  \item
+    \begin{enumerate}
+      \item
+        \begin{align*}
+                      & f(x + h) = f(x_0) + h \frac{\partial f(x_0)}{\partial x} + \frac{h^2}{2!} \frac{\partial^2 f(x_0)}{\partial x^2} + \frac{h^3}{3!} \frac{\partial^3 f(x_0)}{\partial x^3} + \frac{h^4}{4!} \frac{\partial^4 f(x_0)}{\partial x^4} + \mathscr{O}(h^5)\\ %+ \frac{h^5}{5!} \frac{\partial^5 f(\xi ')}{\partial x^5}\\
+          \Rightarrow & \frac{h^3}{3!} \frac{\partial^3 f(x_0)}{\partial x^3} = f(x + h) - f(x_0) - h \frac{\partial f(x_0)}{\partial x} - \frac{h^2}{2!} \frac{\partial^2 f(x_0)}{\partial x^2} - \frac{h^4}{4!} \frac{\partial^4 f(x_0)}{\partial x^4} + \mathscr{O}(h^5) %- \frac{h^5}{5!} \frac{\partial^5 f(\xi')}{\partial x^5}
+        \end{align*}
+        We also have
+        \begin{align*}
+                      & f(x - h) = f(x_0) - h \frac{\partial f(x_0)}{\partial x} + \frac{h^2}{2!} \frac{\partial^2 f(x_0)}{\partial x^2} - \frac{h^3}{3!} \frac{\partial^3 f(x_0)}{\partial x^3} + \frac{h^4}{4!} \frac{\partial^4 f(x_0)}{\partial x^4} + \mathscr{O}(h^5)\\ %- \frac{h^5}{5!} \frac{\partial^5 f(\xi'')}{\partial x^5}\\
+          \Rightarrow & \frac{h^3}{3!} \frac{\partial^3 f(x_0)}{\partial x^3} = f(x_0) - h \frac{\partial f(x_0)}{\partial x} + \frac{h^2}{2!} \frac{\partial^2 f(x_0)}{\partial x^2} - f(x - h) + \frac{h^4}{4!} \frac{\partial^4 f(x_0)}{\partial x^4} + \mathscr{O}(h^5) %- \frac{h^5}{5!} \frac{\partial^5 f(\xi'')}{\partial x^5}
+        \end{align*}
+        Adding these expressions together, we get:
+        \begin{align}
+          & \frac{h^3}{3} \frac{\partial^3 f(x_0)}{\partial x^3} = f(x + h) - f(x - h) - 2 h \frac{\partial f(x_0)}{\partial x} + \mathscr{O}(h^5) \label{eq:thirdDevFirst}%\frac{h^5}{5!} \frac{\partial^5 f(\mu')}{\partial x^5} \label{eq:thirdDevFirst}
+        \end{align}
+        From this it can be seen that this estimate is at best $\mathscr{O}(h^2)$.
+        The estimate of $\frac{\partial f(x_0)}{\partial x}$ must be $\mathscr{O}(h^4)$ or better for the third dertivative estimate to retain its accuracy.
+        Note:
+        \begin{align*}
+          f(x + h) = f(x_0) + h \frac{\partial f(x_0)}{\partial x} + \frac{h^2}{2} \frac{\partial^2 f(x_0)}{\partial x^2} + \frac{h^3}{6} \frac{\partial^3 f(x_0)}{\partial x^3} + \frac{h^4}{24} \frac{\partial^4 f(x_0)}{\partial x^4} + \mathscr{O}(h^5) %+ \frac{h^4}{24} \frac{\partial^4 f(\chi_1)}{\partial x^4}
+        \end{align*}
+        \begin{align*}
+          f(x - h) = f(x_0) - h \frac{\partial f(x_0)}{\partial x} + \frac{h^2}{2} \frac{\partial^2 f(x_0)}{\partial x^2} - \frac{h^3}{6} \frac{\partial^3 f(x_0)}{\partial x^3} + \frac{h^4}{24} \frac{\partial^4 f(x_0)}{\partial x^4} + \mathscr{O}(h^5) %+ \frac{h^4}{24} \frac{\partial^4 f(\chi_2)}{\partial x^4}
+        \end{align*}
+        \begin{align*}
+          f(x + 2 h) = f(x_0) + 2 h \frac{\partial f(x_0)}{\partial x} + 2 h^2 \frac{\partial^2 f(x_0)}{\partial x^2} + \frac{4 h^3}{3} \frac{\partial^3 f(x_0)}{\partial x^3} + \frac{2 h^4}{3} \frac{\partial^4 f(x_0)}{\partial x^4} + \mathscr{O}(h^5) %+ \frac{2 h^4}{3} \frac{\partial^4 f(\chi_3)}{\partial x^4}
+        \end{align*}
+        \begin{align*}
+          f(x - 2 h) = f(x_0) - 2 h \frac{\partial f(x_0)}{\partial x} + 2 h^2 \frac{\partial^2 f(x_0)}{\partial x^2} - \frac{4 h^3}{3} \frac{\partial^3 f(x_0)}{\partial x^3} + \frac{2 h^4}{3} \frac{\partial^4 f(x_0)}{\partial x^4} + \mathscr{O}(h^5) %+ \frac{2 h^4}{3} \frac{\partial^4 f(\chi_4)}{\partial x^4}
+        \end{align*}
+        Manipulation of these terms results in the cancellation of unwanted terms:
+        \begin{align*}
+          f(x + h) - f(x - h) =  2 h \frac{\partial f(x_0)}{\partial x} + \frac{h^3}{3} \frac{\partial^3 f(x_0)}{\partial x^3} + \mathscr{O}(h^5) %+ \frac{h^4}{24} \frac{\partial^4 f(\xi_1)}{\partial x^4}
+        \end{align*}
+        \begin{align*}
+          f(x + 2 h) - f(x - 2 h) = 4 h \frac{\partial f(x_0)}{\partial x} + \frac{8 h^3}{3} \frac{\partial^3 f(x_0)}{\partial x^3} + \mathscr{O}(h^5) %+ \frac{2 h^4}{3} \frac{\partial^4 f(\xi_2)}{\partial x^4}
+        \end{align*}
+        And finally:
+        \begin{align*}
+          f(x - 2 h)- 8 f(x - h) + 8 f(x + h) - f(x + 2 h) =  12 h \frac{\partial f(x_0)}{\partial x} + \mathscr{O}(h^4) %+ \frac{h^4}{24} \frac{\partial^4 f(\xi_3)}{\partial x^4}
+        \end{align*}
+        From this we can get a second order approximation of $f$'s first deriviative:
+        \begin{align*}
+          \frac{\partial f(x_0)}{\partial x} = \frac{f(x - 2 h)- 8 f(x - h) + 8 f(x + h) - f(x - 2 h)}{12 h} + \mathscr{O}(h^4) %- \frac{h^4}{24} \frac{\partial^4 f(\xi_3)}{\partial x^4}
+        \end{align*}
+        This expression in combination with Eq.~\ref{eq:thirdDevFirst} gives the second order approximation of $u_{xxx}$:
+        \begin{align*}
+                      & \frac{h^3}{3} \frac{\partial^3 f(x_0)}{\partial x^3} = f(x + h) - f(x - h) - \frac{f(x - 2 h)- 8 f(x - h) + 8 f(x + h) - f(x + 2 h)}{6} + \mathscr{O}(h^5)\\ %+ \frac{h^5}{5!} \frac{\partial^5 f(\mu')}{\partial x^5}\\
+          \Rightarrow & \frac{\partial^3 f(x_0)}{\partial x^3} = \frac{3 f(x + h) - 3 f(x - h)}{h^3} - \frac{f(x - 2 h)- 8 f(x - h) + 8 f(x + h) - f(x + 2 h)}{2 h^3} + \mathscr{O}(h^2)\\ %+ \frac{h^5}{5!} \frac{\partial^5 f(\mu')}{\partial x^5}\\
+          \Rightarrow & \frac{\partial^3 f(x_0)}{\partial x^3} = \frac{- f(x - 2 h) + 2 f(x - h) - 2 f(x + h) + f(x +  2 h)}{2 h^3} + \mathscr{O}(h^2) %+ \frac{h^5}{5!} \frac{\partial^5 f(\mu')}{\partial x^5} 
+        \end{align*}
+      \item
+        \begin{enumerate}
+          \item
+            Figure~\ref{fig:motion1} shows a collision of a soliton wave.
+            The soliton wave solves the KdV equation with the initial form:
+            \begin{equation*}
+              u(x, 0) = 2 \sech ^ 2 (x - 4t)
+            \end{equation*}
+            \begin{figure}[H]
+              \centering
+              \includegraphics[scale = 0.8]{figs/motion1.pdf}
+              \caption{Motion of soliton wave}
+              \label{fig:motion1}
+            \end{figure}
+          \item
+            Figure~\ref{fig:KDVmass1} shows the mass of the wave as a function of time.
+            \begin{figure}[H]
+              \centering
+              \includegraphics[scale = 0.8]{figs/KDVmass1.pdf}
+              \caption{The mass for the wave}
+              \label{fig:KDVmass1}
+            \end{figure}
+        \end{enumerate}
+      \item
+        \begin{enumerate}
+          \item
+            Figure~\ref{fig:collision} shows a collision of a soliton wave.
+            The soliton wave solves the KdV equation with the initial form:
+            \begin{equation*}
+              u(x, 0) = \frac{12[3 + 4 \cosh(2 x) + \cosh(4x)]}{[3 \cosh(x) + \cosh(3x)]^2}
+            \end{equation*}
+            \begin{figure}[H]
+              \centering
+              \includegraphics[scale = 0.8]{figs/collision.pdf}
+              \caption{Collision of soliton wave}
+              \label{fig:collision}
+            \end{figure}
+          \item
+            Figure~\ref{fig:KDVmass2} shows the mass of the wave as a function of time.
+            The mass is not an absolute constant with time.
+            There are two bumps in the mass, which occur at the beginning and end of the collision.
+            \begin{figure}[H]
+              \centering
+              \includegraphics[scale = 0.8]{figs/KDVmass2.pdf}
+              \caption{The mass for the wave}
+              \label{fig:KDVmass2}
+            \end{figure}
+        \end{enumerate}
+    \end{enumerate}
 \end{enumerate}
 
 \end{document}
