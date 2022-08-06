@@ -293,7 +293,6 @@ for i, d in enumerate(T):
         f.write(f"$t = {t[i]:.05f}$")
         break
 f.close();
-quit()
 
 T = np.array(T)
 ax.semilogy(t, T, c = "steelblue", label = "$\Delta t = \\frac{\Delta x}{750}$", ls = (20, [10, 20]))

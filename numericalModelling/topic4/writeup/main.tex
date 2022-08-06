@@ -53,15 +53,24 @@
   \item
     \begin{enumerate}
       \item
-        Solutions to a Lotka-Volterra problem:
+        Figure~\ref{fig:Lotka_Volterra} shows solutions to a Lotka-Volterra problem with different starting points.
+        The particular problem is:
+        \begin{align}
+          \begin{split}
+            \dot x &= 0.8 x + \alpha x^2 - xy\\
+            \dot y &= - y + xy
+          \end{split}
+          \label{eq:lvprob}
+        \end{align}
         \begin{figure}[H]
           \centering
           \includegraphics[scale = 0.6]{../figs/Lotka_Volterra.pdf} 
           \caption{Orbits of a Lotka Volterra system}
+          \label{fig:Lotka_Volterra}
         \end{figure}
 
       \item
-        The value of:
+        Figure~\ref{fig:LVError} shows the value of $L$ for different initial values.
         \begin{equation*}
           L = f x + d \ln x - cy - a \ln y
         \end{equation*}
@@ -70,25 +79,39 @@
           \centering
           \includegraphics[scale = 0.6]{../figs/LVError.pdf}
           \caption{The value of $L$ along solutions}
+          \label{fig:LVError}
         \end{figure}
 
       \item
-        Numerical soution to a slightly perturbed problem.
+        Figure~\ref{fig:Lotka_Volterra0.1} shows a numerical soution to a slightly perturbed problem, non-Hamiltonian problem.
+        The problem sets $\alpha = 2 $ in Eq.~\ref{eq:lvprob}.
         \begin{figure}[H]
           \centering
           \includegraphics[scale = 0.6]{../figs/Lotka_Volterra0.1.pdf}
-          \caption{Centered derivative and Euler Evolution of an advection equation  with $\Delta t = \Delta x$ and error}
+          \caption{Solution to the perturbed Lotka Volterra problem}
+          \label{fig:Lotka_Volterra0.1}
         \end{figure}
 
     \end{enumerate}
   \item
     \begin{enumerate}
       \item
-        SIR model.
+        Figure~\ref{fig:SIR} shows an SIR model's evolution through time.
+        The particular problem is given by:
+        \begin{gather*}
+          \begin{split}
+            \dot S &= - \beta S I + \sigma R\\
+            \dot I &= \beta SI - \gamma I\\
+            \dot R &= \gamma I - \sigma R
+          \end{split}\\
+          S(0) = \frac{8 \times 10 ^ 6 - 1}{8 \times 10^6},\qquad I(0) = \frac{1}{8 \times 10^6}, \qquad R(0) = 0
+        \end{gather*}
+        where $\beta =  0.8$ and $\gamma = 1 / 3$.
         \begin{figure}[H]
           \centering
           \includegraphics[scale = 0.9]{../figs/SIR.pdf}
           \caption{Evolution of an SIR model through time}
+          \label{fig:SIR}
         \end{figure}
 
       \item

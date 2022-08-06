@@ -262,7 +262,6 @@ ax1[3].set_ylabel("$u(x,t)$")
 
 fig1.savefig("figs/motion1.pdf")
 
-quit()
 x = np.linspace(- np.pi, np.pi, 200)
 dx = x[1] - x[0]
 dt = dx / 1000

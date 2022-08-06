@@ -96,6 +96,12 @@ def set1DHeatNeumannGhost(D, dx, vx1 = 0, vx2 = 0):
         return D * uxx
     return heat
 
+def set1DHeatNeumannSecond(D, dx, vx1 = 0, vx2 = 0):
+    def heat(t, u):
+        uxx = xSecondDerivativeSecond1D(u, dx, vx1, vx2)
+        return D * uxx
+    return heat
+
 def set1DHeatNeumann(D, dx, vx1 = 0, vx2 = 0):
     def heat(t, u):
         uxx = xSecondDerivativeNeuman1D(u, dx, vx1, vx2)
@@ -168,6 +174,14 @@ def xDerivativePeriodic(fx, h):
 def xSecondDerivativeGhost1D(fx, h, v1, v2):
     fx = np.array(fx)
     return (fx[:-2] - 2 * fx[1:-1] + fx[2:]) / h ** 2
+
+def xSecondDerivativeSecond1D(fx, h, v1, v2):
+    fx = np.array(fx)
+    v1 = np.array(v1)
+    v2 = np.array(v2)
+    vxx0 = [- 3 * v1 / h + (-7 * fx[0] + 8 * fx[1] - fx[2]) * 0.5 / h**2]
+    vxxN = [  3 * v2 / h + (-7 * fx[-1] + 8 * fx[-2] - fx[-3]) * 0.5 / h**2]
+    return np.concatenate((vxx0, (fx[:-2] - 2 * fx[1:-1] + fx[2:]) / h ** 2, vxxN))
     
 def xSecondDerivativeNeuman1D(fx, h, v1, v2):
     fx = np.array(fx)
@@ -239,14 +253,14 @@ print(x[-3:])
 dx = x[1] - x[0]
 dt = dx / 400
 #fx = 2 * np.cosh(x )**(-2)
-sigma = 0.005
-fx = 10 * np.exp(- 0.5 * ((x - 0.5) ** 2 ) / sigma)
+sigma = 0.01
+fx = np.exp(- 0.5 * ((x - 0.5) ** 2 ) / sigma)
 
-heat = set1DHeatNeumannGhost(1, dx)
+heat = set1DHeatNeumannSecond(1, dx)
 
-solution, t = evolvePdeGhost(heat, fx, x, 0, 5000 * dt, dt)
+solution, t = evolvePde(heat, fx, x, 0, 0.5 , dt)
 
-fig, ax = plt.subplots(1)
+fig, ax = plt.subplots(1, 2, figsize = (14.5, 5))
 
 T = []
 
@@ -254,8 +268,17 @@ for s in solution:
     T += [np.sum(s[1:-1]**2) * dx]
 T = np.array(T)
 
-ax.semilogy(t, T)
-plt.show()
+ax[1].semilogy(t, T, c = "rebeccapurple")
+ax[1].set_title("$T(t)$")
+ax[1].set_ylabel("$T(t)$")
+ax[1].set_xlabel("$t$")
+ax[0].set_title("$u(x, t)$")
+ax[0].plot(x, solution[0], label = f"$t = {t[0]:.04f}$", c = "tomato")
+ax[0].plot(x, solution[-1], label = f"$t = {t[-1]:.04f}$", c = "darkkhaki")
+ax[0].set_xlabel("$x$")
+ax[0].set_ylabel("$u(x, t)$")
+ax[0].legend()
+fig.savefig("figs/secondOrder.pdf")
 quit()
 
 fps = 1000

@@ -66,9 +66,10 @@ Lt = []
 L0 = []
 Lt2 = []
 L02 = []
-fig, ax = plt.subplots(1, 2, figsize=(10,10), tight_layout = True)
+fig, ax = plt.subplots(1, 2, figsize=(11,5), tight_layout = True)
 res = 0.05
-for x0 in [(1,4), (1,3), (1,2), (1, 1.5), (1, 1.2), (1, 1), (1, 0.8)]:
+colours = ["indianred", "sandybrown", "gold", "yellowgreen", "deepskyblue", "blueviolet", "deeppink"]
+for i, x0 in enumerate([(1,4), (1,3), (1,2), (1, 1.5), (1, 1.2), (1, 1), (1, 0.8)]):
     points = runge_kutta4(lotka_volterra(0), 0, 25, np.array(x0), h = res)
     time += [np.array(points[0])]
     solution += [np.array(points[1])]
@@ -80,14 +81,22 @@ for x0 in [(1,4), (1,3), (1,2), (1, 1.5), (1, 1.2), (1, 1), (1, 0.8)]:
     solution2 += [np.array(points[1])]
     L02 += [x0[0] - np.log(x0[0]) + x0[1] - 0.8 * np.log(x0[1])]
     Lt2 += [solution2[-1][:,0] - np.log(solution2[-1][:,0]) + solution2[-1][:,1] - 0.8 * np.log(solution2[-1][:,1])]
-    ax[0].plot(solution[-1][:, 0], solution[-1][:, 1])
-ax[1].plot(time[2], solution[2][:, 0])
-ax[1].plot(time[2], solution[2][:, 1], '--')
+    ax[0].plot(solution[-1][:, 0], solution[-1][:, 1], c = colours[i], label = "$\\vec{x}_0 = ( "  + str(x0[0]) + ", " + str(x0[1]) + ")$")
+    ax[0].scatter(x0[0], x0[1], c = colours[i], s = 13)
+ax[0].legend()
+ax[0].set_xlabel("x")
+ax[0].set_ylabel("y")
+ax[1].plot(time[2], solution[2][:, 0], c = "tan", label = "x")
+ax[1].plot(time[2], solution[2][:, 1], '--', c = "crimson", label = "y")
+ax[1].legend()
+ax[1].set_ylabel("population")
+ax[1].set_xlabel("$t$")
 fig.savefig('figs/Lotka_Volterra.pdf')
 
 #fig, ax = plt.subplots(len(Lt) // 2 + 1, 2, figsize=(20,5 * len(Lt)), tight_layout = True)
 fig = plt.figure(figsize=(10,int(2.5 * len(Lt))), tight_layout = True)
 gs = GridSpec(len(Lt) // 2 + 1, 4, figure = fig)
+x0s = [(1,4), (1,3), (1,2), (1, 1.5), (1, 1.2), (1, 1), (1, 0.8)]
 for i, L in enumerate(zip(Lt, L0)):
 #    ax = fig.add_subplot(len(Lt) // 2 + 1, 2, i + 1);
     if i != len(Lt) - 1:
@@ -98,6 +107,7 @@ for i, L in enumerate(zip(Lt, L0)):
     ax.plot(time[i], L[0] - L[1], c = 'teal', label = "$L(t) - L(0)$, full time step")#[i % (len(Lt) // 2 + 1)][i // (len(Lt) // 2 + 1)].plot(time[i], L[0] - L[1])
     ax.plot(time2[i], Lt2[i] - L02[i], c = 'olivedrab', label = "$L(t) - L(0)$, half time step")#[i % (len(Lt) // 2 + 1)][i // (len(Lt) // 2 + 1)].plot(time2[i], Lt2[i] - L02[i])
     ax.plot(time2[i], 2**4 * (Lt2[i] - L02[i]), linestyle = '--', c = 'red', dashes = (3,5), label = "$16 \\times [L(t) - L(0)]$, half time step")
+    ax.set_title(f"$\\vec{{x}}_0 = ({x0s[i][0]}, {x0s[i][1]})$")
     if i == 1:
         ax.legend()
 fig.savefig('figs/LVError.pdf')
@@ -106,17 +116,25 @@ solution = []
 time = []
 Lt = []
 L0 = []
-fig, ax = plt.subplots(1, 2, figsize=(10,10), tight_layout = True)
-for x0 in [(1,2)]:
+fig, ax = plt.subplots(1, 2, figsize=(10,5), tight_layout = True)
+colours = ["mediumaquamarine", "sandybrown", "gold", "yellowgreen", "deepskyblue", "blueviolet", "deeppink"]
+for i, x0 in enumerate([(1,2)]):
     points = runge_kutta4(lotka_volterra(0.1), 0, 25, np.array(x0), h = 0.05)
     time += [np.array(points[0])]
     solution += [np.array(points[1])]
     L0 += [x0[0] - np.log(x0[0]) + x0[1] - 0.8 * np.log(x0[1])]
     Lt += [solution[-1][:,0] - np.log(solution[-1][:,0]) + solution[-1][:,1] - 0.8 * np.log(solution[-1][:,1])]
 #    print(solution[-1].shape)
-    ax[0].plot(solution[-1][:, 0], solution[-1][:, 1])
-ax[1].plot(time[0], solution[0][:, 0])
-ax[1].plot(time[0], solution[0][:, 1], '--')
+    ax[0].plot(solution[-1][:, 0], solution[-1][:, 1], c = colours[i], label = f"$\\vec{{x}}_0 = ({x0[0]}, {x0[1]})$")
+    ax[0].scatter(x0[0], x0[1], c = colours[i], s = 13)
+ax[0].legend()
+ax[0].set_xlabel("x")
+ax[0].set_ylabel("y")
+ax[1].plot(time[0], solution[0][:, 0], c = "orchid", label = "x")
+ax[1].plot(time[0], solution[0][:, 1], '--', c = "darkcyan", label = "x")
+ax[1].legend()
+ax[1].set_ylabel("population")
+ax[1].set_xlabel("$t$")
 fig.savefig('figs/Lotka_Volterra0.1.pdf')
 
 ################################################################################
@@ -139,11 +157,24 @@ timeSIR = np.array(points[0])
 solutionSIR = np.array(points[1])
 maxI = np.argmax(solutionSIR[:, 1])
 end = findLess(solutionSIR[:, 1], 1 / 8e6, maxI)
-print(timeSIR[end])
+f = open("2ai.tex", "w")
+f.write(f"$t = {timeSIR[maxI] : .04f}$")
+f.close()
+f = open("2aii.tex", "w")
+f.write(f"$\max{{I(t)}}_{{t}} = {solutionSIR[:, 1][maxI] * 8e6 : d}$")
+f.close()
+f = open("2aiii.tex", "w")
+f.write(f"$t = {timeSIR[end] : .01f}$")
+f.close()
+f = open("2aiiii.tex", "w")
+f.write(f"$p = {timeSIR[end] : .01f}$")
+f.close()
 print(1 - solutionSIR[-1, 0])
-ax.plot(timeSIR, solutionSIR[:, 0], label = 'S')
-ax.plot(timeSIR, solutionSIR[:, 1], label = 'I')
-ax.plot(timeSIR, solutionSIR[:, 2], label = 'R')
+ax.plot(timeSIR, solutionSIR[:, 0], label = 'S', c = "orange", alpha = 0.8)
+ax.plot(timeSIR, solutionSIR[:, 1], label = 'I', c = "red", alpha = 0.7)
+ax.plot(timeSIR, solutionSIR[:, 2], label = 'R', c = "lime", alpha = 0.6)
+ax.set_xlabel("$t$")
+ax.set_ylabel("population fraction")
 #ax.text(y = 0, x = timeSIR[maxI], s = str(timeSIR[maxI]))
 ax.legend()
 fig.savefig('figs/SIR.pdf')
@@ -156,9 +187,12 @@ maxI = np.argmax(solutionSIR[:, 1])
 end = findLess(solutionSIR[:, 1], 1 / 8e6, maxI)
 print(timeSIR[end])
 print(1 - solutionSIR[-1, 0])
-ax.plot(timeSIR, solutionSIR[:, 0], label = 'S')
-ax.plot(timeSIR, solutionSIR[:, 1], label = 'I')
-ax.plot(timeSIR, solutionSIR[:, 2], label = 'R')
+ax.plot(timeSIR, solutionSIR[:, 0], label = 'S', c = "goldenrod", alpha = 1)
+ax.plot(timeSIR, solutionSIR[:, 1], label = 'I', c = "crimson", alpha = 0.8)
+ax.plot(timeSIR, solutionSIR[:, 2], label = 'R', c = "forestgreen", alpha = 0.6)
+#ax.text(y = 0, x = timeSIR[maxI], s = str(timeSIR[maxI]))
+ax.set_xlabel("$t$")
+ax.set_ylabel("population fraction")
 #ax.text(y = 0, x = timeSIR[maxI], s = str(timeSIR[maxI]))
 ax.legend()
 fig.savefig('figs/SIRbetaHalved.pdf')

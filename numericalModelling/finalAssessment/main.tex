@@ -100,6 +100,43 @@
           \caption{Profile of a heat equation evolution}
           \label{fig:profile}
         \end{figure}
+        Another option of handling the boundary conditions is:
+        \begin{equation*}
+          f(x_0 + h ) = f(x_0) + h \frac{d f(x_0)}{dx} + \frac{h^2}{2} \frac{d^2 f(x_0)}{dx^2} + \frac{h^3}{6} \frac{d^3 f(x_0)}{dx^3} + \mathscr{O} (h^4)
+        \end{equation*}
+        And:
+        \begin{align*}
+                      & f(x_0 + 2h ) = f(x_0) + 2h \frac{d f(x_0)}{dx} + 2h^2 \frac{d^2 f(x_0)}{dx^2} + \frac{4 h^3}{3} \frac{d^3 f(x_0)}{dx^3} + \mathscr{O} (h^4)\\
+          \Rightarrow & \frac{h^3}{6} \frac{d^3 f(x_0)}{dx^3} = \frac{f(x_0 + 2h) - f(x_0) }{8} - \frac{h}{4} \frac{d f(x_0)}{dx} - \frac{h^2}{4} \frac{d^2 f(x_0)}{dx^2} + \mathscr{O} (h^4)
+        \end{align*}
+        Combining these two:
+        \begin{align*}
+                      & f(x_0 + h) = \frac{7 f(x_0) + f(x_0 + 2h)}{8} + \frac{3 h}{4} \frac{d f(x_0)}{dx} + \frac{h^2}{4} \frac{d^2 f(x_0)}{dx^2} + \mathscr{O} (h^4)\\
+          \Rightarrow &  \frac{d^2 f(x_0)}{dx^2} = - \frac{3}{h} \frac{d f(x_0)}{dx} + \frac{- 7 f(x_0) + 8 f(x_0 + h) - f(x_0 + 2h)}{2 h^2} + \mathscr{O} (h^2)
+        \end{align*}
+        For the right most boundary point:
+        \begin{equation*}
+          f(x_0 - h ) = f(x_0) - h \frac{d f(x_0)}{dx} + \frac{h^2}{2} \frac{d^2 f(x_0)}{dx^2} - \frac{h^3}{6} \frac{d^3 f(x_0)}{dx^3} + \mathscr{O} (h^4)
+        \end{equation*}
+        And:
+        \begin{align*}
+                      & f(x_0 - 2h ) = f(x_0) - 2h \frac{d f(x_0)}{dx} + 2h^2 \frac{d^2 f(x_0)}{dx^2} - \frac{4 h^3}{3} \frac{d^3 f(x_0)}{dx^3} + \mathscr{O} (h^4)\\
+          \Rightarrow & \frac{h^3}{6} \frac{d^3 f(x_0)}{dx^3} = \frac{f(x_0) - f(x_0 - 2h)}{8} - \frac{h}{4} \frac{d f(x_0)}{dx} + \frac{h^2}{4} \frac{d^2 f(x_0)}{dx^2} + \mathscr{O} (h^4)
+        \end{align*}
+        Combining these two:
+        \begin{align*}
+                      & f(x_0 - h) = \frac{7 f(x_0) + f(x_0 - 2h)}{8} - \frac{3 h}{4} \frac{d f(x_0)}{dx} + \frac{h^2}{4} \frac{d^2 f(x_0)}{dx^2} + \mathscr{O} (h^4)\\
+          \Rightarrow &  \frac{d^2 f(x_0)}{dx^2} = \frac{3}{h} \frac{d f(x_0)}{dx} + \frac{- 7 f(x_0) + 8 f(x_0 - h) - f(x_0 - 2h)}{2 h^2} + \mathscr{O} (h^2)
+        \end{align*}
+        Figure~\ref{fig:secondOrder} shows this second-order method being used to solve a one-dimensional dispersion problem.
+        \begin{figure}[H]
+          \centering
+          \includegraphics[scale = 0.52]{figs/secondOrder.pdf}
+          \caption{Second order Neuman end points}
+          \label{fig:secondOrder}
+        \end{figure}
+        
+        The rest of this question uses the first-order method described above and an RK4 integrator.
       \item
         Figure~\ref{fig:T1} shows the $T(t)$'s value as a function of time.
         \begin{figure}[H]
@@ -177,8 +214,9 @@
         \end{align*}
         This expression in combination with Eq.~\ref{eq:thirdDevFirst} gives the second order approximation of $u_{xxx}$:
         \begin{align*}
-                      & \frac{h^3}{3} \frac{\partial^3 f(x_0)}{\partial x^3} = f(x + h) - f(x - h) - \frac{f(x - 2 h)- 8 f(x - h) + 8 f(x + h) - f(x + 2 h)}{6} + \mathscr{O}(h^5)\\ %+ \frac{h^5}{5!} \frac{\partial^5 f(\mu')}{\partial x^5}\\
-          \Rightarrow & \frac{\partial^3 f(x_0)}{\partial x^3} = \frac{3 f(x + h) - 3 f(x - h)}{h^3} - \frac{f(x - 2 h)- 8 f(x - h) + 8 f(x + h) - f(x + 2 h)}{2 h^3} + \mathscr{O}(h^2)\\ %+ \frac{h^5}{5!} \frac{\partial^5 f(\mu')}{\partial x^5}\\
+                      & \frac{h^3}{3} \frac{\partial^3 f(x_0)}{\partial x^3} = f(x + h) - f(x - h) - \\
+                      & \qquad \qquad \qquad \qquad \frac{f(x - 2 h)- 8 f(x - h) + 8 f(x + h) - f(x + 2 h)}{6} + \mathscr{O}(h^5)\\ %+ \frac{h^5}{5!} \frac{\partial^5 f(\mu')}{\partial x^5}\\
+%          \Rightarrow & \frac{\partial^3 f(x_0)}{\partial x^3} = \frac{3 f(x + h) - 3 f(x - h)}{h^3} - \frac{f(x - 2 h)- 8 f(x - h) + 8 f(x + h) - f(x + 2 h)}{2 h^3} + \mathscr{O}(h^2)\\ %+ \frac{h^5}{5!} \frac{\partial^5 f(\mu')}{\partial x^5}\\
           \Rightarrow & \frac{\partial^3 f(x_0)}{\partial x^3} = \frac{- f(x - 2 h) + 2 f(x - h) - 2 f(x + h) + f(x +  2 h)}{2 h^3} + \mathscr{O}(h^2) %+ \frac{h^5}{5!} \frac{\partial^5 f(\mu')}{\partial x^5} 
         \end{align*}
       \item
@@ -191,7 +229,7 @@
             \end{equation*}
             \begin{figure}[H]
               \centering
-              \includegraphics[scale = 0.8]{figs/motion1.pdf}
+              \includegraphics[scale = 0.7]{figs/motion1.pdf}
               \caption{Motion of soliton wave}
               \label{fig:motion1}
             \end{figure}
