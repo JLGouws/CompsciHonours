@@ -109,25 +109,48 @@
         where $\beta =  0.8$ and $\gamma = 1 / 3$.
         \begin{figure}[H]
           \centering
-          \includegraphics[scale = 0.9]{../figs/SIR.pdf}
+          \includegraphics[scale = 0.8]{../figs/SIR.pdf}
           \caption{Evolution of an SIR model through time}
           \label{fig:SIR}
         \end{figure}
+        \begin{enumerate}
+          \item If the disease has these parameters, the infections peak after \input{2ai.tex} days.
+          \item At the peak \input{2aii.tex} people will be infected at the same time.
+          \item After approximately \input{2aiii.tex} days, no single person should be infected.
+          \item The proportion of people who will be infected is \input{2aiiii.tex}.
+        \end{enumerate}
 
       \item
         Figure~\ref{fig:SIRbetaHalved} shows that halving $\beta$ (the contagiousness parameter) has a large impact on the infection curve.
+        The curve is flatter and hence fewer people are infected at one time.
+        This situation allows hospitals to keep up with new infections.
         \begin{figure}[H]
           \centering
-          \includegraphics[scale = 0.9]{../figs/SIRbetaHalved.pdf}
+          \includegraphics[scale = 0.8]{../figs/SIRbetaHalved.pdf}
           \caption{Evolution of an SIR model through time}
           \label{fig:SIRbetaHalved}
         \end{figure}
+        \begin{enumerate}
+          \item If the disease has these parameters, the infecaions peak at approximately \input{2bi.tex}.
+          \item At the peak \input{2bii.tex} people will be infected at the same time.
+          \item After approximately \input{2biii.tex} days, no single person should be infected.
+          \item The proportion of people who will be infected is \input{2biiii.tex}.
+        \end{enumerate}
   \end{enumerate}
   \item
     \begin{enumerate}
       \item
         Lorenz models are sensitive to initial conditions.
-        Figure~\ref{fig:xvtLorenz} illustrates the chaos exihited by a Lorenz model.
+        Figure~\ref{fig:xvtLorenz} illustrates the chaos exihibited by a Lorenz model.
+        The lorenz model shown is:
+        \begin{gather*}
+          \begin{split}
+            \dot x &= \sigma(y - x)\\
+            \dot y &= rx - y - xz\\
+            \dot z &= xy - bz
+          \end{split}\\
+          \sigma = 10 \qquad b = \frac{8}{3} \qquad r = 28
+        \end{gather*}
         \begin{figure}[H]
           \centering
           \includegraphics[scale = 0.8]{../figs/xvtLorenz.pdf}
@@ -136,15 +159,16 @@
         \end{figure}
       \item
         Figure~\ref{fig:LorenzChaosTimeStep} illustrates the sensitivity solving of Lorenz model.
-        The solution to the same problem results in substantially different solutions depending on the numerical integrator's time step.
+        The solution to the same Lorenz equations are substantially different solutions depending on the numerical integrator's time step.
+        The errors and the actual solution are the same order.
         \begin{figure}[H]
           \centering
-          \includegraphics[scale = 0.4]{../figs/LorenzChaosTimeStep.pdf}
-          \caption{Chaos of Lorenz system when evolution time step is varied}
+          \includegraphics[scale = 0.5]{../figs/LorenzChaosTimeStep.pdf}
+          \caption{Chaos of Lorenz system when for different systems}
           \label{fig:LorenzChaosTimeStep}
         \end{figure}
       \item
-        Figure~\ref{fig:lorenz} shows the lorenz model settling into two lobes.
+        Figure~\ref{fig:lorenz} shows the Lorenz model settling into two lobes.
         \begin{figure}[H]
           \centering
           \includegraphics[scale = 0.7]{../figs/lorenz.pdf}
