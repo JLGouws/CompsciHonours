@@ -43,7 +43,6 @@
 
 
 
-
 \begin{document}
 \thispagestyle{empty}
 
@@ -51,6 +50,85 @@
 
 \begin{enumerate}
   \item
+    \begin{enumerate}
+      \item
+        A possible implementation of Neumann boundary conditions involves predicting a ghost point using the boundary condition.
+        An example of this at the left boundary, $\nu_0^n$ is:
+        \begin{align*}
+                      & {\nu_x}_0^j = \frac{\nu_1^j - \nu_{-1}^j}{2 h} + \mathscr{O} (h^2)\\
+          \Rightarrow & v_{-1}^j = 2 h {\nu_x}_0^j + \nu_{-1}^j + \mathscr{O} (h^3)
+        \end{align*}
+        The calculation of the second derivative at the boundary can use this ghost point.
+        With this choice, the second derivative at the boundaries will only be correct to first order.
+
+        \iffalse
+        Forward and backward finite difference methods can give a second order accurate second derivative at the boundary.
+        For the left most point:
+        \begin{equation*}
+          {\nu_{x}}_1^j = \frac{- 25 \nu_1^j / 12 + 4 \nu_2^j - 3 \nu_3^j  + 4 \nu_4^j / 3 - \nu_5^j / 4}{h} + \mathscr {O}(h^4)
+        \end{equation*}
+        and:
+        \begin{equation*}
+          {\nu_{x}}_2^j = \frac{\nu_0^j / 12 - 2 \nu_1^j / 3 + 2 \nu_3^j / 3 - \nu_4^j / 12}{h} + \mathscr {O}(h^4)
+        \end{equation*}
+        These can be combined to form a second order approximation of the second derivative:
+        \begin{equation*}
+          {\nu_{xx}}_0^j = \frac{- 3 h {\nu_x}_0^j + \left(-\nu_0^j / 12 - 9 \nu_1^j + 16 \nu_2^j - 38 \nu_3^j / 3 + 49 \nu_4^j/ 12 - v_5^j\right)}{2 h^2} + \mathscr {O}(h^2)
+        \end{equation*}
+        For the right most end point:
+        \begin{equation*}
+          {\nu_{x}}_{N-1}^j = \frac{- \nu_{N-4}^j / 3 + 3 \nu_{N-3}^j / 2 - 3 \nu_{N-2}^j + 11 \nu_{N-1}^j / 6}{h} + \mathscr {O}(h^3)
+        \end{equation*}
+        and:
+        \begin{equation*}
+          {\nu_{x}}_{N-2}^j = \frac{\nu_{N-4}^j / 12 - 2 \nu_{N-3}^j / 3 + 2 \nu_{N-1}^j / 3 - \nu_N^j / 12}{h} + \mathscr {O}(h^4)
+        \end{equation*}
+        These can be combined to form a second order approximation of the second derivative:
+        \begin{equation*}
+          {\nu_{xx}}_N^j = \frac{h\left(17 \nu_{N-4}^j/ 12 - 20 \nu_{N-3}^j/ 3 + 12 \nu_{N-2}^j + 20 \nu_{N - 1}^j/ 3 - \nu_N^j / 12\right) + 3 {\nu_x}_N^j}{2 h^2} + \mathscr {O}(h^2)
+        \end{equation*}
+        \fi
+        An RK4 integrator evolves the surface in time.
+        Figure~\ref{fig:profile} shows the evolution of a heat equation with initial profile:
+        \begin{equation*}
+          u(x, y ,0) = e^{-[(x- x_0)^2 + (y - y_0)^2]}
+        \end{equation*}
+        with $\sigma = 0.01$.
+        \begin{figure}[H]
+          \centering
+          \includegraphics[scale = 0.8]{figs/profile.pdf}
+          \caption{Profile of a heat equation evolution}
+          \label{fig:profile}
+        \end{figure}
+      \item
+        Figure~\ref{fig:T1} shows the $T(t)$'s value as a function of time.
+        \begin{figure}[H]
+          \centering
+          \includegraphics[scale = 0.8]{figs/T1.pdf}
+          \caption{$T(t)$ for the given 2 dimensional heat equation}
+          \label{fig:T1}
+        \end{figure}
+
+      \item
+        Figure~\ref{fig:T} gives a semi-logarithmic plot of $T(t)$ as a function of time for different resolutions.
+        \begin{figure}[H]
+          \centering
+          \includegraphics[scale = 0.8]{figs/T.pdf}
+          \caption{$T(t)$ at various grid resolutions}
+          \label{fig:T}
+        \end{figure}
+      \item
+        Figure~\ref{fig:heatSurface} shows how the initial profile changes as time progresses.
+        The dye's density falls below $10^{-4}$ parts per area when \input{tforT.tex}.
+
+        \begin{figure}[H]
+          \centering
+          \includegraphics[scale = 0.6]{figs/heatSurface.pdf}
+          \caption{Evolution of the surface as time progresses}
+          \label{fig:heatSurface}
+        \end{figure}
+    \end{enumerate}
+
   \item
     \begin{enumerate}
       \item

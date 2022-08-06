@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
+from matplotlib.gridspec import GridSpec
 
 from matplotlib import cm
 from matplotlib.ticker import LinearLocator
@@ -87,6 +88,13 @@ def set2DHeatNeumann(D, dx, dy, vx1 = 0, vx2 = 0, vy1 = 0, vy2 = 0):
         return D * (uxx + uyy) 
     return heat
 
+def set2DHeatNeumannSecond(D, dx, dy, vx1 = 0, vx2 = 0, vy1 = 0, vy2 = 0):
+    def heat(t, u):
+        uxx = xSecondDerivativeNeumanSecond(u, dx, vx1, vx2)
+        uyy = ySecondDerivativeNeumanSecond(u, dy, vy1, vy2)
+        return D * (uxx + uyy) 
+    return heat
+
 def setWave(k, dx):
     def wave(t, U):
         uxx = derivative(derivative(U[0], dx), dx)
@@ -168,6 +176,31 @@ def ySecondDerivativeNeuman(fx, h, v1, v2):
     fx = np.concatenate((yi, fx, yf), axis = 1)
     return (fx[:, :-2] - 2 * fx[:,1:-1] + fx[:,2:]) / h ** 2
 
+def xSecondDerivativeNeumanSecond(fx, h, v1, v2):
+    fx = np.array(fx)
+    v1 = np.array(v1)
+    v2 = np.array(v2)
+    vxx0 = [(-3 * h * v1 + (-fx[0,:] / 12 - 9 * fx[1,:] + 16 * fx[2,:] - 38 * fx[3,:] / 3 + 49 * fx[4,:] / 12 - fx[5,:]) ) * 0.5 / h **2]
+    vxxN = [(3 * h * v1 + (-fx[-1,:] / 12 - 9 * fx[-2,:] + 16 * fx[-3,:] - 38 * fx[-4,:] / 3 + 49 * fx[-5,:] / 12 - fx[-6,:]) ) * 0.5 / h **2]
+    return np.concatenate((vxx0, (fx[:-2,:] - 2 * fx[1:-1,:] + fx[2:,:]) / h ** 2, vxxN))
+
+def ySecondDerivativeNeumanSecond(fx, h, v1, v2):
+    fx = np.array(fx)
+    v1 = np.array(v1)
+    v2 = np.array(v2)
+    vyy0 = [(-3 * h * v1 + (-fx[:,0] / 12 - 9 * fx[:,1] + 16 * fx[:,2] - 38 * fx[:,3] / 3 + 49 * fx[:,4] / 12 - fx[:,5]) ) * 0.5 / h **2]
+    vyyN = [(3 * h * v1 + (-fx[:,-1] / 12 - 9 * fx[:,-2] + 16 * fx[:,-3] - 38 * fx[:,-4] / 3 + 49 * fx[:,-5] / 12 - fx[:,-6]) ) * 0.5 / h **2]
+    return np.concatenate((vyy0, (fx[:,:-2] - 2 * fx[:,1:-1] + fx[:,2:]) / h ** 2, vyyN))
+
+def ySecondDerivativeNeumanSecond(fx, h, v1, v2):
+    fx = np.array(fx)
+    v1 = np.array(v1)
+    v2 = np.array(v2)
+    yi = np.array([fx[:, 1] - 2 * h * v1]).T
+    yf = np.array([2 * h * v2 + fx[:,-1]]).T
+    fx = np.concatenate((yi, fx, yf), axis = 1)
+    return (fx[:, :-2] - 2 * fx[:,1:-1] + fx[:,2:]) / h ** 2
+
 def yDerivativePeriodic(fx, h):
     fx = np.array(fx)
     #print(np.array([(fx[:,1] - fx[:,:-2]) * .5 / h]).T)
@@ -214,12 +247,13 @@ sigma = 0.001
 fx = np.exp(- 0.5 * ((X - 0.5) ** 2 + (Y - 0.5) ** 2) / sigma)
 heat = set2DHeatNeumann(1, dx, dy)
 solution, t = evolvePde(heat, fx, x, 0, 0.1, dt)
+
 T = []
 
 for s in solution:
     T += [np.sum(s**2, (0, 1)) * dx * dy]
 T = np.array(T)
-ax.semilogy(t, T, c = "firebrick", label = "$\Delta t = \\frac{\Delta x}{250}$", ls = (0, [10, 20]))
+ax.semilogy(t, T, c = "firebrick", label = "$\Delta t = \\frac{\Delta x}{300}$", ls = (0, [10, 20]))
 
 x = np.linspace(0, 1, 101)
 y = np.linspace(0, 1, 101)
@@ -252,6 +286,15 @@ T = []
 
 for s in solution:
     T += [np.sum(s**2, (0, 1)) * dx * dy]
+
+f = open("tforT.tex", "w")
+for i, d in enumerate(T):
+    if d < 1e-4:
+        f.write(f"$t = {t[i]:.05f}$")
+        break
+f.close();
+quit()
+
 T = np.array(T)
 ax.semilogy(t, T, c = "steelblue", label = "$\Delta t = \\frac{\Delta x}{750}$", ls = (20, [10, 20]))
 
@@ -260,18 +303,81 @@ ax.set_xlabel("$t$")
 ax.set_ylabel("$T(t)$")
 fig.savefig("figs/T.pdf")
 
-quit()
-
 fig, ax = plt.subplots(1)
-ax.plot(X[0,:], solution[0][76,:])
-ax.plot(X[0,:], solution[-1][76,:])
-fig.savefig("figs/profile.pdf")
+ax.plot(np.array(t)[:2000], T[:2000], c = "orangered")
+ax.set_xlabel("$t$")
+ax.set_ylabel("$T(t)$")
+fig.savefig("figs/T1.pdf")
 
 fps = 1000
 
-fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
-                                                                                
-ax.set_zlim(-0.5, 1.5); 
+fig = plt.figure(figsize = (10, 15), tight_layout=True)
+gs = GridSpec(6, 4, figure = fig)
+
+ax = fig.add_subplot(gs[0:2, 0:2], projection = "3d")
+ax.plot_surface(X, Y, solution[0], cmap=cm.coolwarm,
+     linewidth = 0, antialiased=False, label = f"$t = {t[0]:.04f}$")
+ax.set_zlim(-0.5, 1.05); 
+ax.set_title(f"$t = {t[0]:.04f}$")
+ax.set_xlabel("$x$")
+ax.set_ylabel("$y$")
+ax.set_zlabel("$u(x, y)$")
+
+ax = fig.add_subplot(gs[0:2, 2:4], projection = "3d")
+ax.plot_surface(X, Y, solution[100], cmap=cm.coolwarm,
+        linewidth = 0, antialiased=False, label = f"$t = {t[1000]:.04f}$")
+ax.set_zlim(-0.5, 1.05); 
+ax.set_title(f"$t = {t[100]:.04f}$")
+ax.set_xlabel("$x$")
+ax.set_ylabel("$y$")
+ax.set_zlabel("$u(x, y)$")
+
+ax = fig.add_subplot(gs[2:4, 0:2], projection = "3d")
+ax.plot_surface(X, Y, solution[300], cmap=cm.coolwarm,
+     linewidth = 0, antialiased=False, label = f"$t = {t[3000]:.04f}$")
+ax.set_zlim(-0.5, 1.05); 
+ax.set_title(f"$t = {t[300]:.04f}$")
+ax.set_xlabel("$x$")
+ax.set_ylabel("$y$")
+ax.set_zlabel("$u(x, y)$")
+
+ax = fig.add_subplot(gs[2:4, 2:4], projection = "3d")
+ax.plot_surface(X, Y, solution[1000], cmap=cm.coolwarm,
+     linewidth = 0, antialiased=False, label = f"$t = {t[5000]:.04f}$")
+ax.set_zlim(-0.5, 1.05); 
+ax.set_title(f"$t = {t[1000]:.04f}$")
+ax.set_xlabel("$x$")
+ax.set_ylabel("$y$")
+ax.set_zlabel("$u(x, y)$")
+
+ax = fig.add_subplot(gs[4:6, 1:3], projection = "3d")
+ax.plot_surface(X, Y, solution[3000], cmap=cm.coolwarm,
+     linewidth = 0, antialiased=False, label = f"$t = {t[7000]:.04f}$")
+ax.set_zlim(-0.5, 1.05); 
+ax.set_xlabel("$x$")
+ax.set_ylabel("$y$")
+ax.set_zlabel("$u(x, y)$")
+ax.set_title(f"$t = {t[3000]:.04f}$")
+fig.savefig("figs/heatSurface.pdf")
+
+x = np.linspace(0, 1, 101)
+y = np.linspace(0, 1, 101)
+dx = x[1] - x[0]
+dy = y[1] - y[0]
+dt = dx / 500
+X, Y = np.meshgrid(x, y)
+
+sigma = 0.01
+fx = np.exp(- 0.5 * ((X - 0.5) ** 2 + (Y - 0.5) ** 2) / sigma)
+heat = set2DHeatNeumann(1, dx, dy)
+solution, t = evolvePde(heat, fx, x, 0, 0.1, dt)
+fig, ax = plt.subplots(1)
+ax.plot(X[0,:], solution[0][51,:], label = f"$t = {t[0] : .04f}$", c = "darkred")
+ax.plot(X[0,:], solution[-1][51,:], label = f"$t = {t[-1] : .04f}$", c = "cadetblue")
+ax.legend()
+fig.savefig("figs/profile.pdf")
+
+quit()
                                                                                 
 def update(frame, solution, ax):
     ax.clear()
