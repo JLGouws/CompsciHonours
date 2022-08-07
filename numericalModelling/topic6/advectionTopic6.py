@@ -7,6 +7,11 @@ from matplotlib import cm
 from matplotlib.ticker import LinearLocator
 from matplotlib.animation import FuncAnimation
 
+import matplotlib as mpl
+
+mpl.rcParams['text.usetex'] = True
+mpl.rcParams['text.latex.preamble'] = r'\usepackage{amsmath}'
+
 
 def taylors_method(f, a, b, N, alpha):
   h = (b -a)/N
@@ -180,8 +185,11 @@ advecEquation = setAdvectionUpwindPeriodic(1, dx)
 solution, t = evolvePdeEuler(advecEquation, fx, x, 0, 2 * np.pi, dt)
 
 fig, ax = plt.subplots(1)
-ax.plot(x, solution[-1], lw = 4)
-ax.plot(x, fx)
+ax.plot(x, solution[-1], lw = 4, label = "upwind Euler", c = "slategray")
+ax.plot(x, fx, ls = '--', dashes = (10, 10), label = "Exact", c = "red")
+ax.legend()
+ax.set_xlabel("$x$")
+ax.set_ylabel("$u(x, t)$")
 fig.savefig("figs/eulerdx.pdf")
 
 x = np.linspace(- np.pi, np.pi, 100)
@@ -194,8 +202,11 @@ advecEquation = setAdvectionUpwindPeriodic(1, dx)
 eulerSolution, t = evolvePdeEuler(advecEquation, fx, x, 0, 2 * np.pi, dt)
 
 fig, ax = plt.subplots(1)
-ax.plot(x, eulerSolution[-1], lw = 4)
-ax.plot(x, fx)
+ax.plot(x, eulerSolution[-1], lw = 4, label = "upwind Euler")
+ax.plot(x, fx, ls = '--', dashes = (10, 10), label = "Exact")
+ax.legend()
+ax.set_xlabel("$x$")
+ax.set_ylabel("$u(x, t)$")
 fig.savefig("figs/euler.8dx.pdf")
 
 x = np.linspace(- np.pi, np.pi, 100)
@@ -209,12 +220,16 @@ solution, t = evolvePdeEuler(advecEquation, fx, x, 0, 2 * np.pi, dt)
 
 fig, ax = plt.subplots(2)
 ax[0].plot(x, solution[-1], lw = 4, label = "Lax-Wendroff")
-ax[0].plot(x, fx, label = "Exact")
+ax[0].plot(x, fx, ls = '--', dashes = (10, 10), label = "Exact")
 ax[0].legend()
+ax[0].set_xlabel("$x$")
+ax[0].set_ylabel("$u(x, t)$")
 
 ax[1].plot(x, solution[-1], lw = 4, label = "Lax-Wendroff")
-ax[1].plot(x, eulerSolution[-1], label = "upwind-Euler")
+ax[1].plot(x, eulerSolution[-1], ls = '--', dashes = (10, 10), label = "upwind-Euler")
 ax[1].legend()
+ax[1].set_xlabel("$x$")
+ax[1].set_ylabel("$u(x, t)$")
 fig.savefig("figs/laxWendroff.pdf")
 
 

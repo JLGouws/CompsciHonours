@@ -1,11 +1,15 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib as mpl
 import pandas as pd
 import seaborn as sns
 
 from matplotlib import cm
 from matplotlib.ticker import LinearLocator
 from matplotlib.animation import FuncAnimation
+
+mpl.rcParams['text.usetex'] = True
+mpl.rcParams['text.latex.preamble'] = r'\usepackage{amsmath}'
 
 
 def taylors_method(f, a, b, N, alpha):
@@ -169,10 +173,17 @@ advecEquation = setAdvectionUpwindPeriodic(1, dx)
 
 solution, t = evolvePdeEuler(advecEquation, fx, x, 0, 30 * np.pi, dt)
 
-fig, ax = plt.subplots(2)                         
-ax[0].plot(x, solution[-1], lw = 4)
-ax[0].plot(x, gx)
-ax[1].plot(x, np.abs(gx - solution[-1]))
+fig, ax = plt.subplots(2, figsize = (7, 8.5))
+ax[0].plot(x, solution[-1], lw = 4, label = "upwind Euler", c = "lightseagreen")
+ax[0].plot(x, gx, ls = '--', dashes = (10, 10), label = "exact", c = "orangered")
+ax[0].set_xlabel("$x$")
+ax[0].set_ylabel("$u(x,t)$")
+ax[0].set_title("Numerical and Exact Solution")
+ax[0].legend()
+ax[1].plot(x, np.abs(gx - solution[-1]), c = "lightgreen")
+ax[1].set_xlabel("$x$")
+ax[1].set_title("Error in numerical method")
+ax[1].set_ylabel(r"$|u(x_i, t^{\mathrm{final}}) - \nu_i^{\mathrm{final}}|$")
 fig.savefig("figs/upwindEuler.pdf")
 
 x = np.linspace(- np.pi, np.pi, 101)
@@ -185,10 +196,17 @@ advecEquation = setAdvectionUpwindPeriodic(1, dx)
 
 solution, t = evolvePdeEuler(advecEquation, fx, x, 0, 30 * np.pi, dt)
 
-fig, ax = plt.subplots(2)                         
-ax[0].plot(x, solution[-1], lw = 3)
-ax[0].plot(x, gx)
-ax[1].plot(x, np.abs(gx - solution[-1]))
+fig, ax = plt.subplots(2, figsize = (7, 8.5))
+ax[0].plot(x, solution[-1], lw = 3, label = "upwind Euler", c = "springgreen")
+ax[0].plot(x, gx, label = "exact", c = "maroon", ls = "--", dashes = (10, 10))
+ax[0].set_xlabel("$x$")
+ax[0].set_ylabel("$u(x,t)$")
+ax[0].set_title("Numerical and Exact Solution")
+ax[0].legend()
+ax[1].plot(x, np.abs(gx - solution[-1]), c = "olivedrab")
+ax[1].set_xlabel("$x$")
+ax[1].set_title("Error in numerical method")
+ax[1].set_ylabel(r"$|u(x_i, t^{\mathrm{final}}) - \nu_i^{\mathrm{final}}|$")
 fig.savefig("figs/upwindEuler1.1.pdf")
 
 x = np.linspace(- np.pi, np.pi, 101)
@@ -200,10 +218,17 @@ gx = np.sin(x) * np.cos(x / 2) ** 8
 advecEquation = setAdvectionPeriodic(1, dx)
 
 solution, t = evolvePdeEuler(advecEquation, fx, x, 0, 30 * np.pi, dt)
-fig, ax = plt.subplots(2)                         
-ax[0].plot(x, solution[-1], lw = 3)
-ax[0].plot(x, gx)
-ax[1].plot(x, np.abs(gx - solution[-1]))
+fig, ax = plt.subplots(2, figsize = (7, 8.5))                         
+ax[0].plot(x, solution[-1], lw = 3, label = "upwind Euler", c = "gold")
+ax[0].plot(x, gx, label = "exact", c = "royalblue", ls = "--", dashes = (10, 10))
+ax[0].set_xlabel("$x$")
+ax[0].set_ylabel("$u(x,t)$")
+ax[0].set_title("Numerical and Exact Solution")
+ax[0].legend()
+ax[1].plot(x, np.abs(gx - solution[-1]), c = "sandybrown")
+ax[1].set_xlabel("$x$")
+ax[1].set_title("Error in numerical method")
+ax[1].set_ylabel(r"$|u(x_i, t^{\mathrm{final}}) - \nu_i^{\mathrm{final}}|$")
 fig.savefig("figs/centeredEuler.pdf")
 quit()
 

@@ -88,7 +88,7 @@ fig.savefig("figs/equilibriumPoint.pdf")
 
 q6 = logisticMapList(3.2, 0.65, 80)
 fig, ax = plt.subplots(1)
-ax.plot(range(0, 81), q6, c = "lime")
+ax.plot(range(0, 81), q6, c = "limegreen")
 ax.set_xlabel("$n$")
 ax.set_ylabel("$x_n$")
 fig.savefig("figs/q6.pdf")

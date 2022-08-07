@@ -1,0 +1,111 @@
+\documentclass[12pt,a4]{article}
+\usepackage{physics, amsmath,amsfonts,amsthm,amssymb, mathtools,steinmetz, gensymb, siunitx}	% LOADS USEFUL MATH STUFF
+\usepackage{xcolor,graphicx}
+\usepackage[left=45pt, top=60pt, right=45pt, bottom=65pt ,a4paper]{geometry} 				% ADJUSTS PAGE
+\usepackage{setspace}
+\usepackage{caption}
+\usepackage{adjustbox}
+\usepackage{tikz}
+\usepackage{pgf,tikz,pgfplots,wrapfig}
+\usepackage{mathrsfs}
+\usepackage{fancyhdr}
+\usepackage{float}
+\usepackage{array}
+\usepackage{booktabs,multirow}
+\usepackage{bm}
+\usepackage{ulem}
+\usepackage{fancyvrb}
+\usepackage{rotating}
+
+
+\usetikzlibrary{decorations.text, calc}
+\pgfplotsset{compat=1.7}
+
+\usetikzlibrary{decorations.pathreplacing,decorations.markings,matrix,calc}
+\usepgfplotslibrary{fillbetween}
+
+\newcommand{\vect}[1]{\boldsymbol{#1}}
+
+\usepackage{hyperref}
+%\usepackage[style= ACM-Reference-Format, maxbibnames=6, minnames=1,maxnames = 1]{biblatex}
+%\addbibresource{references.bib}
+
+
+\AtBeginDocument{\hypersetup{pdfborder={0 0 0}}}
+
+\title{
+\textsc{Architecture Prac 3}
+}
+\author{\textsc{J L Gouws}
+}
+\date{\today
+\\[1cm]}
+
+
+
+\usepackage{graphicx}
+\usepackage{array}
+
+\VerbatimFootnotes
+
+
+\begin{document}
+\thispagestyle{empty}
+
+\maketitle
+
+\begin{enumerate}
+  \item
+    \begin{enumerate}
+      \item
+        If the cache block size is a multiple of an integer's size, the memory access pattern in the question would result in false sharing.
+        This false sharing would force the loops to run sequentially.
+        On top of the sequential execution, there will also be some overhead from snooping and data transfer amongst the two cores' caches.
+      \item
+        One loop would be:
+        \begin{Verbatim}
+for (int i = 0; i < N / 2; i++)
+  a[i] = init (i);
+        \end{Verbatim}
+        The other loop would be:
+        \begin{Verbatim}
+for (int i = N / 2; i < N; i++)
+  a[i] = init (i);
+        \end{Verbatim}
+        With these two loops there should be minimal false sharing between the cores.
+        False sharing would only occur if \verb|N / 2 - 1| and \verb|N / 2| were in the same cache block.
+    \end{enumerate}
+  \item
+    \begin{enumerate}
+      \item
+        {\textbf For spinlocks}
+          Everytime a task releases the lock, all other tasks will use the shared memory bus to try to obtain the lock.
+          This process will flood the bus.
+          For a short critical section, the tasks will flood the bus frequently.
+        {\textbf For the MCS lock}
+          After a task releases the lock, the queue's next task will grab the lock.
+          Only one task will try to claim the lock by putting a request on the shared memory bus.
+          This scheme does not flood the bus everytime a tasks executes its critical sectin.
+
+          Since the shared memory bus is slow compared to a CPU, frequent bus flooding will result in slower overall execution.
+
+      \item
+        {\textbf For spinlocks}
+          Similar to the previous equation, the bus is flooded after every critcal section.
+          This flooding prevents the critical section's shared data structures from being sent to the core with the lock.
+          All the spinlocks will have to access the lock before the core executing the critical section can access the shared data structures.
+
+        {\textbf For the MCS lock}
+          Similar to the previous quesion, the MCS lock mechanism does not flood the bus after a critical section's execution.
+          Only the next task that will execute the critical section puts a request on the shared memory bus.
+          In this case the bus is free to move the shared data structures to the core that is executing the critical section.
+
+          In this case the spinlock approach will stall the critical section's execution until the bus is free.
+          The MCS lock will not stall the execution for such a long time period, resulting in faster execution of the code.
+    \end{enumerate}
+  \item
+    Label the two cores Core0 and Core1, and assume that Core0 wins the race to access the block.
+
+\end{enumerate}
+
+\end{document}

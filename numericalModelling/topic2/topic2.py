@@ -34,8 +34,10 @@ points = np.array(taylors_method(logistic, 0, 20, 2000, 0.05))
 time = points[:, 0]
 solution = points[:, 1]
 
-fig, ax = plt.subplots(figsize=(10,10))
-ax.plot(time, solution, lw = 8, c = "hotpink")
+fig, ax = plt.subplots(figsize=(5,5))
+ax.plot(time, solution, lw = 8, c = "indianred")
+ax.set_ylabel("$u(t)$")
+ax.set_xlabel("$t$")
 fig.savefig("figs/1a.pdf")
 
 ################################################################################
@@ -44,8 +46,10 @@ points = np.array(midpoint_method(logistic, 0, 20, 2000, 0.05))
 time = points[:, 0]
 solution = points[:, 1]
 
-fig, ax = plt.subplots(figsize=(10,10))
-ax.plot(time, solution, 'o', c = "lime")
+fig, ax = plt.subplots(figsize=(5,5))
+ax.plot(time, solution, 'o', c = "forestgreen")
+ax.set_ylabel("$u(t)$")
+ax.set_xlabel("$t$")
 fig.savefig("figs/1b.pdf")
 
 ################################################################################
@@ -54,8 +58,10 @@ points = np.array(runge_kutta2(logistic, 0, 20, 2000, 0.05))
 time = points[:, 0]
 solution = points[:, 1]
 
-fig, ax = plt.subplots(figsize=(10,10))
-ax.scatter(time, solution, c = "aqua")
+fig, ax = plt.subplots(figsize=(5,5))
+ax.scatter(time, solution, c = "cadetblue")
+ax.set_ylabel("$u(t)$")
+ax.set_xlabel("$t$")
 fig.savefig("figs/1c.pdf")
 
 ################################################################################
@@ -73,7 +79,7 @@ df = pd.DataFrame(data = {'time' : np.ravel(time, order = 'F'), '$\\nu$' : np.ra
 
 fig= plt.figure(figsize=(10,10))
 ax = sns.lineplot(data = df, x = 'time', y = '$\\nu$', hue = 'u_0', palette = 'icefire', legend = 'full')
-ax.set(ylim = [-.75, 2.2], xlim = [0.0, 7.0])
+ax.set(ylim = [-.75, 2.2], xlim = [0.0, 7.0], xlabel = "$t$", ylabel = "$u(t)$")
 ax.legend(loc = 'upper right', title = '$u_0$')
 fig.savefig("figs/2.pdf")
 

@@ -2,10 +2,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
+import matplotlib as mpl
 
 from matplotlib import cm
 from matplotlib.ticker import LinearLocator
 from matplotlib.animation import FuncAnimation
+
+mpl.rcParams['text.usetex'] = True
+mpl.rcParams['text.latex.preamble'] = r'\usepackage{amsmath}'
 
 
 def taylors_method(f, a, b, N, alpha):
@@ -195,7 +199,9 @@ heatEquation = setHeatDirichlet(1, dx)
 solution, t = evolvePdeEulerDirichlet(heatEquation, fx, x, 0, np.pi / 2, dt)
 
 fig, ax = plt.subplots(1)                         
-ax.plot(x, solution[-1])
+ax.plot(x, solution[-1], c = "brown")
+ax.set_xlabel("$x$")
+ax.set_ylabel("$u(x,t)$")
 fig.savefig("figs/heatEulerdx.pdf")
 
 x = np.linspace(- np.pi, np.pi, 101)
@@ -209,13 +215,16 @@ heatEquation = setHeatDirichlet(1, dx)
 solution, t = evolvePdeEulerDirichlet(heatEquation, fx, x, 0, 8 + dt, dt)
 
 fig, ax = plt.subplots(1)                         
-ax.plot(x, solution[0])
-ax.plot(x, solution[round(0.1 / dt)])
-ax.plot(x, solution[round(0.5 / dt)])
-ax.plot(x, solution[round(1 / dt)])
-ax.plot(x, solution[round(2 / dt)])
-ax.plot(x, solution[round(4 / dt)])
-ax.plot(x, solution[round(8 / dt)])
+ax.plot(x, solution[0], label = f"$t = {t[0]:.04f}$", c = "firebrick")
+ax.plot(x, solution[round(0.1 / dt)], label = f"$t = {t[round(0.1 / dt)]:.04f}$", c = "salmon")
+ax.plot(x, solution[round(0.5 / dt)], label = f"$t = {t[round(0.5 / dt)]:.04f}$", c = "peru")
+ax.plot(x, solution[round(1 / dt)]  , label = f"$t = {t[round(1 / dt)]:.04f}$"  , c = "darkorange")
+ax.plot(x, solution[round(2 / dt)]  , label = f"$t = {t[round(2 / dt)]:.04f}$"  , c = "goldenrod")
+ax.plot(x, solution[round(4 / dt)]  , label = f"$t = {t[round(4 / dt)]:.04f}$"  , c = "seagreen")
+ax.plot(x, solution[round(8 / dt)]  , label = f"$t = {t[round(8 / dt)]:.04f}$"  , c = "deepskyblue")
+ax.legend()
+ax.set_xlabel("$x$")
+ax.set_ylabel("$u(x,t)$")
 fig.savefig("figs/heatEuler01dx.pdf")
 
 x = np.linspace(- np.pi, np.pi, 101)
@@ -231,13 +240,16 @@ solution, t = evolvePdeEulerDirichlet(heatEquation, fx, x, 0, 8 + dt, dt)
 
 fig, ax = plt.subplots(1)                         
 ax.text(x = -3, y = 1, s = "$\Delta t = " + str(mulFac) + "\Delta x $")
-ax.plot(x, solution[0])
-ax.plot(x, solution[round(0.1 / dt)])
-ax.plot(x, solution[round(0.5 / dt)])
-ax.plot(x, solution[round(1 / dt)])
-ax.plot(x, solution[round(2 / dt)])
-ax.plot(x, solution[round(4 / dt)])
-ax.plot(x, solution[round(8 / dt)])
+ax.plot(x, solution[0], label = f"$t = {t[0]:.04f}$", c = "red")
+ax.plot(x, solution[round(0.1 / dt)], label = f"$t = {t[round(0.1 / dt)]:.04f}$", c = "saddlebrown")
+ax.plot(x, solution[round(0.5 / dt)], label = f"$t = {t[round(0.5 / dt)]:.04f}$", c = "darkgoldenrod")
+ax.plot(x, solution[round(1 / dt)]  , label = f"$t = {t[round(1 / dt)]:.04f}$"  , c = "olive")  
+ax.plot(x, solution[round(2 / dt)]  , label = f"$t = {t[round(2 / dt)]:.04f}$"  , c = "palegreen")   
+ax.plot(x, solution[round(4 / dt)]  , label = f"$t = {t[round(4 / dt)]:.04f}$"  , c = "dodgerblue")    
+ax.plot(x, solution[round(8 / dt)]  , label = f"$t = {t[round(8 / dt)]:.04f}$"  , c = "rebeccapurple") 
+ax.set_xlabel("$x$")
+ax.set_ylabel("$u(x,t)$")
+ax.legend()
 fig.savefig("figs/heatEulerMaxdx.pdf")
 
 x = np.linspace(- np.pi, np.pi, 101)
@@ -253,13 +265,16 @@ solution, t = evolvePdeDirichlet(heatEquation, fx, x, 0, 8 + dt, dt)
 
 fig, ax = plt.subplots(1)                         
 ax.text(x = -3, y = 1, s = "$\Delta t = " + str(mulFac) + "\Delta x $")
-ax.plot(x, solution[0])
-ax.plot(x, solution[round(0.1 / dt)])
-ax.plot(x, solution[round(0.5 / dt)])
-ax.plot(x, solution[round(1 / dt)])
-ax.plot(x, solution[round(2 / dt)])
-ax.plot(x, solution[round(4 / dt)])
-ax.plot(x, solution[round(8 / dt)])
+ax.plot(x, solution[0], label = f"$t = {t[0]:.04f}$", c = "maroon")
+ax.plot(x, solution[round(0.1 / dt)], label = f"$t = {t[round(0.1 / dt)]:.04f}$", c = "lightcoral")
+ax.plot(x, solution[round(0.5 / dt)], label = f"$t = {t[round(0.5 / dt)]:.04f}$", c = "orange")
+ax.plot(x, solution[round(1 / dt)]  , label = f"$t = {t[round(1 / dt)]:.04f}$"  , c = "yellowgreen")
+ax.plot(x, solution[round(2 / dt)]  , label = f"$t = {t[round(2 / dt)]:.04f}$"  , c = "turquoise")
+ax.plot(x, solution[round(4 / dt)]  , label = f"$t = {t[round(4 / dt)]:.04f}$"  , c = "slateblue")
+ax.plot(x, solution[round(8 / dt)]  , label = f"$t = {t[round(8 / dt)]:.04f}$"  , c = "fuchsia")
+ax.set_xlabel("$x$")
+ax.set_ylabel("$u(x,t)$")
+ax.legend()
 fig.savefig("figs/heatRK4Maxdx.pdf")
 
 quit()
