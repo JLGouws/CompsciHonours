@@ -105,6 +105,21 @@ for (int i = N / 2; i < N; i++)
     \end{enumerate}
   \item
     Label the two cores Core0 and Core1, and assume that Core0 wins the race to access the block.
+    First Core0 gets a cache miss, and puts a snoop request on the shared bus.
+    The snoop request forces Core1 to change its copy from M,E to S.
+
+    Core1 now writes the block back to the shared cache, and Core0 gets access to the block in the shared state.
+    Core0 can now execute the \verb|sw| instruction--Core1 has to wait for the snoop latency.
+    When Core0 writes to its L1 cache, it marks the block as M,E.
+    Subsequently, Core1's block gets marked as invalid.
+    
+    Core1 can now try to execute the \verb|sw| instruction.
+    When Core1 tries to access the shared block in its cache, it finds that the block is invalid which results in a cache miss.
+    Core1 now puts a snoop request on the bus which forces Core0 to mark the block as shared and write it back to L3.
+    This process allows Core1 to get a shared copy of the block in its cache.
+    Sice Core1 has the shared block in cache, it can write to the block.
+    When Core1 writes to the block it changes the block's state from S to M,E.
+    The write forces the block in Core0's cache to becom invalid.
 
 \end{enumerate}
 
