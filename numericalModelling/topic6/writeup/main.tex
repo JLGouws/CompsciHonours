@@ -136,11 +136,12 @@
         The upwind-Euler method allows $|S(k)| = 0$, which removes contributions associated with $k$ from the numerical solution.
         
       \item
-        The advection of a top hat function with an Euler integrator.
+        Figure~\ref{fig:laxWendrof} compares the Lax-Wendroff method with the exact and Euler solutions to the advection problem.
         \begin{figure}[H]
           \centering
-          \includegraphics[]{../figs/laxWendroff.pdf}
+          \includegraphics[scale = 0.92]{../figs/laxWendroff.pdf}
           \caption{Lax-Wendroff Evolution of an advection equation with $\Delta t = 0.8 \Delta x$}
+          \label{fig:laxWendrof}
         \end{figure}
     \end{enumerate}
   \item
