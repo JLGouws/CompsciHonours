@@ -63,18 +63,70 @@ public class MessageClient
     return m; 
   }
 
+  private void sendMessage()
+  {
+    Scanner sc = new Scanner(System.in);
+    System.out.println("Please enter a recipient.");
+    String r = sc.next();
+    System.out.println("Please enter a message.");
+    String b = "";
+    while (sc.hasNextLine())
+      b += sc.nextLine() + "\n";
+
+    this.sendMessage(r, b);
+    System.out.println("Message sent");
+  }
+
+  private void retrieveLatest()
+  {
+    Message m = this.accessLatest();
+    if (m == null)
+      System.out.println("You have no messages.");
+    else
+      System.out.println(m);
+    Scanner sc = new Scanner(System.in);
+    sc.nextLine();
+  }
+
+  private static void printMenu()
+  {
+    System.out.println(
+      "Would you like to:\n" +
+      "Send a message? [s]\n" +
+      "View most recent message? [m]\n" +
+      "Quit? [q]"
+    );
+  }
+
   static public void main(String[] args)
   {
     Scanner sc = new Scanner(System.in);
     System.out.println("Please enter your username.");
-    String u = sc.next();
+    String u = sc.next(),
+           cmd;
     MessageClient mc = new MessageClient(u);
-    System.out.println("Please enter a recipient.");
-    String r = sc.next();
-    System.out.println("Please enter a message.");
-    String b = sc.next();
-    mc.sendMessage(r, b);
+
+    boolean running = true;
+
+    while (running)
+    {
+      printMenu();
+      cmd = sc.next();
+      switch (cmd)
+      {
+        case "s":
+          mc.sendMessage();
+          break;
+        case "m":
+          mc.retrieveLatest();
+          break;
+        case "q":
+          running = false;
+          break;
+        default:
+          System.out.println("You entered an invalid command");
+      }
+    }
     
-    System.out.println(mc.accessLatest());
   }
 }

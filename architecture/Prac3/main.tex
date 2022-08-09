@@ -78,11 +78,30 @@ for (int i = N / 2; i < N; i++)
   \item
     \begin{enumerate}
       \item
-        {\textbf For spinlocks}
+        If there are only a few tasks that need to access the lock.
+
+        {\textbf {For spinlocks}}
+
+          Spinlocks have very little overhead for obtaining and releasing the lock.
+          If the critical section is short, the tasks will not spin on the lock for a longtime.
+          The spinning should thus not create much memory trafic on the shared memory bus.
+
+        {\textbf {For the MCS lock}}
+
+          The MCS lock has a complex mechanism for obtaining and releasing the lock.
+          This overhead might take more time than the execution of the critical section.
+          If the overhead of obtaining the lock is significantly longer than the critical section's execution time, then the MCS lock will slow down the over all execution.
+
+        If there is much contention for the lock.
+
+        {\textbf {For spinlocks}}
+
           Everytime a task releases the lock, all other tasks will use the shared memory bus to try to obtain the lock.
           This process will flood the bus.
           For a short critical section, the tasks will flood the bus frequently.
-        {\textbf For the MCS lock}
+
+        {\textbf {For the MCS lock}}
+
           After a task releases the lock, the queue's next task will grab the lock.
           Only one task will try to claim the lock by putting a request on the shared memory bus.
           This scheme does not flood the bus everytime a tasks executes its critical sectin.
@@ -90,12 +109,14 @@ for (int i = N / 2; i < N; i++)
           Since the shared memory bus is slow compared to a CPU, frequent bus flooding will result in slower overall execution.
 
       \item
-        {\textbf For spinlocks}
+        {\textbf {For spinlocks}}
+
           Similar to the previous equation, the bus is flooded after every critcal section.
           This flooding prevents the critical section's shared data structures from being sent to the core with the lock.
           All the spinlocks will have to access the lock before the core executing the critical section can access the shared data structures.
 
-        {\textbf For the MCS lock}
+        {\textbf {For the MCS lock}}
+
           Similar to the previous quesion, the MCS lock mechanism does not flood the bus after a critical section's execution.
           Only the next task that will execute the critical section puts a request on the shared memory bus.
           In this case the bus is free to move the shared data structures to the core that is executing the critical section.

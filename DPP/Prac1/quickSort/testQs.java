@@ -16,13 +16,13 @@ public class testQs
               ParallelSort.<Integer>array(numbers);
               endTime = System.currentTimeMillis();
 
-              pAverage += (endTime - startTime ) / 10.;
+              pAverage += (endTime - startTime) / 10.;
 
               startTime = System.currentTimeMillis();
               Sort.<Integer>array(numbers2);
               endTime = System.currentTimeMillis();
               
-              sAverage += (endTime - startTime ) / 10.;
+              sAverage += (endTime - startTime) / 10.;
             }
 
 

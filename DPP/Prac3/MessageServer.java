@@ -27,7 +27,6 @@ public class MessageServer implements MessageExchangeInterface
       );
     }
     messageList.add(m);
-    System.out.println("Server received" + messages.get(m.getRecipient()));
   }
 
   public Message accessNewestMessage(Message m)
