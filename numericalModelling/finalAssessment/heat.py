@@ -8,6 +8,11 @@ from matplotlib import cm
 from matplotlib.ticker import LinearLocator
 from matplotlib.animation import FuncAnimation
 
+import matplotlib as mpl
+
+mpl.rcParams['text.usetex'] = True
+mpl.rcParams['text.latex.preamble'] = r'\usepackage{amsmath}' 
+
 
 def taylors_method(f, a, b, N, alpha):
   h = (b -a)/N
@@ -310,7 +315,7 @@ fig.savefig("figs/T1.pdf")
 
 fps = 1000
 
-fig = plt.figure(figsize = (10, 15), tight_layout=True)
+fig = plt.figure(figsize = (12, 15), tight_layout=True)
 gs = GridSpec(6, 4, figure = fig)
 
 ax = fig.add_subplot(gs[0:2, 0:2], projection = "3d")
@@ -374,6 +379,8 @@ fig, ax = plt.subplots(1)
 ax.plot(X[0,:], solution[0][51,:], label = f"$t = {t[0] : .04f}$", c = "darkred")
 ax.plot(X[0,:], solution[-1][51,:], label = f"$t = {t[-1] : .04f}$", c = "cadetblue")
 ax.legend()
+ax.set_xlabel("$x$")
+ax.set_ylabel("$u(x, t)$")
 fig.savefig("figs/profile.pdf")
 
 quit()

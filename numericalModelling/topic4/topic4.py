@@ -4,6 +4,11 @@ from matplotlib.gridspec import GridSpec
 import pandas as pd
 import seaborn as sns
 
+import matplotlib as mpl
+
+mpl.rcParams['text.usetex'] = True
+mpl.rcParams['text.latex.preamble'] = r'\usepackage{amsmath}'
+
 def taylors_method(f, a, b, N, alpha):
   h = (b -a)/N
   Y = [(a, alpha)]
@@ -84,13 +89,13 @@ for i, x0 in enumerate([(1,4), (1,3), (1,2), (1, 1.5), (1, 1.2), (1, 1), (1, 0.8
     ax[0].plot(solution[-1][:, 0], solution[-1][:, 1], c = colours[i], label = "$\\vec{x}_0 = ( "  + str(x0[0]) + ", " + str(x0[1]) + ")$")
     ax[0].scatter(x0[0], x0[1], c = colours[i], s = 13)
 ax[0].legend()
-ax[0].set_xlabel("x")
-ax[0].set_ylabel("y")
+ax[0].set_xlabel("$x$", fontsize = 15)
+ax[0].set_ylabel("$y$", fontsize = 15)
 ax[1].plot(time[2], solution[2][:, 0], c = "tan", label = "x")
 ax[1].plot(time[2], solution[2][:, 1], '--', c = "crimson", label = "y")
 ax[1].legend()
-ax[1].set_ylabel("population")
-ax[1].set_xlabel("$t$")
+ax[1].set_ylabel("population", fontsize = 15)
+ax[1].set_xlabel("$t$", fontsize = 15)
 fig.savefig('figs/Lotka_Volterra.pdf')
 
 #fig, ax = plt.subplots(len(Lt) // 2 + 1, 2, figsize=(20,5 * len(Lt)), tight_layout = True)
@@ -108,6 +113,8 @@ for i, L in enumerate(zip(Lt, L0)):
     ax.plot(time2[i], Lt2[i] - L02[i], c = 'olivedrab', label = "$L(t) - L(0)$, half time step")#[i % (len(Lt) // 2 + 1)][i // (len(Lt) // 2 + 1)].plot(time2[i], Lt2[i] - L02[i])
     ax.plot(time2[i], 2**4 * (Lt2[i] - L02[i]), linestyle = '--', c = 'red', dashes = (3,5), label = "$16 \\times [L(t) - L(0)]$, half time step")
     ax.set_title(f"$\\vec{{x}}_0 = ({x0s[i][0]}, {x0s[i][1]})$")
+    ax.set_xlabel("$t$")
+    ax.set_ylabel("$L(t) - L(0)$")
     if i == 1:
         ax.legend()
 fig.savefig('figs/LVError.pdf')
@@ -128,13 +135,13 @@ for i, x0 in enumerate([(1,2)]):
     ax[0].plot(solution[-1][:, 0], solution[-1][:, 1], c = colours[i], label = f"$\\vec{{x}}_0 = ({x0[0]}, {x0[1]})$")
     ax[0].scatter(x0[0], x0[1], c = colours[i], s = 13)
 ax[0].legend()
-ax[0].set_xlabel("x")
-ax[0].set_ylabel("y")
+ax[0].set_xlabel("$x$", fontsize = 15)
+ax[0].set_ylabel("$y$", fontsize = 15)
 ax[1].plot(time[0], solution[0][:, 0], c = "orchid", label = "x")
 ax[1].plot(time[0], solution[0][:, 1], '--', c = "darkcyan", label = "x")
 ax[1].legend()
-ax[1].set_ylabel("population")
-ax[1].set_xlabel("$t$")
+ax[1].set_ylabel("population", fontsize = 15)
+ax[1].set_xlabel("$t$", fontsize = 15)
 fig.savefig('figs/Lotka_Volterra0.1.pdf')
 
 ################################################################################

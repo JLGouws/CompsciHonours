@@ -64,7 +64,7 @@
       \item
         Figure~\ref{fig:1b} shows the relationship between the errors when evolving with different time steps.
         Halving the time step decreases the error by a factor of two.
-        This relationship confirms that the Euler method is first order.
+        This relationship confirms that the Euler method is first order--halving the time-step halves the error.
 
         \begin{figure}[H]
           \centering
@@ -86,7 +86,8 @@
     \end{enumerate}
   \item
     \begin{enumerate}
-      Figure~\ref{fig:2a} shows the errors made when evolving a logistic equation with an RK2 evolver for different time steps.
+      \item
+        Figure~\ref{fig:2a} shows the errors made when evolving a logistic equation with an RK2 evolver for different time steps.
         \begin{figure}[H]
           \centering
           \includegraphics[scale = 0.7]{../figs/2a.pdf}
@@ -98,6 +99,7 @@
         Figure~\ref{fig:2b} shows the relationship between the errors when evolving with different time steps.
         Halving the time step decreases the error by a factor of four.
         This relationship confirms that the second order Runge-Kutta method is indeed second order.
+        Halving the time-step decreases the error by $2^p = 4$.
         \begin{figure}[H]
           \centering
           \includegraphics[scale = 0.7]{../figs/2b.pdf}
@@ -105,7 +107,7 @@
           \label{fig:2b}
         \end{figure}
       \item
-        Figure~\ref{fig:1c} compares the actual global error of the logistic problem's RK2 evolution against the error estimated with the Richardson extrapolation.
+        Figure~\ref{fig:2c} compares the actual global error of the logistic problem's RK2 evolution against the error estimated with the Richardson extrapolation.
         \begin{figure}[H]
           \centering
           \includegraphics[scale = 0.6]{../figs/2c.pdf}
@@ -118,11 +120,12 @@
     \begin{figure}[H]
       \centering
       \includegraphics[scale = 0.7]{../figs/3.pdf}
-      \caption{Comparison of the actual error and the numerical derivative of the Richardson extrapolation}
+      \caption{Comparison of the actual error and the Richardson extrapolation's derivative}
       \label{fig:3}
     \end{figure}
   \item
     Figure~\ref{fig:4} gives a log-log plot of the evolution time step agains the error's L2-norm.
+    The line for the Euler method has a gradient close to one; The line for the RK2 method has gradient close to two.
     \begin{figure}[H]
       \centering
       \includegraphics[scale = 0.7]{../figs/4.pdf}

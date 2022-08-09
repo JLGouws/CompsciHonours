@@ -184,7 +184,7 @@ advecEquation = setAdvectionUpwindPeriodic(1, dx)
 
 solution, t = evolvePdeEuler(advecEquation, fx, x, 0, 2 * np.pi, dt)
 
-fig, ax = plt.subplots(1)
+fig, ax = plt.subplots(1, figsize = (5, 3), tight_layout = True)
 ax.plot(x, solution[-1], lw = 4, label = "upwind Euler", c = "slategray")
 ax.plot(x, fx, ls = '--', dashes = (10, 10), label = "Exact", c = "red")
 ax.legend()
@@ -201,7 +201,7 @@ advecEquation = setAdvectionUpwindPeriodic(1, dx)
 
 eulerSolution, t = evolvePdeEuler(advecEquation, fx, x, 0, 2 * np.pi, dt)
 
-fig, ax = plt.subplots(1)
+fig, ax = plt.subplots(1, figsize = (5, 3), tight_layout = True)
 ax.plot(x, eulerSolution[-1], lw = 4, label = "upwind Euler", c = "indigo")
 ax.plot(x, fx, ls = '--', dashes = (10, 10), label = "Exact", c = "chartreuse")
 ax.legend()
@@ -231,6 +231,16 @@ ax[1].legend()
 ax[1].set_xlabel("$x$")
 ax[1].set_ylabel("$u(x, t)$")
 fig.savefig("figs/laxWendroff.pdf")
+
+x = np.linspace(0, 1, 100)
+fig, ax = plt.subplots(1, figsize = (5, 5), tight_layout = True)
+ax.plot(x, 1 - 4 * x * ( 1 - x), label = "upwind-Euler", c = "darkolivegreen")
+ax.plot(x, 1 - 4 * x**2 * ( 1 - x**2), label = "Lax-wendroff", c = "darkred")
+ax.set_xlabel("$R$")
+ax.legend()
+ax.set_ylabel("$\max\limits_{k}|S(k)|$")
+fig.savefig("figs/maxSk.pdf")
+
 
 
 quit()

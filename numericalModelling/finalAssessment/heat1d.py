@@ -7,6 +7,11 @@ from matplotlib import cm
 from matplotlib.ticker import LinearLocator
 from matplotlib.animation import FuncAnimation
 
+import matplotlib as mpl
+
+mpl.rcParams['text.usetex'] = True
+mpl.rcParams['text.latex.preamble'] = r'\usepackage{amsmath}'
+
 
 def taylors_method(f, a, b, N, alpha):
   h = (b -a)/N

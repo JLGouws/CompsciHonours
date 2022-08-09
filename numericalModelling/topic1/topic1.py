@@ -1,6 +1,11 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
+import matplotlib as mpl
+
+mpl.rcParams['text.usetex'] = True
+mpl.rcParams['text.latex.preamble'] = r'\usepackage{amsmath}'
+
 def logisticMap(r, x0, n):
   for i in range (0, n):
     x0 =  r * x0 * (1 - x0)
@@ -22,7 +27,7 @@ def logisticMapList(r, x0, n):
   return xs
 
 first100 = logisticMapList(2, 0.5, 100)
-fig, ax = plt.subplots(1)
+fig, ax = plt.subplots(1, figsize = (4,3), tight_layout = True)
 ax.plot(range(0, 101), first100, c = "indigo", lw = 4)
 ax.set_xlabel("$n$")
 ax.set_ylabel("$x_n$")
@@ -30,7 +35,7 @@ ax.set_ylim([0, 1])
 fig.savefig("figs/1.pdf")
 
 first20 = logisticMapList(2, 0.01, 20)
-fig, ax = plt.subplots(1)
+fig, ax = plt.subplots(1, figsize = (4,3), tight_layout = True)
 ax.plot(range(0, 21), first20, lw = 4, c = "peru")
 ax.set_xlabel("$n$")
 ax.set_ylabel("$x_n$")
@@ -57,7 +62,7 @@ def logisticMapListTol(r, x0, tol, N):
   return xs
 
 colours = ["lime", "indianred", "tomato", "darkgoldenrod", "olive", "darkorange", "mediumseagreen", "navy", "darkmagenta"]
-fig, ax = plt.subplots(1)
+fig, ax = plt.subplots(1, figsize = (4,4), tight_layout = True)
 for i, x in enumerate([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]):
   xs = logisticMapList(2, x, 7)
   ax.plot(range(0, len(xs)), xs, label = "$x_0 = " + str(x) + "$", lw = 2, alpha = 0.5, c = colours[i])
@@ -77,7 +82,7 @@ def logisticMapTol(r, x0, tol, N):
     n += 1
   return (xs[-1] + xs[-2])/2
 
-fig, ax = plt.subplots(1)
+fig, ax = plt.subplots(1, figsize = (4,3.5), tight_layout = True)
 xstar = []
 for r in rs:
   xstar += [logisticMapTol(r, 0.5, 10e-6, 1000)]
@@ -87,7 +92,7 @@ ax.set_ylabel("$x^*$")
 fig.savefig("figs/equilibriumPoint.pdf")
 
 q6 = logisticMapList(3.2, 0.65, 80)
-fig, ax = plt.subplots(1)
+fig, ax = plt.subplots(1, figsize = (4,3.5), tight_layout = True)
 ax.plot(range(0, 81), q6, c = "limegreen")
 ax.set_xlabel("$n$")
 ax.set_ylabel("$x_n$")
@@ -100,7 +105,7 @@ rnew =[]
 xstarnew = []
 rnewnew = []
 
-fig, ax = plt.subplots(1)
+fig, ax = plt.subplots(1, figsize = (4,3.5), tight_layout = True)
 xstar = []
 for r in rs:
   xstar += logisticMapList(r, 0.5, 1000)[-2:]
@@ -115,7 +120,7 @@ fig.savefig("figs/equilibriumPointsBifurcations.pdf")
 rs = [0.005 * x for x in range(690, 800)]
 
 extraPoints = 500
-fig, ax = plt.subplots(1)
+fig, ax = plt.subplots(1, figsize = (4,3.5), tight_layout = True)
 for r in rs:
   xstar += logisticMapList(r, 0.5, 1000 + extraPoints)[-extraPoints:]
   xstarnew += [np.flip(np.unique(np.round(xstar[-extraPoints:], 4)))]

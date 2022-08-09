@@ -3,6 +3,11 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 
+import matplotlib as mpl
+
+mpl.rcParams['text.usetex'] = True
+mpl.rcParams['text.latex.preamble'] = r'\usepackage{amsmath}'
+
 def taylors_method(f, a, b, N, alpha):
   h = (b -a)/N
   Y = [(a, alpha)]

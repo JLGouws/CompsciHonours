@@ -55,18 +55,20 @@
       \item
         Figure~\ref{fig:eulerdx} shows the numerical advection of a top hat function with an Euler integrator.
         For this integration, the evolution time step is equal to the spatial variable's point spacing.
+        The figure indicates that the method is neither dissipative nor dispersive.
         \begin{figure}[H]
           \centering
-          \includegraphics[]{../figs/eulerdx.pdf}
+          \includegraphics[scale = 0.85]{../figs/eulerdx.pdf}
           \caption{Euler Evolution of an advection equation with $\Delta t = \Delta x$}
           \label{fig:eulerdx}
         \end{figure}
       \item
         Figure~\ref{fig:euler.8dx} shows the numerical advection of a top hat function with an Euler integrator.
         For this integration, the evolution time step is equal to an eighth of the spatial variable's point spacing.
+        The figure indicates that the method is dissipative.
         \begin{figure}[H]
           \centering
-          \includegraphics[]{../figs/euler.8dx.pdf}
+          \includegraphics[scale = 0.85]{../figs/euler.8dx.pdf}
           \caption{Euler Evolution of an advection equation with $\Delta t = 0.8 \Delta x$}
           \label{fig:euler.8dx}
         \end{figure}
@@ -112,9 +114,19 @@
           \Rightarrow & |S(k)|^2 = \left\{1  - 4 R^2 \sin^4 (k \Delta x / 2) + 4 R^4 \sin^4 (k \Delta x / 2) \right\} \\
           \Rightarrow & |S(k)|^2 = \left\{1  - 4 R^2 (1 - R^2) \sin^4 (k \Delta x / 2) \right\} 
         \end{align*}
-        Since $R^2 \leq 1$  and $\sin^2(\theta) \leq 1$, the results $|S(k)| < 1$ follows. 
+        Since $R^2 \leq 1$  and $\sin^2(\theta) \leq 1$, the result $|S(k)| < 1$ follows. 
         This work demonstrates that the method is stable.
       \item
+        Figure~\ref{fig:maxSk} the amplification factor's maximum value for different $R$ values.
+        \begin{figure}[H]
+          \centering
+          \includegraphics[scale = 0.7]{../figs/maxSk.pdf}
+          \caption{The Lax-Wendroff and upwind Euler method's amplification factor's maximum modulus}
+          \label{fig:maxSk}
+        \end{figure}
+        The figure indicates that both methods are non-dissipative for $R = 1$.
+        The upwind Euler method is more dissipative than the Lax-Wendroff method for $R < \frac{\sqrt{5} - 1}{2} \approx 0.618$; otherwise, the Lax-Wendroff method is more dissipative.
+        \iffalse
         Finding the minimum of $S(k)$ is equivalent to maximizing:
         \begin{equation*}
           f(R, \theta) = 4 R^2 (1 - R^2) \sin^4 (\theta)
@@ -134,6 +146,7 @@
         This equation indicates nothing about the dispersivity of the Lax-Wendroff method.
         It does, however, indicate that the Lax-Wendroff method is less dissipative than the upwind-Euler scheme.
         The upwind-Euler method allows $|S(k)| = 0$, which removes contributions associated with $k$ from the numerical solution.
+        \fi
         
       \item
         Figure~\ref{fig:laxWendrof} compares the Lax-Wendroff method with the exact and Euler solutions to the advection problem.
@@ -162,7 +175,6 @@
       \Rightarrow & \hat \varepsilon^{n + 1} = \hat \varepsilon^n \left[ 1 - 4\frac{k \Delta t}{\Delta x^2} \left(\sin^2(k\Delta x / 2) \right)\right]\\
       \Rightarrow & S(k) = 1 - 4\frac{k \Delta t}{\Delta x^2} \sin^2(k\Delta x / 2)
     \end{align*}
-  \item
     This method is stable provided that:
     \begin{align*}
                   & |S(k)| = |1 - 4\frac{k \Delta t}{\Delta x^2} \sin^2(k\Delta x / 2)| \leq 1\\

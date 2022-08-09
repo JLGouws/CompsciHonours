@@ -7,6 +7,11 @@ from matplotlib import cm
 from matplotlib.ticker import LinearLocator
 from matplotlib.animation import FuncAnimation
 
+import matplotlib as mpl
+
+mpl.rcParams['text.usetex'] = True
+mpl.rcParams['text.latex.preamble'] = r'\usepackage{amsmath}'
+
 
 def taylors_method(f, a, b, N, alpha):
   h = (b -a)/N
@@ -230,8 +235,8 @@ mass = integrateMass(solution, dx)
 t = np.array(t)
                                                                                 
 ax1.plot(t, mass, c = "gold", label = "$\Delta t = \\frac{\Delta x}{800}$", ls = (20, [10, 20]))
-ax1.set_xlabel("t")
-ax1.set_ylabel("M(t)")
+ax1.set_xlabel("$t$")
+ax1.set_ylabel("$M(t)$")
 
 
 ax1.legend(handlelength = 5)
@@ -282,8 +287,8 @@ fig1, ax1 = plt.subplots(1)
 ax1.set_ylim(0, 18);                                                       
 
 ax1.plot(t, mass, c = "darkcyan")
-ax1.set_xlabel("t")
-ax1.set_ylabel("M(t)")
+ax1.set_xlabel("$t$")
+ax1.set_ylabel("$M(t)$")
 
 fig1.savefig("figs/KDVmass2.pdf")
 
