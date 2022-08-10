@@ -1,0 +1,180 @@
+\documentclass[12pt,a4]{article}
+\usepackage{physics, amsmath,amsfonts,amsthm,amssymb, mathtools,steinmetz, gensymb, siunitx}	% LOADS USEFUL MATH STUFF
+\usepackage{xcolor,graphicx}
+\usepackage[left=45pt, top=60pt, right=45pt, bottom=65pt ,a4paper]{geometry} 				% ADJUSTS PAGE
+\usepackage{setspace}
+\usepackage{caption}
+\usepackage{tikz}
+\usepackage{pgf,tikz,pgfplots,wrapfig}
+\usepackage{mathrsfs}
+\usepackage{fancyhdr}
+\usepackage{float}
+\usepackage{array}
+\usepackage{booktabs,multirow}
+\usepackage{bm}
+
+\usetikzlibrary{decorations.text, calc}
+\pgfplotsset{compat=1.7}
+
+\usetikzlibrary{decorations.pathreplacing,decorations.markings}
+\usepgfplotslibrary{fillbetween}
+
+\newcommand{\vect}[1]{\boldsymbol{#1}}
+
+\usepackage{hyperref}
+%\usepackage[style= ACM-Reference-Format, maxbibnames=6, minnames=1,maxnames = 1]{biblatex}
+%\addbibresource{references.bib}
+
+
+\AtBeginDocument{\hypersetup{pdfborder={0 0 0}}}
+
+\title{
+\textsc{Topic 5}
+}
+\author{\textsc{J L Gouws}
+}
+\date{\today
+\\[1cm]}
+
+
+
+\usepackage{graphicx}
+\usepackage{array}
+
+
+
+
+\begin{document}
+\thispagestyle{empty}
+
+\maketitle
+
+\begin{enumerate}
+  \item
+    For the upwind derivative operator:
+    \begin{align*}
+                  & f(x_0 - h) = f(x_0) - h \frac{\partial f(x_0)}{\partial x} + \frac{h^2}{2!} \frac{\partial^2 f(\mu)}{\partial x^2}\\
+      \Rightarrow & \frac{\partial f(x_0)}{\partial x} = \frac{f(x_0) - f(x_0 - h)}{h} - \frac{h}{2} \frac{\partial^2 f(\mu)}{\partial x^2}
+    \end{align*}
+    For the centered derive operator, taylor expanding the function at the points to the left and right of $x_0$ gives
+    \begin{align*}
+      f(x_0 + h) = f(x_0) + h \frac{\partial f(x_0)}{\partial x} + \frac{h^2}{2!} \frac{\partial^2 f(x_0)}{\partial x^2} + \frac{h^3}{3!} \frac{\partial^3 f(\xi')}{\partial x^3} 
+    \end{align*}
+    And:
+    \begin{align*}
+      f(x_0 - h) = f(x_0) - h \frac{\partial f(x_0)}{\partial x} + \frac{h^2}{2!} \frac{\partial^2 f(x_0)}{\partial x^2} - \frac{h^3}{3!} \frac{\partial^3 f(\xi'')}{\partial x^3}
+    \end{align*}
+    Subtracting the second from the first:
+    \begin{align*}
+                  & f(x_0 + h) - f(x_0 - h) = 2 h \frac{\partial f(x_0)}{\partial x} + \frac{h^3}{3} \frac{\partial^3 f(\mu)}{\partial x^3} \\
+      \Rightarrow & \frac{\partial f(x_0)}{\partial x} = \frac{f(x_0 + h) - f(x_0 - h)}{ 2 h}  - \frac{h^2}{6} \frac{\partial^3 f(\mu)}{\partial x^3} 
+    \end{align*}
+    Where $x_0 - h < \mu < x_0 + h$ using the mean value theorem.
+    For the second derivative operator, taylor expanding the function at the points to the left and right of $x_0$ gives:
+    \begin{align*}
+      f(x_0 + h) = f(x_0) + h \frac{\partial f(x_0)}{\partial x} + \frac{h^2}{2!} \frac{\partial^2 f(x_0)}{\partial x^2} + \frac{h^3}{3!} \frac{\partial^3 f(x_0)}{\partial x^3} + \frac{h^4}{4!} \frac{\partial^4 f(\xi')}{\partial x^4}
+    \end{align*}
+    And:
+    \begin{align*}
+      f(x_0 - h) = f(x_0) - h \frac{\partial f(x_0)}{\partial x} + \frac{h^2}{2!} \frac{\partial^2 f(x_0)}{\partial x^2} - \frac{h^3}{3!} \frac{\partial^3 f(x_0)}{\partial x^3} + \frac{h^4}{4!} \frac{\partial^4 f(\xi '')}{\partial x^4}
+    \end{align*}
+    Adding these expressions together, we get:
+    \begin{align*}
+                  & f(x_0 + h) + f(x_0 - h) =  2 f(x_0) + h^2 \frac{\partial^2 f(x_0)}{\partial x^2} + \frac{h^4}{12} \frac{\partial^4 f(\mu)}{\partial x^4}\\
+      \Rightarrow & \frac{\partial^2 f(x_0)}{\partial x^2} =\frac{f(x_0 + h) - 2 f(x_0) + f(x_0 - h)}{h^2}  - \frac{h^2}{12} \frac{\partial^4 f(\mu)}{\partial x^4}
+    \end{align*}
+  \item
+    \begin{enumerate}
+      \item
+        Figure~\ref{fig:upwindEuler} shows the upwind Euler method evolving an advetion equation.
+        The paricular advection problem is given by:
+        \begin{equation}
+          \begin{gathered}
+            u_t + u _x = 0\\
+            u(x + 2 \pi) = u(x)\\
+            u(x, 0) = \sin(x) \cos^8(x / 2)
+          \label{eq:advec}
+          \end{gathered}
+        \end{equation}
+        \begin{figure}[H]
+          \centering
+          \includegraphics[scale = 0.9]{../figs/upwindEuler.pdf} 
+          \caption{Upwind Euler Evolution of an advection equation with $\Delta t = \Delta x$ and error}
+          \label{fig:upwindEuler}
+        \end{figure}
+
+      \item 
+        Figure~\ref{fig:upwindEuler1.1.pdf} shows the upwind Euler solution to the problem in Eq.~\ref{eq:advec} using a timestep that is larger than the grid spacing.
+        \begin{figure}[H]
+          \centering
+          \includegraphics[scale = 0.9]{../figs/upwindEuler1.1.pdf}
+          \caption{Upwind Euler Evolution of an advection equation with $\Delta t = 1.1\Delta x$ and error}
+          \label{fig:upwindEuler1.1.pdf}
+        \end{figure}
+
+      \item
+        Figure~\ref{fig:centeredEuler} shows the centered Euler method's solution to Eq.~\ref{eq:advec}'s problem.
+        \begin{figure}[H]
+          \centering
+          \includegraphics[scale = 0.9]{../figs/centeredEuler.pdf}
+          \caption{Centered derivative and Euler Evolution of an advection equation  with $\Delta t = \Delta x$ and error}
+          \label{fig:centeredEuler}
+        \end{figure}
+    \end{enumerate}
+
+  \item
+    \begin{enumerate}
+      \item
+        Figure~\ref{fig:heatEulerdx} shows the centered Euler method's solution to Eq.~\ref{eq:heat}'s problem.
+        The Euler method uses a timestep equal to the grid spacing.
+        \begin{equation}
+          \begin{gathered}
+            u_t - u_{xx} = 0\\
+            - \pi \leq x \leq \pi\\
+            u(-\pi, t) = 0 = u(\pi, t)\\
+            u(x, 0) = \sin(x) \cos^8(x / 2)
+          \end{gathered}
+          \label{eq:heat}
+        \end{equation}
+
+        \begin{figure}[H]
+          \centering
+          \includegraphics[scale = 0.8]{../figs/heatEulerdx.pdf}
+          \caption{Euler Evolution of a heat equation with $\Delta t = \Delta x$}
+          \label{fig:heatEulerdx}
+        \end{figure}
+
+      \item
+        Figure~\ref{fig:heatEuler01dx} shows the centered Euler method's solution to Eq.~\ref{eq:heat}'s problem using a smaller timestep.
+        \begin{figure}[H]
+          \centering
+          \includegraphics[scale = 0.8]{../figs/heatEuler01dx.pdf}
+          \caption{Euler Evolution of a heat equation with $\Delta t = 0.01 \Delta x$}
+          \label{fig:heatEuler01dx}
+        \end{figure}
+
+      \item
+        Figure~\ref{fig:heatEulerMaxdx} shows the maximum timestep for which the centered Euler method is stable.
+        An anotation for the graph shows the size of this solution's time step.
+        The verge of instability is evident in the last iteration.
+        \begin{figure}[H]
+          \centering
+          \includegraphics[scale = 0.8]{../figs/heatEulerMaxdx.pdf}
+          \caption{Maximum $\Delta t$ step size of Euler Evolution of a heat equation}
+          \label{fig:heatEulerMaxdx}
+        \end{figure}
+
+    \end{enumerate}
+  \item
+    Figure~\ref{fig:heatRK4Maxdx} shows an RK4 method's solution to the given heat equation.
+    An anotation for the graph shows the size of this solution's time step.
+    The verge of instability is evident in the last iteration.
+    \begin{figure}[H]
+      \centering
+      \includegraphics[scale = 0.8]{../figs/heatRK4Maxdx.pdf}
+      \caption{Maximum $\Delta t$ step size of Runge-Kutta Evolution of a heat equation}
+      \label{fig:heatRK4Maxdx}
+    \end{figure}
+\end{enumerate}
+
+\end{document}

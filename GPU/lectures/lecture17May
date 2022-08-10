@@ -1,0 +1,92 @@
+Shared memory utilization
+
+SM Banks
+
+What if global memory is the bottle-neck
+
+Sometimes not possible to do away with non-coalesced global memory accesses.
+
+Shared memory can assist: low-latency (20-32 x < global memory) on-chip memroy that offers higher bandwidth than global memory
+
+Useful as 
+  -- intra-block communication channel - Shared memory allocated per block
+  -- Program managed cache for global memory data
+  -- Scratch pad memory for trasfroming data to improve global memory access patterns
+  -- 28 bit
+
+Shared memory:
+Fixed amount per thread block
+Same tifetimes as thread block to which allocated
+SM accesses issued per warp - idealy in one transaction
+
+Worst case: 32 unique transactions -- order and layout of shared memory
+If multiple threads access same word, and sends it to the other thread via multicast
+Critical resource 64 Kb maxwell: The more share memory used by a kernel, the fewer concurrently active thread blocks possible.
+
+Limits number of blocks that can run on multiprocessor -- can slow down execution. Occupancy calculator -- shared memory plays a role, restricting performance
+
+Considered as a program-managed cache
+
+Allocation of shared memory:
+Statically:
+  __shared__ float tile [size_y][size_x];
+Dynamically:
+ If size is not known at complie tile can declare an unsized 1D array in kernel <-- only one dimensional arrays allowed
+ extern __shared__ int tile[];
+
+ The size is given at kernel launch as third parameter
+ kernel<<<grid, block, size of dynamic SM>>>(...);
+
+Shared memory banks
+To achieve high bandwidth, SM divided inot 32 equally size modules, called banks, which can be accesssed simultaneously
+
+Aim is to have each thread in warp access a separate bank 00 then all accesses can be done in a single transaction.
+Ideal case: load or store for warp accesses only one memory location per bank; can be serviced by one transaction
+Otherwise need multiple transactions -- lower bandwidth utilization.
+
+One thread per bank -- non-contiguous memory access is preferred
+
+2D array of memory: columns are the banks, rows are collections of banks.
+Don't want multiple accesses in the same columns
+
+Bank conflict multiple addresses in SM request fall into same memory bank = bank conflict
+When conflict occures, request is replayed
+
+Hardware splits request with a bank conflict into as many separate conflict free transactions as necessary (decreasing effective bandwidth)
+
+3 Scenaries:
+--Parallel access: multiple address across multiple banks: single transaction
+--Serial access: multiple addresses in same bank : multiple transactions
+--Broadcast access: single address in a single banck: on transaction
+
+Optimal pattern is:
+thread 0 -> bank 0
+thread 1 -> bank 1
+thread 2 -> bank 2
+thread 3 -> bank 3
+        .
+        .
+        .
+Irregular access pattern:
+  a) conflict-free if threads access same address within a bank
+  b) bank conflict if accessing differed addresses in same bank.
+
+Adress modes 
+SM access width dfines whcih SM addresses are in which bank
+Band width varies depending on CC
+ Maxwell 4-byte
+
+Successive 32-bit words map to successive banks
+Each bank has a bandwidht of 32-bits/cycle
+Mapping from SM address to bank index:
+bank index =  (byte address / 4 banks) % 32
+
+for some reason every thread in warp wants data from same bank
+eg each thread does 4 elements at a time
+The certain threads will overlap when executing in lock step
+
+Use padding
+can't have straight down padding
+padding goes diagonally
+
+

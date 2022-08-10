@@ -165,9 +165,9 @@ int main(int argc, char **argv)
 
 	// execute the kernel
     checkCudaErrors(cudaDeviceSynchronize());
-    //sumMatrixOnGPU2D<<<grid, block>>>(d_MatA, d_MatB, d_MatC, nx, ny);  // 2D grid
-  //sumMatrixOnGPU1D<<<grid, block>>>(d_MatA, d_MatB, d_MatC, nx, ny);  // 1D grid
-  sumMatrixOnGPU16e<<<grid, block>>>(d_MatA, d_MatB, d_MatC, nx, ny);  // 1D grid; 16 elements
+ // sumMatrixOnGPU2D<<<grid, block>>>(d_MatA, d_MatB, d_MatC, nx, ny);  // 2D grid
+ // sumMatrixOnGPU1D<<<grid, block>>>(d_MatA, d_MatB, d_MatC, nx, ny);  // 1D grid
+    sumMatrixOnGPU16e<<<grid, block>>>(d_MatA, d_MatB, d_MatC, nx, ny);  // 1D grid; 16 elements
     checkCudaErrors(cudaGetLastError());
     cudaEventRecord(stop);
 	checkCudaErrors(cudaEventSynchronize(stop));

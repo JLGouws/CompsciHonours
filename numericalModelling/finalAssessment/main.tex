@@ -1,0 +1,275 @@
+\documentclass[12pt,a4]{article}
+\usepackage{physics, amsmath,amsfonts,amsthm,amssymb, mathtools,steinmetz, gensymb, siunitx}	% LOADS USEFUL MATH STUFF
+\usepackage{xcolor,graphicx}
+\usepackage[left=45pt, top=60pt, right=45pt, bottom=65pt ,a4paper]{geometry} 				% ADJUSTS PAGE
+\usepackage{setspace}
+\usepackage{caption}
+\usepackage{tikz}
+\usepackage{pgf,tikz,pgfplots,wrapfig}
+\usepackage{mathrsfs}
+\usepackage{fancyhdr}
+\usepackage{float}
+\usepackage{array}
+\usepackage{booktabs,multirow}
+\usepackage{bm}
+
+\usetikzlibrary{decorations.text, calc}
+\pgfplotsset{compat=1.7}
+
+\usetikzlibrary{decorations.pathreplacing,decorations.markings}
+\usepgfplotslibrary{fillbetween}
+
+\newcommand{\vect}[1]{\boldsymbol{#1}}
+
+\usepackage{hyperref}
+%\usepackage[style= ACM-Reference-Format, maxbibnames=6, minnames=1,maxnames = 1]{biblatex}
+%\addbibresource{references.bib}
+
+
+\AtBeginDocument{\hypersetup{pdfborder={0 0 0}}}
+
+\title{
+\textsc{Numerical Modelling final assessment}
+}
+\author{\textsc{J L Gouws}
+}
+\date{\today
+\\[1cm]}
+
+
+
+\usepackage{graphicx}
+\usepackage{array}
+
+
+
+\begin{document}
+\thispagestyle{empty}
+
+\maketitle
+
+\begin{enumerate}
+  \item
+    \begin{enumerate}
+      \item
+        A possible implementation of Neumann boundary conditions involves predicting a ghost point using the boundary condition.
+        An example of this at the left boundary, $\nu_0^n$ is:
+        \begin{align*}
+                      & {\nu_x}_0^j = \frac{\nu_1^j - \nu_{-1}^j}{2 h} + \mathscr{O} (h^2)\\
+          \Rightarrow & v_{-1}^j = 2 h {\nu_x}_0^j + \nu_{-1}^j + \mathscr{O} (h^3)
+        \end{align*}
+        The calculation of the second derivative at the boundary can use this ghost point.
+        With this choice, the second derivative at the boundaries will only be correct to first order.
+
+        \iffalse
+        Forward and backward finite difference methods can give a second order accurate second derivative at the boundary.
+        For the left most point:
+        \begin{equation*}
+          {\nu_{x}}_1^j = \frac{- 25 \nu_1^j / 12 + 4 \nu_2^j - 3 \nu_3^j  + 4 \nu_4^j / 3 - \nu_5^j / 4}{h} + \mathscr {O}(h^4)
+        \end{equation*}
+        and:
+        \begin{equation*}
+          {\nu_{x}}_2^j = \frac{\nu_0^j / 12 - 2 \nu_1^j / 3 + 2 \nu_3^j / 3 - \nu_4^j / 12}{h} + \mathscr {O}(h^4)
+        \end{equation*}
+        These can be combined to form a second order approximation of the second derivative:
+        \begin{equation*}
+          {\nu_{xx}}_0^j = \frac{- 3 h {\nu_x}_0^j + \left(-\nu_0^j / 12 - 9 \nu_1^j + 16 \nu_2^j - 38 \nu_3^j / 3 + 49 \nu_4^j/ 12 - v_5^j\right)}{2 h^2} + \mathscr {O}(h^2)
+        \end{equation*}
+        For the right most end point:
+        \begin{equation*}
+          {\nu_{x}}_{N-1}^j = \frac{- \nu_{N-4}^j / 3 + 3 \nu_{N-3}^j / 2 - 3 \nu_{N-2}^j + 11 \nu_{N-1}^j / 6}{h} + \mathscr {O}(h^3)
+        \end{equation*}
+        and:
+        \begin{equation*}
+          {\nu_{x}}_{N-2}^j = \frac{\nu_{N-4}^j / 12 - 2 \nu_{N-3}^j / 3 + 2 \nu_{N-1}^j / 3 - \nu_N^j / 12}{h} + \mathscr {O}(h^4)
+        \end{equation*}
+        These can be combined to form a second order approximation of the second derivative:
+        \begin{equation*}
+          {\nu_{xx}}_N^j = \frac{h\left(17 \nu_{N-4}^j/ 12 - 20 \nu_{N-3}^j/ 3 + 12 \nu_{N-2}^j + 20 \nu_{N - 1}^j/ 3 - \nu_N^j / 12\right) + 3 {\nu_x}_N^j}{2 h^2} + \mathscr {O}(h^2)
+        \end{equation*}
+        \fi
+        An RK4 integrator evolves the surface in time.
+        Figure~\ref{fig:profile} shows the evolution of a heat equation with initial profile:
+        \begin{equation*}
+          u(x, y ,0) = e^{-[(x- x_0)^2 + (y - y_0)^2]}
+        \end{equation*}
+        with $\sigma = 0.01$.
+        \begin{figure}[H]
+          \centering
+          \includegraphics[scale = 0.8]{figs/profile.pdf}
+          \caption{Profile of a heat equation evolution}
+          \label{fig:profile}
+        \end{figure}
+        Another option of handling the boundary conditions is:
+        \begin{equation*}
+          f(x_0 + h ) = f(x_0) + h \frac{d f(x_0)}{dx} + \frac{h^2}{2} \frac{d^2 f(x_0)}{dx^2} + \frac{h^3}{6} \frac{d^3 f(x_0)}{dx^3} + \mathscr{O} (h^4)
+        \end{equation*}
+        And:
+        \begin{align*}
+                      & f(x_0 + 2h ) = f(x_0) + 2h \frac{d f(x_0)}{dx} + 2h^2 \frac{d^2 f(x_0)}{dx^2} + \frac{4 h^3}{3} \frac{d^3 f(x_0)}{dx^3} + \mathscr{O} (h^4)\\
+          \Rightarrow & \frac{h^3}{6} \frac{d^3 f(x_0)}{dx^3} = \frac{f(x_0 + 2h) - f(x_0) }{8} - \frac{h}{4} \frac{d f(x_0)}{dx} - \frac{h^2}{4} \frac{d^2 f(x_0)}{dx^2} + \mathscr{O} (h^4)
+        \end{align*}
+        Combining these two:
+        \begin{align*}
+                      & f(x_0 + h) = \frac{7 f(x_0) + f(x_0 + 2h)}{8} + \frac{3 h}{4} \frac{d f(x_0)}{dx} + \frac{h^2}{4} \frac{d^2 f(x_0)}{dx^2} + \mathscr{O} (h^4)\\
+          \Rightarrow &  \frac{d^2 f(x_0)}{dx^2} = - \frac{3}{h} \frac{d f(x_0)}{dx} + \frac{- 7 f(x_0) + 8 f(x_0 + h) - f(x_0 + 2h)}{2 h^2} + \mathscr{O} (h^2)
+        \end{align*}
+        For the right most boundary point:
+        \begin{equation*}
+          f(x_0 - h ) = f(x_0) - h \frac{d f(x_0)}{dx} + \frac{h^2}{2} \frac{d^2 f(x_0)}{dx^2} - \frac{h^3}{6} \frac{d^3 f(x_0)}{dx^3} + \mathscr{O} (h^4)
+        \end{equation*}
+        And:
+        \begin{align*}
+                      & f(x_0 - 2h ) = f(x_0) - 2h \frac{d f(x_0)}{dx} + 2h^2 \frac{d^2 f(x_0)}{dx^2} - \frac{4 h^3}{3} \frac{d^3 f(x_0)}{dx^3} + \mathscr{O} (h^4)\\
+          \Rightarrow & \frac{h^3}{6} \frac{d^3 f(x_0)}{dx^3} = \frac{f(x_0) - f(x_0 - 2h)}{8} - \frac{h}{4} \frac{d f(x_0)}{dx} + \frac{h^2}{4} \frac{d^2 f(x_0)}{dx^2} + \mathscr{O} (h^4)
+        \end{align*}
+        Combining these two:
+        \begin{align*}
+                      & f(x_0 - h) = \frac{7 f(x_0) + f(x_0 - 2h)}{8} - \frac{3 h}{4} \frac{d f(x_0)}{dx} + \frac{h^2}{4} \frac{d^2 f(x_0)}{dx^2} + \mathscr{O} (h^4)\\
+          \Rightarrow &  \frac{d^2 f(x_0)}{dx^2} = \frac{3}{h} \frac{d f(x_0)}{dx} + \frac{- 7 f(x_0) + 8 f(x_0 - h) - f(x_0 - 2h)}{2 h^2} + \mathscr{O} (h^2)
+        \end{align*}
+        Figure~\ref{fig:secondOrder} shows this second-order method being used to solve a one-dimensional dispersion problem.
+        \begin{figure}[H]
+          \centering
+          \includegraphics[scale = 0.52]{figs/secondOrder.pdf}
+          \caption{Second order Neuman end points}
+          \label{fig:secondOrder}
+        \end{figure}
+        
+        The rest of this question uses the first-order method described above and an RK4 integrator.
+      \item
+        Figure~\ref{fig:T1} shows the $T(t)$'s value as a function of time.
+        \begin{figure}[H]
+          \centering
+          \includegraphics[scale = 0.8]{figs/T1.pdf}
+          \caption{$T(t)$ for the given 2 dimensional heat equation}
+          \label{fig:T1}
+        \end{figure}
+
+      \item
+        Figure~\ref{fig:T} gives a semi-logarithmic plot of $T(t)$ as a function of time for different resolutions.
+        \begin{figure}[H]
+          \centering
+          \includegraphics[scale = 0.8]{figs/T.pdf}
+          \caption{$T(t)$ at various grid resolutions}
+          \label{fig:T}
+        \end{figure}
+      \item
+        Figure~\ref{fig:heatSurface} shows how the initial profile changes as time progresses.
+        The dye's density falls below $10^{-4}$ parts per area when \input{tforT.tex}.
+
+        \begin{figure}[H]
+          \centering
+          \includegraphics[scale = 0.6]{figs/heatSurface.pdf}
+          \caption{Evolution of the surface as time progresses}
+          \label{fig:heatSurface}
+        \end{figure}
+    \end{enumerate}
+
+  \item
+    \begin{enumerate}
+      \item
+        \begin{align*}
+                      & f(x + h) = f(x_0) + h \frac{\partial f(x_0)}{\partial x} + \frac{h^2}{2!} \frac{\partial^2 f(x_0)}{\partial x^2} + \frac{h^3}{3!} \frac{\partial^3 f(x_0)}{\partial x^3} + \frac{h^4}{4!} \frac{\partial^4 f(x_0)}{\partial x^4} + \mathscr{O}(h^5)\\ %+ \frac{h^5}{5!} \frac{\partial^5 f(\xi ')}{\partial x^5}\\
+          \Rightarrow & \frac{h^3}{3!} \frac{\partial^3 f(x_0)}{\partial x^3} = f(x + h) - f(x_0) - h \frac{\partial f(x_0)}{\partial x} - \frac{h^2}{2!} \frac{\partial^2 f(x_0)}{\partial x^2} - \frac{h^4}{4!} \frac{\partial^4 f(x_0)}{\partial x^4} + \mathscr{O}(h^5) %- \frac{h^5}{5!} \frac{\partial^5 f(\xi')}{\partial x^5}
+        \end{align*}
+        We also have
+        \begin{align*}
+                      & f(x - h) = f(x_0) - h \frac{\partial f(x_0)}{\partial x} + \frac{h^2}{2!} \frac{\partial^2 f(x_0)}{\partial x^2} - \frac{h^3}{3!} \frac{\partial^3 f(x_0)}{\partial x^3} + \frac{h^4}{4!} \frac{\partial^4 f(x_0)}{\partial x^4} + \mathscr{O}(h^5)\\ %- \frac{h^5}{5!} \frac{\partial^5 f(\xi'')}{\partial x^5}\\
+          \Rightarrow & \frac{h^3}{3!} \frac{\partial^3 f(x_0)}{\partial x^3} = f(x_0) - h \frac{\partial f(x_0)}{\partial x} + \frac{h^2}{2!} \frac{\partial^2 f(x_0)}{\partial x^2} - f(x - h) + \frac{h^4}{4!} \frac{\partial^4 f(x_0)}{\partial x^4} + \mathscr{O}(h^5) %- \frac{h^5}{5!} \frac{\partial^5 f(\xi'')}{\partial x^5}
+        \end{align*}
+        Adding these expressions together, we get:
+        \begin{align}
+          & \frac{h^3}{3} \frac{\partial^3 f(x_0)}{\partial x^3} = f(x + h) - f(x - h) - 2 h \frac{\partial f(x_0)}{\partial x} + \mathscr{O}(h^5) \label{eq:thirdDevFirst}%\frac{h^5}{5!} \frac{\partial^5 f(\mu')}{\partial x^5} \label{eq:thirdDevFirst}
+        \end{align}
+        From this it can be seen that this estimate is at best $\mathscr{O}(h^2)$.
+        The estimate of $\frac{\partial f(x_0)}{\partial x}$ must be $\mathscr{O}(h^4)$ or better for the third dertivative estimate to retain its accuracy.
+        Note:
+        \begin{align*}
+          f(x + h) = f(x_0) + h \frac{\partial f(x_0)}{\partial x} + \frac{h^2}{2} \frac{\partial^2 f(x_0)}{\partial x^2} + \frac{h^3}{6} \frac{\partial^3 f(x_0)}{\partial x^3} + \frac{h^4}{24} \frac{\partial^4 f(x_0)}{\partial x^4} + \mathscr{O}(h^5) %+ \frac{h^4}{24} \frac{\partial^4 f(\chi_1)}{\partial x^4}
+        \end{align*}
+        \begin{align*}
+          f(x - h) = f(x_0) - h \frac{\partial f(x_0)}{\partial x} + \frac{h^2}{2} \frac{\partial^2 f(x_0)}{\partial x^2} - \frac{h^3}{6} \frac{\partial^3 f(x_0)}{\partial x^3} + \frac{h^4}{24} \frac{\partial^4 f(x_0)}{\partial x^4} + \mathscr{O}(h^5) %+ \frac{h^4}{24} \frac{\partial^4 f(\chi_2)}{\partial x^4}
+        \end{align*}
+        \begin{align*}
+          f(x + 2 h) = f(x_0) + 2 h \frac{\partial f(x_0)}{\partial x} + 2 h^2 \frac{\partial^2 f(x_0)}{\partial x^2} + \frac{4 h^3}{3} \frac{\partial^3 f(x_0)}{\partial x^3} + \frac{2 h^4}{3} \frac{\partial^4 f(x_0)}{\partial x^4} + \mathscr{O}(h^5) %+ \frac{2 h^4}{3} \frac{\partial^4 f(\chi_3)}{\partial x^4}
+        \end{align*}
+        \begin{align*}
+          f(x - 2 h) = f(x_0) - 2 h \frac{\partial f(x_0)}{\partial x} + 2 h^2 \frac{\partial^2 f(x_0)}{\partial x^2} - \frac{4 h^3}{3} \frac{\partial^3 f(x_0)}{\partial x^3} + \frac{2 h^4}{3} \frac{\partial^4 f(x_0)}{\partial x^4} + \mathscr{O}(h^5) %+ \frac{2 h^4}{3} \frac{\partial^4 f(\chi_4)}{\partial x^4}
+        \end{align*}
+        Manipulation of these terms results in the cancellation of unwanted terms:
+        \begin{align*}
+          f(x + h) - f(x - h) =  2 h \frac{\partial f(x_0)}{\partial x} + \frac{h^3}{3} \frac{\partial^3 f(x_0)}{\partial x^3} + \mathscr{O}(h^5) %+ \frac{h^4}{24} \frac{\partial^4 f(\xi_1)}{\partial x^4}
+        \end{align*}
+        \begin{align*}
+          f(x + 2 h) - f(x - 2 h) = 4 h \frac{\partial f(x_0)}{\partial x} + \frac{8 h^3}{3} \frac{\partial^3 f(x_0)}{\partial x^3} + \mathscr{O}(h^5) %+ \frac{2 h^4}{3} \frac{\partial^4 f(\xi_2)}{\partial x^4}
+        \end{align*}
+        And finally:
+        \begin{align*}
+          f(x - 2 h)- 8 f(x - h) + 8 f(x + h) - f(x + 2 h) =  12 h \frac{\partial f(x_0)}{\partial x} + \mathscr{O}(h^4) %+ \frac{h^4}{24} \frac{\partial^4 f(\xi_3)}{\partial x^4}
+        \end{align*}
+        From this we can get a second order approximation of $f$'s first deriviative:
+        \begin{align*}
+          \frac{\partial f(x_0)}{\partial x} = \frac{f(x - 2 h)- 8 f(x - h) + 8 f(x + h) - f(x - 2 h)}{12 h} + \mathscr{O}(h^4) %- \frac{h^4}{24} \frac{\partial^4 f(\xi_3)}{\partial x^4}
+        \end{align*}
+        This expression in combination with Eq.~\ref{eq:thirdDevFirst} gives the second order approximation of $u_{xxx}$:
+        \begin{align*}
+                      & \frac{h^3}{3} \frac{\partial^3 f(x_0)}{\partial x^3} = f(x + h) - f(x - h) - \\
+                      & \qquad \qquad \qquad \qquad \frac{f(x - 2 h)- 8 f(x - h) + 8 f(x + h) - f(x + 2 h)}{6} + \mathscr{O}(h^5)\\ %+ \frac{h^5}{5!} \frac{\partial^5 f(\mu')}{\partial x^5}\\
+%          \Rightarrow & \frac{\partial^3 f(x_0)}{\partial x^3} = \frac{3 f(x + h) - 3 f(x - h)}{h^3} - \frac{f(x - 2 h)- 8 f(x - h) + 8 f(x + h) - f(x + 2 h)}{2 h^3} + \mathscr{O}(h^2)\\ %+ \frac{h^5}{5!} \frac{\partial^5 f(\mu')}{\partial x^5}\\
+          \Rightarrow & \frac{\partial^3 f(x_0)}{\partial x^3} = \frac{- f(x - 2 h) + 2 f(x - h) - 2 f(x + h) + f(x +  2 h)}{2 h^3} + \mathscr{O}(h^2) %+ \frac{h^5}{5!} \frac{\partial^5 f(\mu')}{\partial x^5} 
+        \end{align*}
+      \item
+        \begin{enumerate}
+          \item
+            Figure~\ref{fig:KDVmass1} shows the mass of the wave as a function of time.
+            The wave has the initial profile given in Eq.~\ref{eq:kdvi}.
+            \begin{figure}[H]
+              \centering
+              \includegraphics[scale = 0.8]{figs/KDVmass1.pdf}
+              \caption{The mass for the wave}
+              \label{fig:KDVmass1}
+            \end{figure}
+          \item
+            Figure~\ref{fig:motion1} shows the motion of a  soliton wave.
+            The soliton wave solves the KdV equation with the initial form:
+            \begin{equation}
+              u(x, 0) = 2 \sech ^ 2 (x - 4t)
+              \label{eq:kdvi}
+            \end{equation}
+            \begin{figure}[H]
+              \centering
+              \includegraphics[scale = 0.7]{figs/motion1.pdf}
+              \caption{Motion of soliton wave}
+              \label{fig:motion1}
+            \end{figure}
+        \end{enumerate}
+      \item
+        \begin{enumerate}
+          \item
+            Figure~\ref{fig:collision} shows a collision of a soliton wave.
+            The soliton wave solves the KdV equation with the initial form:
+            \begin{equation*}
+              u(x, 0) = \frac{12[3 + 4 \cosh(2 x) + \cosh(4x)]}{[3 \cosh(x) + \cosh(3x)]^2}
+            \end{equation*}
+            \begin{figure}[H]
+              \centering
+              \includegraphics[scale = 0.8]{figs/collision.pdf}
+              \caption{Collision of soliton wave}
+              \label{fig:collision}
+            \end{figure}
+          \item
+            Figure~\ref{fig:KDVmass2} shows the mass of the wave as a function of time.
+            The mass is not an absolute constant with time.
+            There are two bumps in the mass, which occur at the beginning and end of the collision.
+            \begin{figure}[H]
+              \centering
+              \includegraphics[scale = 0.8]{figs/KDVmass2.pdf}
+              \caption{The mass for the wave}
+              \label{fig:KDVmass2}
+            \end{figure}
+        \end{enumerate}
+    \end{enumerate}
+\end{enumerate}
+
+\end{document}

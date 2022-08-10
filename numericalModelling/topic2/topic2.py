@@ -3,6 +3,11 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 
+import matplotlib as mpl
+
+mpl.rcParams['text.usetex'] = True
+mpl.rcParams['text.latex.preamble'] = r'\usepackage{amsmath}'
+
 def taylors_method(f, a, b, N, alpha):
   h = (b -a)/N
   Y = [(a, alpha)]
@@ -34,9 +39,11 @@ points = np.array(taylors_method(logistic, 0, 20, 2000, 0.05))
 time = points[:, 0]
 solution = points[:, 1]
 
-fig, ax = plt.subplots(figsize=(10,10))
-ax.plot(time, solution)
-fig.savefig("1a.pdf")
+fig, ax = plt.subplots(figsize=(5,5))
+ax.plot(time, solution, lw = 8, c = "indianred")
+ax.set_ylabel("$u(t)$")
+ax.set_xlabel("$t$")
+fig.savefig("figs/1a.pdf")
 
 ################################################################################
 #1b.
@@ -44,9 +51,11 @@ points = np.array(midpoint_method(logistic, 0, 20, 2000, 0.05))
 time = points[:, 0]
 solution = points[:, 1]
 
-fig, ax = plt.subplots(figsize=(10,10))
-ax.plot(time, solution, 'bo')
-fig.savefig("1b.pdf")
+fig, ax = plt.subplots(figsize=(5,5))
+ax.plot(time, solution, 'o', c = "forestgreen")
+ax.set_ylabel("$u(t)$")
+ax.set_xlabel("$t$")
+fig.savefig("figs/1b.pdf")
 
 ################################################################################
 #1c.
@@ -54,9 +63,11 @@ points = np.array(runge_kutta2(logistic, 0, 20, 2000, 0.05))
 time = points[:, 0]
 solution = points[:, 1]
 
-fig, ax = plt.subplots(figsize=(10,10))
-ax.scatter(time, solution)
-fig.savefig("1c.pdf")
+fig, ax = plt.subplots(figsize=(5,5))
+ax.scatter(time, solution, c = "cadetblue")
+ax.set_ylabel("$u(t)$")
+ax.set_xlabel("$t$")
+fig.savefig("figs/1c.pdf")
 
 ################################################################################
 #2.
@@ -73,9 +84,9 @@ df = pd.DataFrame(data = {'time' : np.ravel(time, order = 'F'), '$\\nu$' : np.ra
 
 fig= plt.figure(figsize=(10,10))
 ax = sns.lineplot(data = df, x = 'time', y = '$\\nu$', hue = 'u_0', palette = 'icefire', legend = 'full')
-ax.set(ylim = [-.75, 2.2], xlim = [0.0, 7.0])
+ax.set(ylim = [-.75, 2.2], xlim = [0.0, 7.0], xlabel = "$t$", ylabel = "$u(t)$")
 ax.legend(loc = 'upper right', title = '$u_0$')
-fig.savefig("2.pdf")
+fig.savefig("figs/2.pdf")
 
 ################################################################################
 #3.
@@ -109,4 +120,4 @@ for i, (method, name) in enumerate([(taylors_method, "Euler's Method"),
     ax[i].legend(title = 'Time step')
     ax[i].set(title = name, xlabel = 'time', ylabel = '$\\nu$')
 
-fig.savefig("3a.pdf")
+fig.savefig("figs/3a.pdf")

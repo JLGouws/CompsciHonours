@@ -44,7 +44,7 @@
 
   \begin{table}[H]
     \resizebox{\textwidth}{!}{
-    \begin{tabular}{ccccccc}
+      \begin{tabular}{ccccccc}
       \toprule
           \multicolumn{1}{p{4em}}{\textbf{Block Size}} & \multicolumn{1}{p{5em}}{\textbf{Kernel Execution Time(ms)}} & 
           \multicolumn{1}{p{5em}}{\textbf{Achieved occupancy(\%)}} & \multicolumn{1}{p{5em}}{\textbf{Global Memory Load Throughput(GB/S)}} & 
@@ -52,22 +52,47 @@
           \multicolumn{1}{p{5em}}{\textbf{Global Memory Store Throughput (GB/S)}}&
           \multicolumn{1}{p{5em}}{\textbf{Global Memory Store Efficiency (\%)}} 
           \\ \midrule
+          \midrule
+        \multicolumn{7}{c}{ 2D Grid} \\
+      \hline
       $64 \times  8$ & 2.66404          & 87.8    & 50.334 & 100      & 25.167& 100 \\ 
       \hline
       $2  \times 64$ & 5.88941          & 87.2    & 93     & 100      & 46.5  & 100 \\ 
-      \hline
-      $16 \times 16$ & 2.67481          & 89.3    & 50.028 & 100      & 25.014& 100 \\ 
+      \midrule
+      \midrule 
+        \multicolumn{7}{c}{1D Grid}\\
+        \hline
+      $16 \times 16$ & 2.67481 & 89.3    & 50.028 & 100      & 25.014& 100 \\ 
       \hline
       $32 \times 32$ & 2.76861          & 83.9    & 49.929 & 100      & 24.964& 100 \\ 
-      \hline
+      \midrule
+      \midrule
+        \multicolumn{7}{c}{1D Grid, 16 Data per thread, unstrided}\\
+        \hline
       $2  \times 64$ & 7.04664          & 72.1    & 156.709& 12.5     & 78.354& 12.5\\ 
       \hline
       $64 \times 16$ & 7.41846          & 91.4    & 152.988& 12.5     & 76.494& 12.5\\ 
+      \midrule
+      \midrule
+        \multicolumn{7}{c}{1D Grid, 16 Data per thread, unstrided}\\
+        \hline
+      $32 \times 32$ & 2.79042         & 95.2    &  48.149& 100      & 24.074& 100 \\ 
+      \hline
+      $16 \times 64$ & 2.83848          & 94.9    &  48.675& 100      & 24.337& 100 \\ 
       \bottomrule
     \end{tabular}
   }
-    \caption{Average execution times of Kernel}
-    \label{table2}
   \end{table}
   Observations:\\
+  The table shows that the memory throughput metrics can be misleading.
+  The worst performing kernels have very high memory throughput.
+  This throughput is not always productive, as shown by the memory efficiency metrics.
+
+  Achieved occupancy can also be misleading.
+  The, worst performing, unstrided 16 data per thread kernel achieves 91.4\% occupancy, yet it has an execution time of $\sim$ 7.4 ms.
+  These considerations of occupancy and throughput show that one particular metric cannot give the full picture.
+  Multiple metrics should be considered to understand the performance of the kernel.
+
+  Doing sixteen consecutive data items per thread results in low memory load and store efficiencies.
+  Striding solves this problem and achieves the same memory efficiency as the single datum per thread approach.
 \end{document}

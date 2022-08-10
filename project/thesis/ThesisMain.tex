@@ -1,0 +1,169 @@
+\documentclass[12pt] {ThesisRU}    % changed default font to 12pt
+\usepackage[htt]{hyphenat}
+\usepackage[usenames,svgnames,table]{xcolor}
+
+\usepackage[hidelinks]{hyperref}
+% \hypersetup{colorlinks,citecolor=MidnightBlue, linkcolor=Navy}
+\hypersetup{allcolors=[rgb]{0.75, 0, 0},colorlinks=true}
+\usepackage[T1]{fontenc}
+
+	% preamble stuff here
+\usepackage{graphicx}  % need this for figures etc.
+\usepackage{url}  % to handle urls 
+\usepackage[comma,authoryear]{natbib}    %  includes \citet (textual), and \citep (parenthesized) -- can be used with numbered styles too
+%% include any other packages that you need for your thesis  ....
+\usepackage{float}
+\renewcommand {\cite} {\citep}  % default for cite is citet in natbib - so change it
+
+\newcommand {\shortcite} {\citeyearpar}  % for date only citations
+
+\newcommand\MyBox[2]{%confusion matrix
+  \fbox{\lower0.75cm
+    \vbox to 1.7cm{\vfil
+      \hbox to 1.7cm{\hfil\parbox{1.4cm}{#1\\#2}\hfil}
+      \vfil}%
+  }%
+}
+
+% LP 2022 changed caption name to bold
+\renewcommand{\baselinestretch}{1.5} % easier to read once printed i think
+\usepackage[labelfont=bf]{caption}
+
+\captionsetup[table]{skip=10pt}
+
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{amsmath}
+\usepackage[toc]{appendix}
+\usepackage{colortbl}
+\usepackage{multirow}
+
+% uncomment this is you tired of using `` and don't mind experimenting with this package
+% \usepackage{csquotes}
+% \MakeOuterQuote{"}
+
+\setcounter{tocdepth}{3}
+\setcounter{secnumdepth}{3}
+
+\usepackage[utf8]{inputenc}
+
+\usepackage{xcolor}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.98,0.995}
+
+\usepackage{listings}
+\usepackage{courier}
+\lstset{basicstyle=\footnotesize\ttfamily,breaklines=true}
+\lstset{framextopmargin=50pt}
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    %basicstyle=\ttfamily\footnotesize,
+    basicstyle=\ttfamily\scriptsize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+
+\lstset{style=mystyle}
+
+\usepackage{bibunits}
+
+\begin{document}
+\pagenumbering{roman}
+	
+	% Create a title
+\title{Put your title in ThesisMain.tex}
+\author{Name Surname}
+\date {\today}
+\maketitle  
+% \renewcommand{\chapterheadstartvskip}{\vspace*{-3\baselineskip}}
+
+\input{Chapters/Declaration.tex}
+
+\chapter*{Abstract}
+Half page usually, three-quarter page max.
+
+\newpage
+
+
+\chapter*{ACM Computing Classification System}  
+
+% \lhead{ACM Computing Classification System}
+
+Thesis classification under the ACM Computing Classification System\footnote{https://www.acm.org/publications/class-2012} (2012 version valid through 2022):
+\begin{itemize}
+\item \textbf{Computing methodologies $\mathtt{\sim}$ Neural networks}
+\item \textbf{Computing methodologies $\mathtt{\sim}$ Object identification}
+\item \textit{Applied computing $\mathtt{\sim}$ Agriculture}
+\end{itemize}
+
+
+\textbf{General-Terms:} Convolutional Neural Networks, Image Classification, Multispectral Imaging, Plant Stress Detection.
+
+
+\newpage
+
+\chapter*{Acknowledgements}
+% \lhead{Acknowledgements}
+The authors would like to thank the authors of the publicly available datasets used in this paper. This work was undertaken in the Distributed Multimedia CoE at Rhodes University, with financial support from Telkom SA and CORIANT. The authors acknowledge that opinions, findings and conclusions or recommendations expressed here are those of the author(s) and that none of the above mentioned sponsors accept liability whatsoever in this regard.
+
+I would also like to acknowledge all those who directly and indirectly supported me through my work. In particular I would like to thank my ...
+
+\newpage
+
+
+\tableofcontents
+\newpage
+
+\listoffigures
+\newpage
+
+\listoftables
+\newpage
+
+\lstlistoflistings
+\newpage
+
+% \chapter*{Declaration of Publications}
+% \input{Chapters/Publications}
+
+\chapter*{Glossary}
+\lhead{Glossary}
+
+\input{Chapters/Abbreviations}
+\newpage
+
+\pagenumbering{arabic}
+\input{Chapters/Chap1.tex}
+\input{Chapters/Chap2.tex}
+\input{Chapters/Chap3.tex}
+% \input{Chapters/Chap4.tex}
+% \input{Chapters/Chap5.tex}
+\input{Chapters/Chap6.tex}
+
+
+
+\bibliographystyle{infosecMsc}    % authordate style 
+ 
+\bibliography{references.bib}   	% load in the info produced from ref.bib
+
+% \renewcommand{\chapterheadstartvskip}{\vspace*{-6\baselineskip}}
+
+\begin{appendices}
+% \input{Chapters/AppendixA}
+\end{appendices}
+\end{document}

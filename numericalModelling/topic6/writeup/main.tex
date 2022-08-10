@@ -1,0 +1,189 @@
+\documentclass[12pt,a4]{article}
+\usepackage{physics, amsmath,amsfonts,amsthm,amssymb, mathtools,steinmetz, gensymb, siunitx}	% LOADS USEFUL MATH STUFF
+\usepackage{xcolor,graphicx}
+\usepackage[left=45pt, top=60pt, right=45pt, bottom=65pt ,a4paper]{geometry} 				% ADJUSTS PAGE
+\usepackage{setspace}
+\usepackage{caption}
+\usepackage{tikz}
+\usepackage{pgf,tikz,pgfplots,wrapfig}
+\usepackage{mathrsfs}
+\usepackage{fancyhdr}
+\usepackage{float}
+\usepackage{array}
+\usepackage{booktabs,multirow}
+\usepackage{bm}
+
+\usetikzlibrary{decorations.text, calc}
+\pgfplotsset{compat=1.7}
+
+\usetikzlibrary{decorations.pathreplacing,decorations.markings}
+\usepgfplotslibrary{fillbetween}
+
+\newcommand{\vect}[1]{\boldsymbol{#1}}
+
+\usepackage{hyperref}
+%\usepackage[style= ACM-Reference-Format, maxbibnames=6, minnames=1,maxnames = 1]{biblatex}
+%\addbibresource{references.bib}
+
+
+\AtBeginDocument{\hypersetup{pdfborder={0 0 0}}}
+
+\title{
+\textsc{Topic 6}
+}
+\author{\textsc{J L Gouws}
+}
+\date{\today
+\\[1cm]}
+
+
+
+\usepackage{graphicx}
+\usepackage{array}
+
+
+
+
+\begin{document}
+\thispagestyle{empty}
+
+\maketitle
+
+\begin{enumerate}
+  \item
+    \begin{enumerate}
+      \item
+        Figure~\ref{fig:eulerdx} shows the numerical advection of a top hat function with an Euler integrator.
+        For this integration, the evolution time step is equal to the spatial variable's point spacing.
+        The figure indicates that the method is neither dissipative nor dispersive.
+        \begin{figure}[H]
+          \centering
+          \includegraphics[scale = 0.85]{../figs/eulerdx.pdf}
+          \caption{Euler Evolution of an advection equation with $\Delta t = \Delta x$}
+          \label{fig:eulerdx}
+        \end{figure}
+      \item
+        Figure~\ref{fig:euler.8dx} shows the numerical advection of a top hat function with an Euler integrator.
+        For this integration, the evolution time step is equal to an eighth of the spatial variable's point spacing.
+        The figure indicates that the method is dissipative.
+        \begin{figure}[H]
+          \centering
+          \includegraphics[scale = 0.85]{../figs/euler.8dx.pdf}
+          \caption{Euler Evolution of an advection equation with $\Delta t = 0.8 \Delta x$}
+          \label{fig:euler.8dx}
+        \end{figure}
+    \end{enumerate}
+  \item
+    \begin{enumerate}
+      \item
+        The error propagation for the Lax-Wendroff method is given by:
+        \begin{align*}
+                      & u^{n+1}_j - \varepsilon^{n+1}_j = u^{n}_j - \varepsilon^{n}_j - \frac{c \Delta t}{2\Delta x} (u^{n}_{j + 1} - \varepsilon^{n}_{j+1} - u^{n}_{j - 1} + \varepsilon^{n}_{j-1})\\
+                      & \qquad \qquad \qquad \qquad + \frac{c^2 \Delta^2}{2 \Delta x^2}(u^n_{j + 1} - \varepsilon^n_{j+1} - 2(u^n_j - \varepsilon^n_j) + u^n_{j-1} - \varepsilon^n_{j-1})\\
+          \Rightarrow & \frac{u^{n+1}_j - u^n_j}{\Delta t^2} + c \frac{u^{n}_{j + 1} - u^{n}_{j - 1}}{2 \Delta x \Delta t} - \frac{c^2 }{2 \Delta x^2}(u^n_{j + 1} - 2 u^n_j + u^n_{j-1})\\
+                      &  \qquad = \frac{\varepsilon^{n+1}_j - \varepsilon^n_j}{\Delta t^2} + c \frac{\varepsilon^{n}_{j + 1} - \varepsilon^{n}_{j - 1}}{2 \Delta x \Delta t} - \frac{c^2 }{2 \Delta x^2}(\varepsilon^n_{j + 1} - 2 \varepsilon^n_j + \varepsilon^n_{j-1})\\
+          \Rightarrow &  \tau^n_j = \frac{\varepsilon^{n+1}_j - \varepsilon^n_j}{\Delta t^2} + c \frac{\varepsilon^{n}_{j + 1} - \varepsilon^{n}_{j - 1}}{2 \Delta x \Delta t} - \frac{c^2 }{2 \Delta x^2}(\varepsilon^n_{j + 1} - 2 \varepsilon^n_j + \varepsilon^n_{j-1})
+        \end{align*}
+        Equating the truncation error to zero, and rearranging for $\varepsilon^{n+1}_j$:
+        \begin{equation*}
+          \varepsilon^{n+1}_j = \varepsilon^n_j - \frac{c \Delta t}{2 \Delta x } (\varepsilon^{n}_{j + 1} - \varepsilon^{n}_{j - 1})+ \frac{c^2 \Delta t^2}{2 \Delta x^2}(\varepsilon^n_{j + 1} - 2 \varepsilon^n_j + \varepsilon^n_{j-1})
+        \end{equation*}
+        Which could have been seen immediately from the Lax-Wendroff method equation.
+        Substituting an expansion coefficient of the Fourier series:
+        \begin{equation*}
+            \varepsilon (x_j, t^n) = \sum_{n = -N}^N \hat \varepsilon^n e^{ikx_j} = \sum_{n = -N}^N \hat \varepsilon^n e^{ikj \Delta x}
+        \end{equation*}
+        The following equation is obtained:
+        \begin{align*}
+                      & \hat \varepsilon^{n + 1}e^{i k j\Delta x} = \hat \varepsilon^ne^{ikj\Delta x} - \frac{c \Delta t}{2 \Delta x } (\hat\varepsilon^{n}e^{ik(j + 1)\Delta x} - \hat \varepsilon^{n}e^{ik(j - 1)\Delta x}) \\
+                      & \qquad \qquad \qquad + \frac{c^2 \Delta t^2}{2 \Delta x^2}(\hat \varepsilon^ne^{ik(j + 1)\Delta x} - 2 \hat \varepsilon^ne^{ikj\Delta x} + \hat \varepsilon^ne^{ik(j-1)\Delta x}) \\
+          \Rightarrow & \hat \varepsilon^{n + 1} = \hat \varepsilon^n - \frac{c \Delta t}{2 \Delta x } (\hat\varepsilon^{n}e^{ik\Delta x} - \hat \varepsilon^{n}e^{-ik\Delta x}) \\
+                      & \qquad \qquad + \frac{c^2 \Delta t^2}{2 \Delta x^2}(\hat \varepsilon^ne^{ik\Delta x} - 2 \hat \varepsilon^n + \hat \varepsilon^ne^{-ik\Delta x}) \\
+          \Rightarrow & \hat \varepsilon^{n + 1} = \hat \varepsilon^n\left[1  - \frac{c \Delta t}{2 \Delta x } (e^{ik\Delta x} - e^{-ik\Delta x})\right. \\
+                      & \qquad \qquad \quad + \left.\frac{c^2 \Delta t^2}{2 \Delta x^2}(e^{ik\Delta x} - 2  + e^{-ik\Delta x}) \right]\\
+          \Rightarrow & \hat \varepsilon^{n + 1} = \hat \varepsilon^n\left[1  - i R \sin (k \Delta x) + R^2 (\cos (k\Delta x) - 1 ) \right]\\
+          \Rightarrow & S(k) = \left[1  - iR \sin (k \Delta x) + R^2 (\cos (k\Delta x) - 1 ) \right]
+        \end{align*}
+      \item
+        Now we get:
+        \begin{align*}
+                      & |S(k)|^2 = \left\{\left[1 + R^2 (\cos (k\Delta x) - 1 )\right]^2 + R^2 \sin^2 (k \Delta x)  \right\}\\
+          \Rightarrow & |S(k)|^2 = \left\{\left[1 - 2 R^2 \sin^2(k \Delta x / 2)\right]^2 + R^2 \sin^2 (k \Delta x)  \right\}\\
+          \Rightarrow & |S(k)|^2 = \left\{1  - 4 R^2 \sin^2 (k \Delta x / 2) + 4 R^4 \sin^4 (k \Delta x / 2)+ 4R^2 \sin^2(k \Delta x / 2)\cos^2(k \Delta x / 2) \right\} \\
+          \Rightarrow & |S(k)|^2 = \left\{1  - 4 R^2 \sin^2 (k \Delta x / 2)(1 - \cos^2(k \Delta x / 2)) + 4 R^4 \sin^4 (k \Delta x / 2) \right\} \\
+          \Rightarrow & |S(k)|^2 = \left\{1  - 4 R^2 \sin^4 (k \Delta x / 2) + 4 R^4 \sin^4 (k \Delta x / 2) \right\} \\
+          \Rightarrow & |S(k)|^2 = \left\{1  - 4 R^2 (1 - R^2) \sin^4 (k \Delta x / 2) \right\} 
+        \end{align*}
+        Since $R^2 \leq 1$  and $\sin^2(\theta) \leq 1$, the result $|S(k)| < 1$ follows. 
+        This work demonstrates that the method is stable.
+      \item
+        Figure~\ref{fig:maxSk} the amplification factor's maximum value for different $R$ values.
+        \begin{figure}[H]
+          \centering
+          \includegraphics[scale = 0.7]{../figs/maxSk.pdf}
+          \caption{The Lax-Wendroff and upwind Euler method's amplification factor's maximum modulus}
+          \label{fig:maxSk}
+        \end{figure}
+        The figure indicates that both methods are non-dissipative for $R = 1$.
+        The upwind Euler method is more dissipative than the Lax-Wendroff method for $R < \frac{\sqrt{5} - 1}{2} \approx 0.618$; otherwise, the Lax-Wendroff method is more dissipative.
+        \iffalse
+        Finding the minimum of $S(k)$ is equivalent to maximizing:
+        \begin{equation*}
+          f(R, \theta) = 4 R^2 (1 - R^2) \sin^4 (\theta)
+        \end{equation*}
+        Since $\sin \theta \leq 1$, the maximum with respect to theta is:
+        \begin{equation*}
+          \max_\theta f(R, \theta) = 4 R^2 (1 - R^2)
+        \end{equation*}
+        Minimisation of $f$ with respect to $R$ requires:
+        \begin{equation*}
+          \frac{\partial f}{\partial R} = 8 R - 16 R^3 = 0 \Rightarrow R^2 = \frac{1}{2}
+        \end{equation*}
+        This relation implies that:
+        \begin{align*}
+          |S(k)|^2 \geq 1 - \frac{9}{8} + \frac{9}{16} = \frac{1}{4}
+        \end{align*}
+        This equation indicates nothing about the dispersivity of the Lax-Wendroff method.
+        It does, however, indicate that the Lax-Wendroff method is less dissipative than the upwind-Euler scheme.
+        The upwind-Euler method allows $|S(k)| = 0$, which removes contributions associated with $k$ from the numerical solution.
+        \fi
+        
+      \item
+        Figure~\ref{fig:laxWendrof} compares the Lax-Wendroff method with the exact and Euler solutions to the advection problem.
+        \begin{figure}[H]
+          \centering
+          \includegraphics[scale = 0.92]{../figs/laxWendroff.pdf}
+          \caption{Lax-Wendroff Evolution of an advection equation with $\Delta t = 0.8 \Delta x$}
+          \label{fig:laxWendrof}
+        \end{figure}
+    \end{enumerate}
+  \item
+    The centered-Euler scheme for the heat equation has the error propagation:
+    \begin{equation*}
+      \varepsilon^{n+1}_j = \varepsilon^n_j + k \Delta t \left(\frac{\varepsilon^n_{j + 1} - 2 \varepsilon^n_j + \varepsilon^n_{j - 1}}{2 \Delta x^2 }\right) 
+    \end{equation*}
+    Assuming:
+    \begin{equation*}
+        \varepsilon (x_j, t^n) = \sum_{n = -N}^N \hat \varepsilon^n e^{ikx_j} = \sum_{n = -N}^N \hat \varepsilon^n e^{ikj \Delta x}
+    \end{equation*}
+    The following equation is obtained:
+    \begin{align*}
+                  & \hat \varepsilon^{n + 1}e^{i k j\Delta x} = \hat \varepsilon^ne^{ikj\Delta x} + \frac{k \Delta t}{\Delta x^2} \left(\hat \varepsilon^ne^{ik(j + 1 )\Delta x} - 2 \hat \varepsilon^ne^{ikj\Delta x} + \hat \varepsilon^ne^{ik(j - 1 )\Delta x}\right)\\
+      \Rightarrow & \hat \varepsilon^{n + 1} = \hat \varepsilon^n + \frac{k \Delta t}{\Delta x^2} \left(\hat \varepsilon^ne^{ik\Delta x} - 2 \hat \varepsilon^n + \hat \varepsilon^ne^{-ik\Delta x}\right)\\
+      \Rightarrow & \hat \varepsilon^{n + 1} = \hat \varepsilon^n \left[ 1 + \frac{k \Delta t}{\Delta x^2} \left(e^{ik\Delta x} - 2 + e^{-ik\Delta x}\right)\right]\\
+      \Rightarrow & \hat \varepsilon^{n + 1} = \hat \varepsilon^n \left[ 1 + 2\frac{k \Delta t}{\Delta x^2} \left(\cos(k\Delta x) - 1\right)\right]\\
+      \Rightarrow & \hat \varepsilon^{n + 1} = \hat \varepsilon^n \left[ 1 - 4\frac{k \Delta t}{\Delta x^2} \left(\sin^2(k\Delta x / 2) \right)\right]\\
+      \Rightarrow & S(k) = 1 - 4\frac{k \Delta t}{\Delta x^2} \sin^2(k\Delta x / 2)
+    \end{align*}
+    This method is stable provided that:
+    \begin{align*}
+                  & |S(k)| = |1 - 4\frac{k \Delta t}{\Delta x^2} \sin^2(k\Delta x / 2)| \leq 1\\
+      \Rightarrow & |1 - 4\frac{k \Delta t}{\Delta x^2} \sin^2(k\Delta x / 2)| \leq 1\\
+      \Rightarrow & -2 \leq - 4\frac{k \Delta t}{\Delta x^2} |\sin^2(k\Delta x / 2)| \leq 0\\
+      \Rightarrow & 0 \leq \frac{k \Delta t}{\Delta x^2} |\sin^2(k\Delta x / 2)| \leq \frac{1}{2}\\
+      \Rightarrow & \frac{k \Delta t}{\Delta x^2} \leq \frac{1}{2}\\
+      \Rightarrow & \Delta t \leq \frac{1}{2 k}\Delta x^2
+    \end{align*}
+\end{enumerate}
+
+\end{document}
