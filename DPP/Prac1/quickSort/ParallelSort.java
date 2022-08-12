@@ -9,7 +9,7 @@ public class ParallelSort
   {
     static private class Worker<T extends Comparable<? super T>> extends RecursiveAction
       {
-        static final int THRESHOLD = 1000;
+        static final int THRESHOLD = 1000; //set threshold for sequential sorting
         final T[] list;
         final int hi,
                   lo;
@@ -24,11 +24,12 @@ public class ParallelSort
 
         protected void compute ()
           { if (hi - lo < THRESHOLD)
-              recursiveQS (list, lo, hi);
+              recursiveQS (list, lo, hi);//sequentiall sort if there are fewer items than the threshold
             else
               if (lo < hi)
-                { int partitionPoint = partition(list, lo, hi);
-                  invokeAll(new Worker<T>(list, lo, partitionPoint-1),
+                { int partitionPoint = partition(list, lo, hi); //find the paritition point for this iteration of
+                                                                //the quick sort
+                  invokeAll(new Worker<T>(list, lo, partitionPoint-1),//invoke two workers in parallel to do the sorting.
                             new Worker<T>(list, partitionPoint+1, hi));
                 }
           }
@@ -100,7 +101,8 @@ public class ParallelSort
       */
     static public <T extends Comparable<? super T>> void array(T[] list)
     // Quick Sort the list - actually just calls recursiveQS
-      { ForkJoinTask.<Worker<T>>invokeAll(new Worker<T>(list, 0, list.length - 1));
+      { ForkJoinTask.
+          <Worker<T>>invokeAll(new Worker<T>(list, 0, list.length - 1)); //create a fork join pool to do the sorting.
       } // quickSort
 
   } // class ParrallelSort

@@ -67,7 +67,7 @@ public class Sort
       * <P>This sort is of order <I>n</I>log <I>n</I>.
       * @param list The list of items to be sorted.
       */
-    public static <T extends Comparable<? super T>> void array(T[] list)
+    public static <T extends Comparable<? super T>> void array(T[] list)//renamed this
     // Quick Sort the list - actually just calls recursiveQS
       { recursiveQS(list, 0, list.length-1);
       } // quickSort

@@ -2,6 +2,7 @@
  * @author George Wells
  * @author Jonathan Gouws
  */
+
 import java.applet.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -79,6 +80,7 @@ public class MandelbrotThr extends Applet
           }
       } // run
 
+    //*******************************************************************************************
     private void generateImage()
       { startTime = System.currentTimeMillis();
         //Using a Cached Thread Pool so that new threads are created as needed
@@ -98,6 +100,7 @@ public class MandelbrotThr extends Applet
 
         waitForResults(results);//give the futures to a method that will display them
       } // generateImage
+    //___________________________________________________________________________________________
 
     private void waitForResults ()
       { while (progress != NUM_TASKS)
@@ -115,6 +118,7 @@ public class MandelbrotThr extends Applet
         repaint();
       } // waitForResults
 
+    //*******************************************************************************************
     private void waitForResults (LinkedList<Future<MandlebrotResult>> results)
       { while (progress != NUM_TASKS)
           { try
@@ -134,6 +138,7 @@ public class MandelbrotThr extends Applet
               { // ignore
               }
           }
+    //___________________________________________________________________________________________
 
         long end = System.currentTimeMillis(); //get end time
         done = true;
@@ -289,12 +294,16 @@ public class MandelbrotThr extends Applet
             return results;
           } // calculateMandelbrot
 
+        //added the call method for the call interface
+        //*******************************************************************************************
         public MandlebrotResult call ()
           { return new MandlebrotResult(start, calculateMandelbrot()); //result
           } // run
+        //___________________________________________________________________________________________
 
       } // inner class WindowCloser
 
+    //*******************************************************************************************
     public class MandlebrotResult //encapsulation for a result
       { final public int start;   //Has index of start and the byte array
                                   //of pixel colours
@@ -304,6 +313,7 @@ public class MandelbrotThr extends Applet
           { this.start = start;
             this.value = value;
           }
-      } //inner Resuclt class
+      } //inner Result class
+    //___________________________________________________________________________________________
 
   } // class MandelbrotThr

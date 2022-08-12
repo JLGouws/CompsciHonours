@@ -24,14 +24,14 @@ public class Buffer implements CSProcess
                     int numConsumers
                   )
       {
-        head   = 0;
+        head   = 0; //set the head and length of the queue
         length = 0;
-        inChannel = in;
-        outReqChannel = outReq;
-        outChannel = out;
+        inChannel = in;         // for a producer to send times to the buffer
+        outReqChannel = outReq; // for the consumer to request an item from the buffer
+        outChannel = out;       // for the buffer to send an item to a waiting consumer
         this.numProducers = numProducers;
         this.numConsumers = numConsumers;
-        alt = new Alternative(
+        alt = new Alternative( //alternative for producer to request or producer the send
                 new Guard[] 
                   { outReqChannel,
                     inChannel
@@ -40,40 +40,30 @@ public class Buffer implements CSProcess
       } // constructor
 
     public void run ()
-      { while(numConsumers > 0) 
+      { while(numConsumers > 0) //carry on while there are still consumers.
           { 
-           // if (length == BUFF_LENGTH)
-           //   { outReqChannel.read();
-           //     outChannel.write(buff[head]);
-           //     head = (head + 1) % BUFF_LENGTH;
-           //     length--;
-           //   }
-           // else if (length == 0)
-           //   { buff[head] = inChannel.read();
-           //     length++;
-           //   }
-
-            switch ((length % BUFF_LENGTH) != 0 ? alt.select() : 
+            switch ((length % BUFF_LENGTH) != 0 ? alt.select() :      //multiplex this
                       (length == 10 || 
                         (numProducers == 0 && length == 0) ? 0 : 1)) 
-              { case OUT:
-                  Object o = outReqChannel.read();           //read from consumer
-                  outChannel.write(buff[head]);
-                  if (o == null || (numProducers == 0 && length == 0))
-                      numConsumers--;
+              { case OUT:                                             //need to send message to consumer
+                  Object o = outReqChannel.read();                    //read from consumer
+                  if (o == null || (numProducers == 0 && length == 0))//if this consumer wants to end or
+                    { numConsumers--;                                 //there are no more items coming or this consumer is done
+                      outChannel.write(null);                         //we end this consumer
+                    }
                   else
                     {
-                      buff[head] = null;
+                      outChannel.write(buff[head]);                   //write head onto the channel
                       head = (head + 1) % BUFF_LENGTH;
                       length--;
                     }
                   break;
-                case IN:
+                case IN:                                              //need to read an item from a producer
                   Object Item = inChannel.read();
-                  if (Item == null) //this producer is done
+                  if (Item == null)                                   //this producer is done
                     numProducers--;
                   else 
-                    buff[(head + length++) % BUFF_LENGTH] = Item;
+                    buff[(head + length++) % BUFF_LENGTH] = Item;     //add item to buffer
               }
           }
       } // run

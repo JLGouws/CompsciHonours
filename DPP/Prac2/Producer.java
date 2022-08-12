@@ -13,28 +13,15 @@ public class Producer implements CSProcess
 
     public Producer (final SharedChannelOutput out, final int a, final int b)
       { channel = out;
-        r = (b - a + 1);
-        s = a;
+        r = (b - a + 1); //set range for this producer
+        s = a;           //set offset for the producer production
       } // constructor
 
     public void run ()
       { int item;
         int num = 0, max = 0;
-        for (int i = 0; i < 100; i++)
-          { 
-            /*
-            try 
-              { if (num == max);
-                max = 5 + (int) (11 * Math.random());
-                num = 0;
-                Thread.sleep((int) (15 * Math.random()));
-              }
-            catch (Exception ex)
-              {
-              }
-            num++;
-            */
-            item = (int)(Math.random() * r) + s;
+        for (int i = 0; i < 100; i++) //produce 100 items and send them on the channel to the buffer.
+          { item = (int)(Math.random() * r) + s;
             channel.write(item);
           }
         channel.write(null);
