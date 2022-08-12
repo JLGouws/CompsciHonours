@@ -28,8 +28,8 @@ public final class testOne
         final One2AnyChannel bcChannel     = Channel.one2any();
 
         // Create and run parallel construct with a list of processes
-        Consumer a = new Consumer(bcReqChannel.out(), bcChannel.in()), //create two consumers
-                 b = new Consumer(bcReqChannel.out(), bcChannel.in()); //created here to get results later
+        Consumer a = new Consumer(bcReqChannel.out(), bcChannel.in(), "a"), //create two consumers
+                 b = new Consumer(bcReqChannel.out(), bcChannel.in(), "a"); //created here to get results later
         CSProcess[] procList = { 
             new Producer(pbChannel.out(), 1, 1000),                    //Create producers for the buffer
             new Buffer(pbChannel.in(), bcReqChannel.in(), bcChannel.out(), 1, 1), //launch buffer in parallel
