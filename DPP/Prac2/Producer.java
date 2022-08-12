@@ -4,14 +4,14 @@ import org.jcsp.lang.*;
   * output channel, then terminates.
   */
 public class Producer implements CSProcess
-  { private SharedChannelOutputInt channel;
+  { private SharedChannelOutput channel;
     private final int s, r;
 
-    public Producer (final SharedChannelOutputInt out)
+    public Producer (final SharedChannelOutput out)
       { this (out, 1, 100);
       } // constructor
 
-    public Producer (final SharedChannelOutputInt out, final int a, final int b)
+    public Producer (final SharedChannelOutput out, final int a, final int b)
       { channel = out;
         r = (b - a + 1);
         s = a;
@@ -37,6 +37,7 @@ public class Producer implements CSProcess
             item = (int)(Math.random() * r) + s;
             channel.write(item);
           }
+        channel.write(null);
       } // run
 
   } // class Producer

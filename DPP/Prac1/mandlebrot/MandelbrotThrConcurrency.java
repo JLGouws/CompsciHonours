@@ -1,3 +1,7 @@
+/**
+ * @author George Wells
+ * @author Jonathan Gouws
+ */
 import java.applet.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -77,8 +81,14 @@ public class MandelbrotThr extends Applet
 
     private void generateImage()
       { startTime = System.currentTimeMillis();
+        //Using a Cached Thread Pool so that new threads are created as needed
+        //Threads are reused appropriately
+        //This choice allows multiple threads to execute in parallel, and I do not need to
+        //guess how many threads will be appropriate
         ExecutorService executor = Executors.newCachedThreadPool();
-        LinkedList<Future<MandlebrotResult>> results = new LinkedList<Future<MandlebrotResult>>();
+        //list of Futures for the results
+        LinkedList<Future<MandlebrotResult>> results 
+          = new LinkedList<Future<MandlebrotResult>>();
         int i = 0;
         for (; i < ysize; i += taskSize)
           { // Start thread
@@ -86,7 +96,7 @@ public class MandelbrotThr extends Applet
           }
 
 
-        waitForResults(results);
+        waitForResults(results);//give the futures to a method that will display them
       } // generateImage
 
     private void waitForResults ()
@@ -109,12 +119,12 @@ public class MandelbrotThr extends Applet
       { while (progress != NUM_TASKS)
           { try
               { for (Future<MandlebrotResult> e : results)
-                  if (e.isDone())
+                  if (e.isDone()) //check if the future is ready
                   {
-                    MandlebrotResult r = e.get();
-                    display(r.value, r.start);
-                    results.remove(r);
-                    progress++;
+                    MandlebrotResult r = e.get(); //get the result
+                    display(r.value, r.start);//display this result
+                    results.remove(r);//remove this result from the list
+                    progress++; //update progress
                   }
               }
             catch (ExecutionException ex)
@@ -125,8 +135,8 @@ public class MandelbrotThr extends Applet
               }
           }
 
+        long end = System.currentTimeMillis(); //get end time
         done = true;
-        long end = System.currentTimeMillis();
         System.out.println("Time taken: " + (end-startTime) + "ms.");
         repaint();
       } // waitForResults
@@ -238,6 +248,8 @@ public class MandelbrotThr extends Applet
           }
       } // inner class WindowCloser
 
+    //implement callable interface to do work in parallel
+    //return a MandlebrotResult
     private class WorkerThread implements Callable<MandlebrotResult>
       { private int start;
         private int end;
@@ -278,13 +290,14 @@ public class MandelbrotThr extends Applet
           } // calculateMandelbrot
 
         public MandlebrotResult call ()
-          { return new MandlebrotResult(start, calculateMandelbrot());
+          { return new MandlebrotResult(start, calculateMandelbrot()); //result
           } // run
 
       } // inner class WindowCloser
 
-    public class MandlebrotResult
-      { final public int start;
+    public class MandlebrotResult //encapsulation for a result
+      { final public int start;   //Has index of start and the byte array
+                                  //of pixel colours
         final public byte[][] value;
 
         public MandlebrotResult(int start, byte[][] value)

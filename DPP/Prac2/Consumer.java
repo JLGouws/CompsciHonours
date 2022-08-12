@@ -4,30 +4,39 @@ import org.jcsp.lang.*;
   * terminates.
   */
 public class Consumer implements CSProcess
-  { private SharedChannelInputInt channel;
-    private SharedChannelOutputInt reqChannel;
+  { private SharedChannelInput channel;
+    private SharedChannelOutput reqChannel;
+    private boolean itemsLeft;
     private final String name;
+    private Integer[] items; 
 
-    public Consumer (final SharedChannelOutputInt req, final SharedChannelInputInt in)
+    public Consumer (final SharedChannelOutput req, final SharedChannelInput in)
       { this(req, in, "Consumer");
       } // constructor
 
-    public Consumer (final SharedChannelOutputInt req, final SharedChannelInputInt in, final String name)
+    public Consumer (final SharedChannelOutput req, final SharedChannelInput in, final String name)
       { channel    = in;
         reqChannel = req;
-        this.name = name;
+        this.name  = name;
+        itemsLeft  = true;
+        items = new Integer[100];
       } // constructor
 
+    public Object[] getItems ()
+      {
+        return items;
+      }
     public void run ()
-      { int[] item = new int[100];
-        
-        for (int i = 0; i < 100; i++)
+      { 
+        for (int i = 0; i <= 100 && itemsLeft; i++)
           {
-            reqChannel.write(-1);
-            item[i] = channel.read();
+            reqChannel.write(i == 100 ? null : -1);
+            Object o = channel.read();
+            if (o == null)
+              itemsLeft = false;
+            else
+              items[i] = (Integer) o;
           }
-        for (int i = 0; i < 100; i++)
-          System.out.println(name + " has consumed: " + item[i]);
       } // run
 
   } // class Consumer
