@@ -1,4 +1,7 @@
 *.pdf
+*.ppm
+*.pgm
+*.pbm
 *.mp4
 *.log
 *.aux
