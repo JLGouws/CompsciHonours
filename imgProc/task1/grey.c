@@ -56,7 +56,7 @@ unsigned char *frame_difference(unsigned char *frame1, unsigned char *frame2, un
   unsigned char *tmp = frame1;
   for(unsigned register i = 0; i < width * height; i++)
   {
-    *tmp++ = *tmp++ = *tmp++ = abs((signed int) *tmp - (signed int) *frame2) > 50 ? *frame2 : 0;
+    *tmp++ = *tmp++ = *tmp++ = abs((signed int) *tmp - (signed int) *frame2) > 20 ? abs((signed int) *tmp - (signed int) *frame2) : 0;
     frame2 += 3;
   }
   return frame1;

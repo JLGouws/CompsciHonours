@@ -56,10 +56,17 @@ unsigned char *frame_difference(unsigned char *frame1, unsigned char *frame2, un
   unsigned char *tmp = frame1;
   for(unsigned register i = 0; i < width * height; i++)
   {
-    *tmp++ = *tmp++ = *tmp++ = abs((signed int) *tmp - (signed int) *frame2) > 20 ? abs((signed int) *tmp - (signed int) *frame2): 0;
+    *tmp++ = *tmp++ = *tmp++ = abs((signed int) *tmp - (signed int) *frame2) > 10 ? abs((signed int) *tmp - (signed int) *frame2): 0;
     frame2 += 3;
   }
   return frame1;
+}
+
+unsigned char *brighten(unsigned char *frame, float value, unsigned int width, unsigned int height) {
+  unsigned char *tmp = frame;
+  for(unsigned register i = 0; i < 3 * width * height; i++)
+    *tmp++ = value * *frame++;
+  return frame;
 }
 
 char *to_grey_red(unsigned char *data, unsigned int width, unsigned int height, unsigned char *grey) {
@@ -250,9 +257,8 @@ int main(int argc, char** argv)
   fread(data1, 3 * width1 * height1, 1, fp1);
   fread(data2, 3 * width2 * height2, 1, fp2);
   fprintf(out, "%d %d\n%d\n", width1, height1, max1);
-  printf("hi\n");
-  printf("bye\n");
   frame_difference(data1, data2, width1, height1);
+  brighten(data1, 1.75, width1, height1);
   fwrite(data1, 3 * width1 * height1, 1, out);
   free(data1);
   free(data2);
