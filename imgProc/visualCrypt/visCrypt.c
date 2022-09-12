@@ -1,15 +1,9 @@
+#include "time.h"
 #include "stdlib.h"
 #include "stdio.h"
 #include "string.h"
 
 #include "math.h"
-
-#include "common_v4l2.h"
-
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
-
-#define PI 3.14159265358979
 
 
 char *catchar(char *one, char *two)
@@ -50,6 +44,70 @@ char *copy_image(unsigned char *data, unsigned int width, unsigned int height, u
     *tmp++ = *data++;
   }
   return dest;
+}
+
+unsigned char *encrypt(unsigned char *pixels, unsigned char *o11, unsigned char *o21, unsigned int w, unsigned int h)
+{
+  srand(time(NULL));   // Initialization, should only be called once.
+  unsigned char px[16] =  {0x09, 0x06, 0x05, 0x06, 0x03},
+                cp = *pixels++,
+                p1,
+                p2,
+                *o12 = o11 + (2 * w + 7) / 8,
+                *o22 = o21 + (2 * w + 7) / 8;
+  int count = 0, count2 = 6, dest, index, bit, r;
+  for(unsigned register i = 0; i < h; i++)
+  {
+    if(count != 0)
+    {
+      cp = *pixels++;
+      count = 0;
+    }
+    for(unsigned register j = 0; j < w; j++)
+    {
+      r = ((long) 5 * rand()) / RAND_MAX;
+      p1 = px[r];
+      p2 = cp / 128 == 0 ? p1 : ~p1 & 0x0F;
+
+      *o11 |= (p1 >> 2) << count2;
+      *o21 |= (p2 >> 2) << count2;
+
+
+      *o12 |= (p1 % 4) << count2;
+      *o22 |= (p2 % 4) << count2;
+      cp <<= 1;
+      count = (count + 1) % 8;
+      if(count == 0) {
+        cp = *pixels++;
+      }
+      if (count2 == 0) {
+        count2 = 8;
+        o11++;
+        o21++;
+        o12++;
+        o22++;
+      }
+      count2 -= 2;
+    }
+    if(count2!=6)
+    {
+      count2 = 6;
+      o12++;
+      o22++;
+    }
+    o11 = o12;
+    o21 = o22;
+    o12 += (2 * w + 7) / 8;
+    o22 += (2 * w + 7) / 8;
+  }
+}
+
+unsigned char *decrypt(unsigned char *pixels, unsigned char *o1, unsigned char *o2, unsigned int w, unsigned int h)
+{
+  for(unsigned register i = 0; i < (w + 7) / 8 * h; i++)
+  {
+    *pixels++ = *o1++ | *o2++;
+  }
 }
 
 unsigned char *frame_difference(unsigned char *frame1, unsigned char *frame2, unsigned int width, unsigned int height) {
@@ -224,7 +282,7 @@ char *getstr(FILE *fp, char* str)
 
 int main(int argc, char** argv)
 {
-  char path[100] = "../ppm/",
+  char path[100] = "../pbm/",
        *img_name;
   if (argc == 2)
     img_name = argv[1];
@@ -234,115 +292,45 @@ int main(int argc, char** argv)
     return 0;
   }
   FILE *fp = fopen(catchar(path, img_name), "rb");
-  FILE *out = fopen("output.ppm", "wb");
-  fputs("P6\n", out);
+  FILE *out1 = fopen("output1.pbm", "wb");
+  FILE *out2 = fopen("output2.pbm", "wb");
+  FILE *out3 = fopen("out.pbm", "wb");
+  fputs("P4\n", out1);
+  fputs("P4\n", out2);
+  fputs("P4\n", out3);
   char type[100], s = 1;
 
   getstr(fp, type);
 
   int width  = getnum(fp),
-      height = getnum(fp),
-      max    = getnum(fp),
-      triple[3];
-  unsigned int
-      x_res = 640,
-      y_res = 480
-  ;
-  char *data,
-       *rgbImg,
-       *fileData,
-       *resizedImg,
-       *rotatedImg,
-       keyPress;
-  unsigned char *prev;
-  data = (char *) malloc(4 * x_res * y_res);
-  rgbImg = (char *) malloc(3 * x_res * y_res);
-  fileData = (char *) malloc(3 * width * height);
-  prev = (char *) malloc(3 * x_res * y_res);
+      height = getnum(fp);
+  unsigned char *data,
+                *outData1,
+                *outData2,
+                *decrypted;
+  unsigned char prev;
+  data     = (char *) malloc((width + 7) / 8 * height);
+  outData1 = (char *)  calloc(1, (2 * width + 7) / 8 * 2 * height);
+  outData2 = (char *)  calloc(1, (2 * width + 7) / 8 * 2 * height);
+  decrypted = (char *) calloc(1, (2 * width + 7) / 8 * 2 * height);
 
-  fread(fileData, 3 * width * height, 1, fp);
-  //to_grey_correct(fileData, width, height, fileData);
-//  rotatedImg = rotate(fileData, &width, &height, PI / 4, 0, 0);
-  resizedImg = resize_bilinear(fileData, width, height, 3 * width, 3 * height);
-  fprintf(out, "%d %d\n%d\n", 3 * width, 3 * height, max);
-  fwrite(resizedImg, 27 * width * height, 1, out);
-  free(fileData);
-  //free(rotatedImg);
-  free(resizedImg);
-/*
-  for(register unsigned i = 0; i < width * height; i++)
-  {
-    fputc(fileData[3 * i], out);
-  }
-  //fgets(fileData, 3 * width * height, out);
-  for (unsigned register i = 0; i < width * height; i++)
-  {
-    gettriple(fp, triple);
-    int value = (int) (triple[0] + triple[1] + triple[2]) / 3;
-//    putc((int) (.3 * triple[0] + .59 * triple[1] + .11 * triple[2] + .5), out);
-    putc(value, out);
-    putc(value, out);
-    putc(value, out);
-  }
-*/
 
-  Display *d;
-  Visual *v;
-  Window w;
-  GC gc;
-  XEvent e;
-  XImage *img;
-  const char *msg = "Hello, World!";
- 
-  d = XOpenDisplay(NULL);
-  if (d == NULL) {
-     fprintf(stderr, "Cannot open display\n");
-     exit(1);
-  }
-
-  CommonV4l2 common_v4l2;
-  char *dev_name = "/dev/video0";
-  struct buffer *buffers;
-
- 
-  s = DefaultScreen(d);
-  v = DefaultVisual(d, s);
-  w = XCreateSimpleWindow(d, RootWindow(d, s), 10, 10, x_res, y_res, 1,
-                          BlackPixel(d, s), WhitePixel(d, s));
-
-  gc = XCreateGC(d, w, 0, NULL);
-
-  XSelectInput(d, w, ExposureMask | KeyPressMask);
-  XMapWindow(d, w);
-
-  CommonV4l2_init(&common_v4l2, dev_name, x_res, y_res);
-
-  CommonV4l2_update_image(&common_v4l2);
-
-  to_grey_correct(CommonV4l2_get_image(&common_v4l2), x_res, y_res, rgbImg);
-  to_bgr_pixmap(rgbImg, x_res, y_res, data);
-  img = XCreateImage(d, v, 24, ZPixmap, 0, data, x_res, y_res, 32, 0);
- 
-  while (1) {
-    XPutImage(d, w, gc, img, 0, 0, 0, 0, x_res, y_res);
-    keyPress = XCheckWindowEvent(d, w, KeyPressMask, &e);
-    if (e.type == KeyPress)
-      break;
-    copy_image(rgbImg, x_res, y_res, prev);
-    CommonV4l2_update_image(&common_v4l2);
-    to_grey_correct(CommonV4l2_get_image(&common_v4l2), x_res, y_res, rgbImg);
-    frame_difference(prev, rgbImg, x_res, y_res);
-    to_bgr_pixmap(prev, x_res, y_res, data);
-    img = XCreateImage(d, v, 24, ZPixmap, 0, data, x_res, y_res, 32, 0);
-  }
- 
-  XDestroyImage(img);
-  XCloseDisplay(d);
-  
-  free(rgbImg);
-  free(prev);
+  fread(data, (width + 7) / 8 * height, 1, fp);
+  fprintf(out1, "%d %d\n", 2 * width, 2 * height);
+  fprintf(out2, "%d %d\n", 2 * width, 2 * height);
+  fprintf(out3, "%d %d\n", 2 * width, 2 * height);
+  encrypt(data, outData1, outData2, width, height);
+  decrypt(decrypted, outData1, outData2, 2 * width, 2 * height);
+  fwrite(outData1, (2 * width + 7) / 8 * 2 * height, 1, out1);
+  fwrite(outData2, (2 * width + 7) / 8 * 2 * height, 1, out2);
+  fwrite(decrypted,(2 * width + 7) / 8 * 2 * height, 1, out3);
+  free(data);
+  free(decrypted);
+  free(outData1);
+  free(outData2);
   fclose(fp);
-  fclose(out);
-  CommonV4l2_deinit(&common_v4l2);
+  fclose(out1);
+  fclose(out2);
+  fclose(out3);
   return 0;
 }
