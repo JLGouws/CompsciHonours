@@ -3,9 +3,8 @@ import numpy as np
 import cv2
 
 from pdf2image import convert_from_path
-pages = convert_from_path('pg1.pdf', 500)
+pages = convert_from_path('2018.pdf', 500)
 
-print(cv2.__version__)
 
 page = cv2.cvtColor(np.array(pages[0]), cv2.COLOR_RGB2GRAY)
 
@@ -13,8 +12,8 @@ page = cv2.cvtColor(np.array(pages[0]), cv2.COLOR_RGB2GRAY)
 blur = cv2.GaussianBlur(page,(15,15),0)
 ret3,th3 = cv2.threshold(blur,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
 
-width = int(th3.shape[1] / 5)
-height = int(th3.shape[0] / 5)
+width = int(th3.shape[1] )
+height = int(th3.shape[0])
 
 re = cv2.resize(th3, (width, height))
 dialated = re.copy()
@@ -71,7 +70,6 @@ boundaries = []
  
 # The below for loop runs till r and theta values
 # are in the range of the 2d array
-print(len(lines))
 for r_theta in lines:
     arr = np.array(r_theta[0], dtype=np.float64)
     r, theta = arr
@@ -133,14 +131,18 @@ for r_theta in lines:
     # drawn. In this case, it is red.
     boundaries += [((maxStart, maxEnd), shift)]
 
+def euDist(a, b):
+    return np.sqrt(np.sum((a - b) * (a - b)))
+
 reducedBound = []#[boundaries.pop()]
 while len(boundaries) > 0:
     reducedBound.append(boundaries.pop(0))
     (s0, f0), g0 = reducedBound[-1]
-    for i, b in enumerate(boundaries):
-        (s1, f1), g1 = b
-        if (np.sqrt(np.sum((s1 - s0) * (s1 - s0))) < height / 10 and np.sqrt(np.sum((f1 - f0) * (f1 - f0))) < height / 10) or np.sqrt(np.sum((s1 - f1) * (s1 - f1))) < height / 3:
-            boundaries.pop(i)
+    for i in range(len(boundaries)):
+        (s1, f1), g1 = b = boundaries.pop(0)
+        if not ((np.sqrt(np.sum((s1 - s0) * (s1 - s0))) < height / 10 and np.sqrt(np.sum((f1 - f0) * (f1 - f0))) < height / 10) or np.sqrt(np.sum((s1 - f1) * (s1 - f1))) < height / 3):
+            boundaries.append(b)
+
 
 box = []
 maxDist = height / 20 
@@ -151,17 +153,31 @@ for i in range(len(reducedBound)):
             box.append(rb)
     reducedBound.insert(i, rb)
 
-corners = []
-for i in range(len(box)):
-    ((s0, f0), sh0) = rb = box.pop(i)
-    for ((s1, f1), sh1) in box:
-        if (np.sum(np.round(1000 * np.abs(sh0 - sh1[::-1]))) == 0 and (min(np.sqrt(np.sum((s1 - f1) * (s1 - f1))), np.sqrt(np.sum((f0 - s0) * (f0 - s0))), np.sqrt(np.sum((s1 - s0) * (s1 - s0))), np.sqrt(np.sum((f1 - s0) * (f1 - s0)))) < maxDist)):
-            x = ((np.diff(s0 * f0[::-1]) + np.diff(f1 * s1[::-1]))[0]) / ((f0 - f1 + s1 - s0) [1])
-            y = 
-    box.insert(i, rb)
 
-for rb, _ in box:
-    cv2.line(col, (int(rb[0][0]), int(rb[0][1])), (int(rb[1][0]), int(rb[1][1])), (0, 255, 0), 2)
+corners = []
+print(width, height)
+for i in range(len(box)):
+    ((s0, f0), sh0) = rb = box.pop(0)
+    for ((s1, f1), sh1) in box:
+        if (np.sum(np.round(1000 * np.abs(sh0 - sh1[::-1]))) == 0 and (min(euDist(s0, s1), euDist(s0, f1), euDist(f0, s1), euDist(f0, f1)) < maxDist)):
+            denom =  np.diff((f1 - s1) * ((f0 - s0) [::-1])) 
+            num = (f1 - s1) * (np.diff(s0 * f0[::-1])) + (f0 - s0) * (np.diff(f1 * s1[::-1]))
+            x, y = num / denom
+            corners.append((int(x), int(y)))
+
+corners.sort()
+
+
+for c in corners:
+    cv2.circle(col,c,2,(0,0,255),4)
+    #cv2.line(col, (int(rb[0][0]), int(rb[0][1])), (int(rb[1][0]), int(rb[1][1])), (0, 255, 0), 2)
+
+col = col[corners[0][1]: corners[1][1], corners[0][0]: corners[2][0]]
+
+width = int(col.shape[1]/4)
+height = int(col.shape[0]/4)
+
+col = cv2.resize(col, (width, height))
 
 cv2.imshow("sheet", col)
 
