@@ -3,11 +3,11 @@ import numpy as np
 import cv2
 
 from pdf2image import convert_from_path
-pages = convert_from_path('2018.pdf', 500)
+pages = convert_from_path('pg1.pdf', 500)
 
 print(cv2.__version__)
 
-page = cv2.cvtColor(np.array(pages[1]), cv2.COLOR_RGB2GRAY)
+page = cv2.cvtColor(np.array(pages[0]), cv2.COLOR_RGB2GRAY)
 
 #th3 = cv2.adaptiveThreshold(page, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 13, -2)
 blur = cv2.GaussianBlur(page,(15,15),0)
@@ -66,6 +66,8 @@ dialated = cv2.dilate(dialated, kernel, iterations=3)
 dialated = cv2.erode(dialated, kernel, iterations=3)
 dialated = cv2.dilate(dialated, kernel, iterations=3)
 dialated = cv2.erode(dialated, kernel, iterations=3)
+
+boundaries = []
  
 # The below for loop runs till r and theta values
 # are in the range of the 2d array
@@ -108,7 +110,7 @@ for r_theta in lines:
     while(state[0] < re.shape[1] and state[1] < re.shape[0]):
         if(online):
             if(dialated[int(state[1]), int(state[0])] < 100):
-                length += 1
+                length += np.sqrt(np.sum(shift * shift))
             else:
                 online = False
                 if(length > maxLength):
@@ -119,20 +121,47 @@ for r_theta in lines:
                     maxEnd[1] = state[1]
         else:
             if(dialated[int(state[1]), int(state[0])] < 100):
-                length = 1
+                length = 0
                 online = True
                 lineStart[0] = state[0]
                 lineStart[1] = state[1]
         state += shift;
 
-    print(maxLength)
-    print()
  
     # cv2.line draws a line in img from the point(x1,y1) to (x2,y2).
     # (0,0,255) denotes the colour of the line to be
     # drawn. In this case, it is red.
-    if(maxLength > height / 3):
-        cv2.line(col, (round(maxStart[0]), round(maxStart[1])), (round(maxEnd[0]), round(maxEnd[1])), (0, 0, 255), 2)
+    boundaries += [((maxStart, maxEnd), shift)]
+
+reducedBound = []#[boundaries.pop()]
+while len(boundaries) > 0:
+    reducedBound.append(boundaries.pop(0))
+    (s0, f0), g0 = reducedBound[-1]
+    for i, b in enumerate(boundaries):
+        (s1, f1), g1 = b
+        if (np.sqrt(np.sum((s1 - s0) * (s1 - s0))) < height / 10 and np.sqrt(np.sum((f1 - f0) * (f1 - f0))) < height / 10) or np.sqrt(np.sum((s1 - f1) * (s1 - f1))) < height / 3:
+            boundaries.pop(i)
+
+box = []
+maxDist = height / 20 
+for i in range(len(reducedBound)):
+    ((s0, f0), sh0) = rb = reducedBound.pop(i)
+    for ((s1, f1), sh1) in reducedBound:
+        if (np.sum(np.round(1000 * np.abs(sh0 - sh1[::-1]))) == 0 and (min(np.sqrt(np.sum((s1 - f1) * (s1 - f1))), np.sqrt(np.sum((f0 - s0) * (f0 - s0))), np.sqrt(np.sum((s1 - s0) * (s1 - s0))), np.sqrt(np.sum((f1 - s0) * (f1 - s0)))) < maxDist)):
+            box.append(rb)
+    reducedBound.insert(i, rb)
+
+corners = []
+for i in range(len(box)):
+    ((s0, f0), sh0) = rb = box.pop(i)
+    for ((s1, f1), sh1) in box:
+        if (np.sum(np.round(1000 * np.abs(sh0 - sh1[::-1]))) == 0 and (min(np.sqrt(np.sum((s1 - f1) * (s1 - f1))), np.sqrt(np.sum((f0 - s0) * (f0 - s0))), np.sqrt(np.sum((s1 - s0) * (s1 - s0))), np.sqrt(np.sum((f1 - s0) * (f1 - s0)))) < maxDist)):
+            x = ((np.diff(s0 * f0[::-1]) + np.diff(f1 * s1[::-1]))[0]) / ((f0 - f1 + s1 - s0) [1])
+            y = 
+    box.insert(i, rb)
+
+for rb, _ in box:
+    cv2.line(col, (int(rb[0][0]), int(rb[0][1])), (int(rb[1][0]), int(rb[1][1])), (0, 255, 0), 2)
 
 cv2.imshow("sheet", col)
 
