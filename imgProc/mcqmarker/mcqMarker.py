@@ -17,16 +17,48 @@ def fixHoles(column, idx):
         l += 1
     return -1
 
-def checkFlip(circRows):
-    return len(circRows[0]) <= 10 and len(circRows[1]) <= 10 and 10 < len(circRows[2]) and len(circRows[2]) <= 26 and len(circRows[3]) <= 10
-
-def flip(circRows, img):
-    return -1 
-
-def splitAdmin(circRows):
+def taskSplitIdx(column):
+    for i, c in enumerate(column):
+        if c[1] > 770:
+            return i 
     return -1
 
-page = cv2.cvtColor(np.array(pages[0]), cv2.COLOR_RGB2GRAY)
+def checkFlip(circRows):
+    return not(len(circRows[0]) <= 10 and len(circRows[1]) <= 10 and 10 < len(circRows[2]) and len(circRows[2]) <= 26 and len(circRows[3]) <= 10)
+
+def flip(circRows, img):
+    for g in circRows:
+        for idx in range(len(g)):
+            col = np.array(g[idx])
+            flipped = np.zeros_like(col)
+            print(flipped.shape)
+            flipped[:, 0] = 1300
+            flipped[:, 1] = 1750
+            g[idx] = list(np.abs(flipped - col)[::-1])
+        g.reverse()
+    circRows.reverse()
+    return cv2.rotate(img, cv2.ROTATE_180)
+
+def splitTask(admin):
+    idx = 0
+    runTop = -1
+    tasks = []
+    while idx < len(admin):
+        colm = admin[idx]
+        colm.sort(key = lambda x: x[1]) 
+        runTop = colm[0][1] if runTop == -1 else (colm[0][1] + runTop) / 2
+        if idx > 3 and len(colm) > 10 and abs(colm[-1][1] - colm[0][1]) > 200:
+            sidx = taskSplitIdx(colm)
+            print(sidx)
+            if sidx != -1:
+                tasks.append(colm[sidx:])
+                admin[idx] = colm[:sidx]
+        if colm[0][1] > 770:
+            tasks.append(admin.pop(idx))
+        idx += 1
+    return tasks
+
+page = cv2.cvtColor(np.array(pages[6]), cv2.COLOR_RGB2GRAY)
 
 #th3 = cv2.adaptiveThreshold(page, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 13, -2)
 blur = cv2.GaussianBlur(page,(15,15),0)
@@ -205,52 +237,46 @@ circles = list(np.int64(np.around(circles))[0,:])
 circles.sort(key = lambda x : x[0])
 
 
-circRows = [[] for i in range(26)]
+circRows = []
 
 colidx = 0;
 idx = 1
-circRows[colidx].append(circles[0])
+circRows.append([[circles[0]]])
 
-while idx < len(circles) - 1:
+while idx < len(circles):
     t, m = circles[idx - 1: idx + 1]
-    if abs(t[0] - m[0]) < 20:
-        circRows[colidx].append(m)
+    if abs(t[0] - m[0]) > 180:
+        circRows.append([[m]])
+    elif abs(t[0] - m[0]) < 20:
+        circRows[-1][-1].append(m)
     else:
-        print(len(circRows[colidx]))
-        colidx += 1
-        circRows[colidx].append(m)
+        circRows[-1].append([m])
     idx += 1
     #cv2.circle(col,(i[0],i[1]),i[2],(0,255,0),4)
 
-if checkFlip(circRows):
-    flip(circRows, th4)
+if checkFlip(circRows[0]):
+    print("Flipping image")
+    th4 = flip(circRows, th4)
+    col = cv2.rotate(col, cv2.ROTATE_180)
 
-splitAdmin(circRows)
+tasks = splitTask(circRows[0])
 
-k = 0
-while k < len(circRows):
-    column = circRows[k]
-    column.sort(key = lambda x : x[1])
-    idx = fixHoles(column, k)
-    if idx != -1:
-        circRows.insert(k + 1, column[idx:])
-        circRows[k] = column[:idx]
-    k += 1
-
-print()
-
-for column in circRows:
+for column in circRows[0]:
     print(len(column))
     for i in column:
         cv2.circle(col,(i[0],i[1]),i[2],(0,255,0),4)
     # draw the outer circle
     # print("circle: ", i[0], ", ", i[1] , "r = ", i[2])
 
+for column in tasks:
+    for i in column:
+        cv2.circle(col,(i[0],i[1]),i[2],(0,0,255),4)
 
 width = int(col.shape[1]/2)
 height = int(col.shape[0]/2)
 
 
+cv2.line(col,(0,770),(1300,770),(255,0,0),5)
 
 col = cv2.resize(col, (width, height))
 
