@@ -31,7 +31,6 @@ def flip(circRows, img):
         for idx in range(len(g)):
             col = np.array(g[idx])
             flipped = np.zeros_like(col)
-            print(flipped.shape)
             flipped[:, 0] = 1300
             flipped[:, 1] = 1750
             g[idx] = list(np.abs(flipped - col)[::-1])
@@ -49,7 +48,6 @@ def splitTask(admin):
         runTop = colm[0][1] if runTop == -1 else (colm[0][1] + runTop) / 2
         if idx > 3 and len(colm) > 10 and abs(colm[-1][1] - colm[0][1]) > 200:
             sidx = taskSplitIdx(colm)
-            print(sidx)
             if sidx != -1:
                 tasks.append(colm[sidx:])
                 admin[idx] = colm[:sidx]
@@ -58,7 +56,28 @@ def splitTask(admin):
         idx += 1
     return tasks
 
-page = cv2.cvtColor(np.array(pages[6]), cv2.COLOR_RGB2GRAY)
+def fillNormal(circles, allCirc);
+    idx = 0
+    while idx < len(circles):
+
+        idx += 1
+
+def findAllCircles(circles):
+    allCirc = np.zeros((5, 30, 3), dtype = np.int64)
+    idx = 0
+    minY = 1750
+    maxY = 0
+    while idx < len(circles):
+        col = circles[idx]
+        col.sort(key = lambda x: x[1]) 
+        minY = min(minY, col[0][1])
+        maxY = max(maxY, col[-1][1])
+        idx += 1
+    if (abs(minY - 100) < 20 and abs(maxY - 1630) < 20):
+        fillNormal(circles, allCirc)
+    return allCirc
+
+page = cv2.cvtColor(np.array(pages[0]), cv2.COLOR_RGB2GRAY)
 
 #th3 = cv2.adaptiveThreshold(page, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 13, -2)
 blur = cv2.GaussianBlur(page,(15,15),0)
@@ -261,8 +280,9 @@ if checkFlip(circRows[0]):
 
 tasks = splitTask(circRows[0])
 
+findAllCircles(circRows[1])
+
 for column in circRows[0]:
-    print(len(column))
     for i in column:
         cv2.circle(col,(i[0],i[1]),i[2],(0,255,0),4)
     # draw the outer circle
@@ -271,6 +291,10 @@ for column in circRows[0]:
 for column in tasks:
     for i in column:
         cv2.circle(col,(i[0],i[1]),i[2],(0,0,255),4)
+
+for column in circRows[1]:
+    for i in column:
+        cv2.circle(col,(i[0],i[1]),i[2],(255,0,255),4)
 
 width = int(col.shape[1]/2)
 height = int(col.shape[0]/2)
