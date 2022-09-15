@@ -6,17 +6,18 @@ from pdf2image import convert_from_path
 pages = convert_from_path('2018.pdf', 500)
 
 
-page = cv2.cvtColor(np.array(pages[0]), cv2.COLOR_RGB2GRAY)
+page = cv2.cvtColor(np.array(pages[1]), cv2.COLOR_RGB2GRAY)
 
 #th3 = cv2.adaptiveThreshold(page, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 13, -2)
 blur = cv2.GaussianBlur(page,(15,15),0)
 ret3,th3 = cv2.threshold(blur,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
 
-width = int(th3.shape[1] )
-height = int(th3.shape[0])
+width = int(th3.shape[1]/3)
+height = int(th3.shape[0]/3)
 
 re = cv2.resize(th3, (width, height))
 dialated = re.copy()
+th4 = re.copy()
 
 col = cv2.cvtColor(re, cv2.COLOR_GRAY2RGB)
 
@@ -155,7 +156,6 @@ for i in range(len(reducedBound)):
 
 
 corners = []
-print(width, height)
 for i in range(len(box)):
     ((s0, f0), sh0) = rb = box.pop(0)
     for ((s1, f1), sh1) in box:
@@ -167,18 +167,41 @@ for i in range(len(box)):
 
 corners.sort()
 
+print(corners[2][0] - corners[0][0], corners[1][1] - corners[0][1])
 
-for c in corners:
-    cv2.circle(col,c,2,(0,0,255),4)
-    #cv2.line(col, (int(rb[0][0]), int(rb[0][1])), (int(rb[1][0]), int(rb[1][1])), (0, 255, 0), 2)
-
+th4 = th4[corners[0][1]: corners[1][1], corners[0][0]: corners[2][0]]
 col = col[corners[0][1]: corners[1][1], corners[0][0]: corners[2][0]]
 
-width = int(col.shape[1]/4)
-height = int(col.shape[0]/4)
+th4 = cv2.resize(th4, (1300, 1750))
+col = cv2.resize(col, (1300, 1750))
+
+circles = cv2.HoughCircles(th4,cv2.HOUGH_GRADIENT,1,8, param1=30,param2=30,minRadius=8,maxRadius=22)
+#circles = cv2.HoughCircles(re,cv2.HOUGH_GRADIENT_ALT,1.5,10, param1=300,param2=0.8,minRadius=6,maxRadius=10)
+
+
+circles = np.uint16(np.around(circles))
+
+circRows = [[] for i in range(40)]
+
+print(circles.shape)
+
+for i in circles[0,:]:
+    # draw the outer circle
+#    print("circle: ", i[0], ", ", i[1] , "r = ", i[2])
+    circRows[int(i[0] / 40)].append(i)
+    cv2.circle(col,(i[0],i[1]),i[2],(0,255,0),4)
+    # draw the center of the circle
+    #cv2.circle(col,(i[0],i[1]),2,(0,0,255),3)
+
+for i in circRows:
+    if(len(i) != 0):
+        print(len(i))
+
+width = int(col.shape[1]/2)
+height = int(col.shape[0]/2)
 
 col = cv2.resize(col, (width, height))
 
 cv2.imshow("sheet", col)
 
-cv2.waitKey(15000)
+cv2.waitKey(100000)
