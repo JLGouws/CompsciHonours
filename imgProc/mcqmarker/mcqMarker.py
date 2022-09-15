@@ -2,6 +2,8 @@ import numpy as np
 
 import cv2
 
+import itertools
+
 from pdf2image import convert_from_path
 pages = convert_from_path('2018.pdf', 500)
 
@@ -56,25 +58,83 @@ def splitTask(admin):
         idx += 1
     return tasks
 
-def fillNormal(circles, allCirc);
-    idx = 0
-    while idx < len(circles):
+def circEq(a, b):
+    return np.all(a == b)
 
-        idx += 1
+def fixMissing(allCirc):
+    colAvg = np.zeros(5)
+    rowAvg = np.zeros(30)
+    colCount = np.zeros(5)
+    rowCount = np.zeros(30)
+    zero = np.array([0, 0, 0])
+    for i in range(5):
+        for j in range(30):
+            if not(circEq(allCirc[i, j], zero)):
+                colAvg[i] += allCirc[i, j, 0]
+                colCount[i] += 1
+                rowAvg[j] += allCirc[i, j, 1]
+                rowCount[j] += 1
+
+    colAvg /= colCount
+    rowAvg /= rowCount
+
+    for i in range(5):
+        for j in range(30):
+            if circEq(allCirc[i, j], zero):
+                allCirc[i, j] = np.array([colAvg[i], rowAvg[j], 19], dtype = np.int64)
+
+def fillNormal(allCirc, circRows, circCols):
+    depth = [0, 0, 0, 0, 0]
+    for i, row in enumerate(circRows):
+        for a in row:
+            for j, col in enumerate(circCols):
+                if depth[j] == len(col):
+                    continue
+                b = col[depth[j]]
+                if circEq(a, b):
+                    depth[j] += 1
+                    allCirc[j, i] = a
 
 def findAllCircles(circles):
     allCirc = np.zeros((5, 30, 3), dtype = np.int64)
-    idx = 0
-    minY = 1750
-    maxY = 0
+    circCols = circles.copy()
+    circles = list(itertools.chain(*circles))
+    circles.sort(key = lambda x : x[1])
+    circRows = []
+    idx = 1
+    circRows.append([circles[0]])
+    leftBound = circles[0][0]
+    rightBound = circles[0][0]
+
+    for col in circCols:
+        col.sort(key = lambda x : x[1])
+
     while idx < len(circles):
-        col = circles[idx]
-        col.sort(key = lambda x: x[1]) 
-        minY = min(minY, col[0][1])
-        maxY = max(maxY, col[-1][1])
+        t, m = circles[idx - 1: idx + 1]
+        leftBound = min(leftBound, m[0])
+        rightBound = max(rightBound, m[0])
+        if abs(t[1] - m[1]) < 20:
+            circRows[-1].append(m)
+        else:
+            circRows[-1].sort(key = lambda x : x[0])
+            circRows.append([m])
         idx += 1
-    if (abs(minY - 100) < 20 and abs(maxY - 1630) < 20):
-        fillNormal(circles, allCirc)
+    circRows[-1].sort(key = lambda x : x[0])
+
+    if len(circRows) == 30 and len(circCols) == 5:
+        fillNormal(allCirc, circRows, circCols)
+#    idx = 0
+#    minY = 1750
+#    maxY = 0
+#    while idx < len(circles):
+#        col = circles[idx]
+#        col.sort(key = lambda x: x[1]) 
+#        minY = min(minY, col[0][1])
+#        maxY = max(maxY, col[-1][1])
+#        idx += 1
+#    if (abs(minY - 100) < 20 and abs(maxY - 1630) < 20):
+#        fillNormal(circles, allCirc)
+    fixMissing(allCirc)
     return allCirc
 
 page = cv2.cvtColor(np.array(pages[0]), cv2.COLOR_RGB2GRAY)
@@ -280,7 +340,9 @@ if checkFlip(circRows[0]):
 
 tasks = splitTask(circRows[0])
 
-findAllCircles(circRows[1])
+allCirc1 = np.transpose(findAllCircles(circRows[1]), axes = (1, 0, 2))
+allCirc2 = findAllCircles(circRows[2])
+
 
 for column in circRows[0]:
     for i in column:
@@ -292,17 +354,34 @@ for column in tasks:
     for i in column:
         cv2.circle(col,(i[0],i[1]),i[2],(0,0,255),4)
 
-for column in circRows[1]:
-    for i in column:
+dialated = th4.copy()
+
+kernel = np.ones((3, 3), np.uint8)
+ 
+dialated = cv2.dilate(dialated, kernel, iterations=3)
+dialated = cv2.erode(dialated, kernel, iterations=8)
+dialated = cv2.dilate(dialated, kernel, iterations=4)
+
+mask1 = np.zeros_like(th4)
+for row in allCirc1:
+    for i in row:
+        cv2.circle(col,(i[0],i[1]),i[2],(255,0,255),4)
+        mask1.fill(0)
+        cv2.circle(mask1,(i[0],i[1]),i[2],(255),-1)
+        mean = cv2.mean(dialated, mask = mask1)
+        print(mean)
+    print()
+
+for row in allCirc2:
+    for i in row:
         cv2.circle(col,(i[0],i[1]),i[2],(255,0,255),4)
 
 width = int(col.shape[1]/2)
 height = int(col.shape[0]/2)
 
 
-cv2.line(col,(0,770),(1300,770),(255,0,0),5)
-
 col = cv2.resize(col, (width, height))
+dialated = cv2.resize(dialated, (width, height))
 
 cv2.imshow("sheet", col)
 
