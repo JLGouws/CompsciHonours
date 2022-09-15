@@ -5,15 +5,35 @@ import cv2
 from pdf2image import convert_from_path
 pages = convert_from_path('2018.pdf', 500)
 
+def fixHoles(column, idx):
+    l = 1;
+    while l < len(column):
+        t = column[l - 1]
+        b = column[l]
+        if(b[1] - t[1] > 180 and idx in [ 5, 6, 7, 8] and len(column) > 10):
+            return l 
+        if 60 < b[1] - t[1] and b[1] - t[1] < 100:
+            column.insert(l, np.int64(np.around((t + b) / 2)))
+        l += 1
+    return -1
 
-page = cv2.cvtColor(np.array(pages[1]), cv2.COLOR_RGB2GRAY)
+def checkFlip(circRows):
+    return len(circRows[0]) <= 10 and len(circRows[1]) <= 10 and 10 < len(circRows[2]) and len(circRows[2]) <= 26 and len(circRows[3]) <= 10
+
+def flip(circRows, img):
+    return -1 
+
+def splitAdmin(circRows):
+    return -1
+
+page = cv2.cvtColor(np.array(pages[0]), cv2.COLOR_RGB2GRAY)
 
 #th3 = cv2.adaptiveThreshold(page, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 13, -2)
 blur = cv2.GaussianBlur(page,(15,15),0)
 ret3,th3 = cv2.threshold(blur,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
 
-width = int(th3.shape[1]/3)
-height = int(th3.shape[0]/3)
+width = int(th3.shape[1]/4)
+height = int(th3.shape[0]/4)
 
 re = cv2.resize(th3, (width, height))
 dialated = re.copy()
@@ -133,6 +153,8 @@ for r_theta in lines:
     boundaries += [((maxStart, maxEnd), shift)]
 
 def euDist(a, b):
+    a = a[:2]
+    b = b[:2]
     return np.sqrt(np.sum((a - b) * (a - b)))
 
 reducedBound = []#[boundaries.pop()]
@@ -167,7 +189,6 @@ for i in range(len(box)):
 
 corners.sort()
 
-print(corners[2][0] - corners[0][0], corners[1][1] - corners[0][1])
 
 th4 = th4[corners[0][1]: corners[1][1], corners[0][0]: corners[2][0]]
 col = col[corners[0][1]: corners[1][1], corners[0][0]: corners[2][0]]
@@ -179,26 +200,57 @@ circles = cv2.HoughCircles(th4,cv2.HOUGH_GRADIENT,1,8, param1=30,param2=30,minRa
 #circles = cv2.HoughCircles(re,cv2.HOUGH_GRADIENT_ALT,1.5,10, param1=300,param2=0.8,minRadius=6,maxRadius=10)
 
 
-circles = np.uint16(np.around(circles))
+circles = list(np.int64(np.around(circles))[0,:])
 
-circRows = [[] for i in range(40)]
+circles.sort(key = lambda x : x[0])
 
-print(circles.shape)
 
-for i in circles[0,:]:
+circRows = [[] for i in range(26)]
+
+colidx = 0;
+idx = 1
+circRows[colidx].append(circles[0])
+
+while idx < len(circles) - 1:
+    t, m = circles[idx - 1: idx + 1]
+    if abs(t[0] - m[0]) < 20:
+        circRows[colidx].append(m)
+    else:
+        print(len(circRows[colidx]))
+        colidx += 1
+        circRows[colidx].append(m)
+    idx += 1
+    #cv2.circle(col,(i[0],i[1]),i[2],(0,255,0),4)
+
+if checkFlip(circRows):
+    flip(circRows, th4)
+
+splitAdmin(circRows)
+
+k = 0
+while k < len(circRows):
+    column = circRows[k]
+    column.sort(key = lambda x : x[1])
+    idx = fixHoles(column, k)
+    if idx != -1:
+        circRows.insert(k + 1, column[idx:])
+        circRows[k] = column[:idx]
+    k += 1
+
+print()
+
+for column in circRows:
+    print(len(column))
+    for i in column:
+        cv2.circle(col,(i[0],i[1]),i[2],(0,255,0),4)
     # draw the outer circle
-#    print("circle: ", i[0], ", ", i[1] , "r = ", i[2])
-    circRows[int(i[0] / 40)].append(i)
-    cv2.circle(col,(i[0],i[1]),i[2],(0,255,0),4)
-    # draw the center of the circle
-    #cv2.circle(col,(i[0],i[1]),2,(0,0,255),3)
+    # print("circle: ", i[0], ", ", i[1] , "r = ", i[2])
 
-for i in circRows:
-    if(len(i) != 0):
-        print(len(i))
 
 width = int(col.shape[1]/2)
 height = int(col.shape[0]/2)
+
+
 
 col = cv2.resize(col, (width, height))
 
