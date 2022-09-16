@@ -13,8 +13,8 @@ def euDist(a, b):
     return np.sqrt(np.sum((a - b) * (a - b)))
 
 def intersection(a, b):
-    (s0, f0) = a
-    (s1, f1) = b
+    (s0, f0) = np.array(a)
+    (s1, f1) = np.array(b)
     denom =  np.diff((f1 - s1) * ((f0 - s0) [::-1])) 
     num = (f1 - s1) * (np.diff(s0 * f0[::-1])) + (f0 - s0) * (np.diff(f1 * s1[::-1]))
     x, y = num / denom
@@ -208,7 +208,8 @@ def findLines(re, width, height):
 
     low_threshold = 50
     high_threshold = 150
-    edges = cv2.Canny(re, low_threshold, high_threshold)
+    copied = re.copy()
+    edges = cv2.Canny(copied, low_threshold, high_threshold)
 
     rho = 1  # distance resolution in pixels of the Hough grid
     theta = np.pi / 180  # angular resolution in radians of the Hough grid
@@ -226,7 +227,7 @@ def findLines(re, width, height):
 #        cv2.line(col,(x1,y1),(x2,y2),(255,0,0),5)
 #
 
-    lines = cv2.HoughLines(edges, rho, theta, 200)
+    lines = cv2.HoughLines(edges, rho, theta, 300)
 
     boundaries = []
      
@@ -265,21 +266,30 @@ def findLines(re, width, height):
 
         ll = np.array([(0, 0), (0, height)])
 
-        st = intersection(line, tl) if abs(theta - np.pi / 2) > 0.01 else (-1, -1)
-
-        sl = intersection(line, ll) if abs(theta) > 0.01 and abs(theta - np.pi) > 0.01 else (-1, -1)
-
-        s0 = st if 0 < st[0] and st[0] < width else sl
-
         bl = np.array([(0, height), (width, height)])
 
         rl = np.array([(width, 0), (width, height)])
+
+        s0 = None
+
+        f0 = None
+
+        sl = intersection(line, ll) if abs(theta) > 0.01 and abs(theta - np.pi) > 0.01 else (-1, -1)
+
+        st = intersection(line, tl) if abs(theta - np.pi / 2) > 0.01 else (-1, -1)
 
         fb = intersection(line, bl) if abs(theta - np.pi / 2) > 0.01 else (-1, -1)
 
         fr = intersection(line, rl) if abs(theta) > 0.01 and abs(theta - np.pi) > 0.01 else (-1, -1)
 
-        f0 = fb if 0 < fb[0] and fb[0] < width else fr
+        if (theta < np.pi / 2):
+            s0 = sl if 0 < sl[1] and sl[1] < height else fb
+            f0 = fr if 0 < fr[1] and fr[1] < height else st
+        else:
+            s0 = sl if 0 < sl[1] and sl[1] < height else st
+            f0 = fr if 0 < fr[1] and fr[1] < height else fb
+
+
 
         shift = np.abs(np.array([b,a]))
 #    state = np.array([x0,y0])
@@ -328,18 +338,79 @@ def removeDupNonPerpLines(boundaries, height):
             reducedBound.append(b)
     i = 0
     while i < len(reducedBound):
+        perpCount = 0
         ((s0, f0), th0) = b = reducedBound.pop(0)
-        print(b)
         for ((s1, f1), th1) in reducedBound:
             if abs(np.pi/2 - abs(th0 - th1)) < 0.001:
-                reducedBound.append(b)
-                break
+                if perpCount == 0:
+                    perpCount += 1
+                else:
+                    reducedBound.append(b)
+                    break
         i += 1
     return reducedBound
+
+def findLongestSolid(img, boundaries):
+    dialated = img.copy()
+
+    height = max(img.shape[1], img.shape[0])
+
+    kernel = np.ones((5, 5), np.uint8)
+
+    dialated = cv2.erode(dialated, kernel, iterations=2)
+
+
+    mask1 = np.zeros_like(img)
+
+    newBounds = []
+
+    i = 0
+
+    while i < len(boundaries):
+        (l1, th0) = b = boundaries.pop(0)
+
+        maxSolid = 0
+
+        p1 = None
+        p2 = None
+        p3 = None
+
+        for (l2, th1) in boundaries:
+            if abs(np.pi/2 - abs(th0 - th1)) < 0.001:
+                if np.any(p1 == None):
+                    p1 = np.int64(intersection(l1, l2))
+                elif np.any(p2 == None):
+                    p2 = np.int64(intersection(l1, l2))
+                    mask1.fill(0)
+                    cv2.line(mask1, p1, p2, (255),5)
+                    mean = cv2.mean(dialated, mask = mask1)[0]
+                    if mean > 240:
+                        p2 = None
+                else:
+                    p3 = intersection(l1, l2)
+                    p31 = euDist(p3, p1)
+                    p32 = euDist(p3, p2)
+                    tmp = p1
+                    if max(p31, p32) > euDist(p1, p2):
+                        if p32 > p31:
+                            tmp = p2
+                        mask1.fill(0)
+                        cv2.line(mask1, tmp, p3, (255),5)
+                        mean = cv2.mean(dialated, mask = mask1)[0]
+                        if mean < 127:
+                            p1 = tmp
+                            p2 = p3
+        if np.any(p1 != None) and np.any(p2 != None) and euDist(p1, p2) > height / 3:
+            newBounds.append(((p1, p1), th0))
+        boundaries.append(b)
+        i += 1
+    return newBounds
 
 boundaries = findLines(re, width, height)
 
 boundaries = removeDupNonPerpLines(boundaries, max(width, height))
+
+boundaries = findLongestSolid(th4, boundaries)
 
 for ((x1, y1), (x2, y2)), shift in boundaries:
     cv2.line(col,(int(x1),int(y1)),(int(x2),int(y2)),(255,0,0),5)
