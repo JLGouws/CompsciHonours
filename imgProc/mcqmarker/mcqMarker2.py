@@ -74,14 +74,14 @@ def splitTask(admin):
 def circEq(a, b):
     return np.all(a == b)
 
-def fixMissing(allCirc):
-    colAvg = np.zeros(5)
-    rowAvg = np.zeros(30)
-    colCount = np.zeros(5)
-    rowCount = np.zeros(30)
+def fixMissing(allCirc, brth, dpth):
+    colAvg = np.zeros(brth)
+    rowAvg = np.zeros(dpth)
+    colCount = np.zeros(brth)
+    rowCount = np.zeros(dpth)
     zero = np.array([0, 0, 0])
-    for i in range(5):
-        for j in range(30):
+    for i in range(brth):
+        for j in range(dpth):
             if not(circEq(allCirc[i, j], zero)):
                 colAvg[i] += allCirc[i, j, 0]
                 colCount[i] += 1
@@ -91,13 +91,13 @@ def fixMissing(allCirc):
     colAvg /= colCount
     rowAvg /= rowCount
 
-    for i in range(5):
-        for j in range(30):
+    for i in range(brth):
+        for j in range(dpth):
             if circEq(allCirc[i, j], zero):
                 allCirc[i, j] = np.array([colAvg[i], rowAvg[j], 18], dtype = np.int64)
 
-def fillNormal(allCirc, circRows, circCols):
-    depth = [0, 0, 0, 0, 0]
+def fillNormal(allCirc, circRows, circCols, brth, dpth):
+    depth = [0 for x in range(brth)]
     for i, row in enumerate(circRows):
         for a in row:
             for j, col in enumerate(circCols):
@@ -108,8 +108,8 @@ def fillNormal(allCirc, circRows, circCols):
                     depth[j] += 1
                     allCirc[j, i] = a
 
-def findAllCircles(circles):
-    allCirc = np.zeros((5, 30, 3), dtype = np.int64)
+def findAllCircles(circles, brth, dpth):
+    allCirc = np.zeros((brth, dpth, 3), dtype = np.int64)
     circCols = circles.copy()
     circles = list(itertools.chain(*circles))
     circles.sort(key = lambda x : x[1])
@@ -130,9 +130,9 @@ def findAllCircles(circles):
         idx += 1
     circRows[-1].sort(key = lambda x : x[0])
 
-    if len(circRows) == 30 and len(circCols) == 5:
-        fillNormal(allCirc, circRows, circCols)
-    fixMissing(allCirc)
+    if len(circRows) == dpth and len(circCols) == brth:
+        fillNormal(allCirc, circRows, circCols, brth, dpth)
+    fixMissing(allCirc, brth, dpth)
     return allCirc
 
 def findAllCirclesSn(circles):
@@ -160,7 +160,7 @@ def findAllCirclesSn(circles):
                 col.insert(idx, np.int64((t + b) / 2))
                 idx += 1
             elif (idx == 8 and len(col) == 9 and q != 2) or (idx == 24 and len(col) == 25 and q == 2):
-                col.insert(idx, np.array([(t[0] + b[0]) / 2, 2 * b[1] - t[1], (t[2] + b[2]) / 2], dtype = np.int64))
+                col.insert(idx + 1, np.array([(t[0] + b[0]) / 2, 2 * b[1] - t[1], (t[2] + b[2]) / 2], dtype = np.int64))
 
             idx += 1
     return circles 
@@ -370,6 +370,60 @@ def markPage(page, outFile):
                     corners.append(tuple(f0))
         return corners
 
+    def findTaskNo(tasks, dialated):
+        mask1 = np.zeros_like(dialated)
+        tNo = []
+        for column in tasks:
+            noLetters = 0
+            column.sort(key = lambda x : x[1])
+            for j, cir in enumerate(column):
+                cv2.circle(col,(cir[0],cir[1]),cir[2],(0,255,0),4)
+                mask1.fill(0)
+                cv2.circle(mask1,(cir[0],cir[1]),cir[2],(255),-1)
+                mean = cv2.mean(dialated, mask = mask1)[0]
+                if mean < 127:
+                    tNo.append(j)
+                    noLetters += 1
+            if noLetters != 1:
+                return
+        if len(tNo) == 2:
+            return tNo
+        else:
+            return
+
+    def fillTasks(tasks):
+        tasks[0].sort(key = lambda x : x[1])
+        tasks[1].sort(key = lambda x : x[1])
+
+        avgY = 0
+        topCount = 0
+        for col in tasks:
+            col.sort(key = lambda x : x[1])
+            if abs(col[0][1] - 840) < 40:
+                avgY += col[0][1]
+                topCount += 1
+        if topCount != 0:
+            avgY /= topCount
+        else:
+            avgY = 840
+
+        for q, col in enumerate(tasks):
+            if abs(col[0][1] - 840) > 40:
+                tmp = np.array(col)
+                avgX = np.average(tmp, axis = 0)[0]
+                col.insert(0, np.array([avgX, avgY, 19], dtype = np.int64))
+            idx = 1
+            while idx < len(col):
+                t, b = col[idx - 1: idx + 1]
+                if 70 < abs(b[1] - t[1]) and abs(b[1] - t[1]) < 100:
+                    col.insert(idx, np.int64((t + b) / 2))
+                    idx += 1
+                elif idx == 8 and len(col) == 9:
+                    col.insert(idx + 1, np.array([(t[0] + b[0]) / 2, 2 * b[1] - t[1], (t[2] + b[2]) / 2], dtype = np.int64))
+
+                idx += 1
+        return tasks
+
     boundaries = findLines(re, width, height)
 
     boundaries = removeDupNonPerpLines(boundaries, max(width, height))
@@ -422,6 +476,9 @@ def markPage(page, outFile):
 
     tasks = splitTask(circRows[0])
 
+    tasks = fillTasks(tasks)
+
+
     studentNumberCols = findAllCirclesSn(circRows[0])
 
 
@@ -433,11 +490,10 @@ def markPage(page, outFile):
     dialated = cv2.erode(dialated, kernel, iterations=8)
     dialated = cv2.dilate(dialated, kernel, iterations=4)
 
-    mask1 = np.zeros_like(th4)
 
-    sNo = []
 
     def mark(allCirc, dialated):
+        mask1 = np.zeros_like(dialated)
         choices = []
         for row in allCirc:
             choices.append(np.array([False, False, False, False, False]))
@@ -451,39 +507,62 @@ def markPage(page, outFile):
 
     choices = []
     for group in circRows[1:]:
-        allCirc = np.transpose(findAllCircles(group), axes = (1, 0, 2))
+        allCirc = np.transpose(findAllCircles(group, 5, 30), axes = (1, 0, 2))
         choices.append(mark(allCirc, dialated))
 
-    for column in studentNumberCols:
-        noLetters = 0
-        for j, cir in enumerate(column):
-            cv2.circle(col,(cir[0],cir[1]),cir[2],(0,255,0),4)
-            mask1.fill(0)
-            cv2.circle(mask1,(cir[0],cir[1]),cir[2],(255),-1)
-            mean = cv2.mean(dialated, mask = mask1)[0]
-            if mean < 127:
-                sNo.append(j)
-                noLetters += 1
-        if noLetters != 1:
-            print('Invalid Student Number')
+    def findSNo(studentNumberCols, dialated):
+        mask1 = np.zeros_like(dialated)
+        sNo = []
+        for column in studentNumberCols:
+            noLetters = 0
+            for j, cir in enumerate(column):
+                cv2.circle(col,(cir[0],cir[1]),cir[2],(0,255,0),4)
+                mask1.fill(0)
+                cv2.circle(mask1,(cir[0],cir[1]),cir[2],(255),-1)
+                mean = cv2.mean(dialated, mask = mask1)[0]
+                if mean < 127:
+                    sNo.append(j)
+                    noLetters += 1
+            if noLetters != 1:
+                return
+        if len(sNo) == 7:
+            sNo[2] = chr(97 + sNo[2])
+            return sNo
+        else:
             return
         # draw the outer circle
         # print("circle: ", i[0], ", ", i[1] , "r = ", i[2])
 
-    sNo[2] = chr(97 + sNo[2])
+    
+    tNo = findTaskNo(tasks, dialated)
+
+    if tNo == None:
+        print('Task Number')
+        return
+
+    sNo = findSNo(studentNumberCols, dialated)
+
+    if sNo == None:
+        print('Invalid Student Number')
+        return
+
+    stNo = ""
     ssNo = ""
 
-    symbols = np.array(['A', 'B', 'C', 'D', 'E'])
+    for c in tNo:
+        stNo += str(c)
 
     for c in sNo:
         ssNo += str(c)
 
     questionNo = 0
 
+    symbols = np.array(['A', 'B', 'C', 'D', 'E'])
+
     for c in choices:
         for row in c:
             questionNo += 1
-            outFile.write(ssNo + "," + str(questionNo) + "," + "".join(symbols[row]) + "\n")
+            outFile.write(ssNo + "," + stNo + "," + str(questionNo) + "," + "".join(symbols[row]) + "\n")
 
 
     for column in tasks:
@@ -500,6 +579,8 @@ def markPage(page, outFile):
     cv2.imshow("sheet", col)
 
     cv2.waitKey(100000)
+
+    return True
 
 outFile = open("ouput.csv", "w")
 
