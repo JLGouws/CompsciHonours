@@ -5,7 +5,7 @@ import cv2
 import itertools
 
 from pdf2image import convert_from_path
-pages = convert_from_path('2018.pdf', 500)
+
 
 def euDist(a, b):
     a = np.array(a[:2])
@@ -165,57 +165,39 @@ def findAllCirclesSn(circles):
             idx += 1
     return circles 
 
-page = cv2.cvtColor(np.array(pages[0]), cv2.COLOR_RGB2GRAY)
+def markPage(page, outFile):
+    blur = cv2.GaussianBlur(page,(15,15),0)
+    ret3,th3 = cv2.threshold(blur,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
 
-#th3 = cv2.adaptiveThreshold(page, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 13, -2)
-blur = cv2.GaussianBlur(page,(15,15),0)
-ret3,th3 = cv2.threshold(blur,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
+    width = int(th3.shape[1]/4)
+    height = int(th3.shape[0]/4)
 
-width = int(th3.shape[1]/4)
-height = int(th3.shape[0]/4)
+    re = cv2.resize(th3, (width, height))
+    dialated = re.copy()
+    th4 = re.copy()
 
-re = cv2.resize(th3, (width, height))
-dialated = re.copy()
-th4 = re.copy()
+    col = cv2.cvtColor(re, cv2.COLOR_GRAY2RGB)
 
-col = cv2.cvtColor(re, cv2.COLOR_GRAY2RGB)
+    kernel = np.ones((5, 5), np.uint8)
+     
+    dialated = cv2.erode(dialated, kernel, iterations=3)
+    dialated = cv2.dilate(dialated, kernel, iterations=3)
+    dialated = cv2.erode(dialated, kernel, iterations=3)
+    dialated = cv2.dilate(dialated, kernel, iterations=3)
+    dialated = cv2.erode(dialated, kernel, iterations=3)
 
-#
-#contours, _ = cv2.findContours(re, cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
-#
-#
-##circles = cv2.HoughCircles(re,cv2.HOUGH_GRADIENT,1,10, param1=80,param2=10,minRadius=6,maxRadius=10)
-#circles = cv2.HoughCircles(re,cv2.HOUGH_GRADIENT_ALT,1.5,10, param1=300,param2=0.8,minRadius=6,maxRadius=10)
-#
-#circles = np.uint16(np.around(circles))
-#
-#for i in circles[0,:]:
-#    # draw the outer circle
-#    cv2.circle(col,(i[0],i[1]),i[2],(0,255,0),2)
-#    # draw the center of the circle
-#    #cv2.circle(col,(i[0],i[1]),2,(0,0,255),3)
-#
+    def findLines(re, width, height):
 
-kernel = np.ones((5, 5), np.uint8)
- 
-dialated = cv2.erode(dialated, kernel, iterations=3)
-dialated = cv2.dilate(dialated, kernel, iterations=3)
-dialated = cv2.erode(dialated, kernel, iterations=3)
-dialated = cv2.dilate(dialated, kernel, iterations=3)
-dialated = cv2.erode(dialated, kernel, iterations=3)
+        low_threshold = 50
+        high_threshold = 150
+        copied = re.copy()
+        edges = cv2.Canny(copied, low_threshold, high_threshold)
 
-def findLines(re, width, height):
-
-    low_threshold = 50
-    high_threshold = 150
-    copied = re.copy()
-    edges = cv2.Canny(copied, low_threshold, high_threshold)
-
-    rho = 1  # distance resolution in pixels of the Hough grid
-    theta = np.pi / 180  # angular resolution in radians of the Hough grid
-    threshold = 200  # minimum number of votes (intersections in Hough grid cell)
-    min_line_length = 20  # minimum number of pixels making up a line
-    max_line_gap = 50  # maximum gap in pixels between connectable line segments
+        rho = 1  # distance resolution in pixels of the Hough grid
+        theta = np.pi / 180  # angular resolution in radians of the Hough grid
+        threshold = 200  # minimum number of votes (intersections in Hough grid cell)
+        min_line_length = 20  # minimum number of pixels making up a line
+        max_line_gap = 50  # maximum gap in pixels between connectable line segments
 #
 ## Run Hough on edge detected image
 ## Output "lines" is an array containing endpoints of detected line segments
@@ -227,340 +209,304 @@ def findLines(re, width, height):
 #        cv2.line(col,(x1,y1),(x2,y2),(255,0,0),5)
 #
 
-    lines = cv2.HoughLines(edges, rho, theta, 300)
+        lines = cv2.HoughLines(edges, rho, theta, 300)
 
-    boundaries = []
-     
+        boundaries = []
+         
 # The below for loop runs till r and theta values
 # are in the range of the 2d array
-    for r_theta in lines:
-        arr = np.array(r_theta[0], dtype=np.float64)
-        r, theta = arr
-        # Stores the value of cos(theta) in a
-        a = np.cos(theta)
-     
-        # Stores the value of sin(theta) in b
-        b = np.sin(theta)
-     
-        # x0 stores the value rcos(theta)
-        x0 = a*r
-     
-        # y0 stores the value rsin(theta)
-        y0 = b*r
-     
-        # x1 stores the rounded off value of (rcos(theta)-1000sin(theta))
-        x1 = int(x0 + 1000*(-b))
-     
-        # y1 stores the rounded off value of (rsin(theta)+1000cos(theta))
-        y1 = int(y0 + 1000*(a))
+        for r_theta in lines:
+            arr = np.array(r_theta[0], dtype=np.float64)
+            r, theta = arr
+            # Stores the value of cos(theta) in a
+            a = np.cos(theta)
+         
+            # Stores the value of sin(theta) in b
+            b = np.sin(theta)
+         
+            # x0 stores the value rcos(theta)
+            x0 = a*r
+         
+            # y0 stores the value rsin(theta)
+            y0 = b*r
+         
+            # x1 stores the rounded off value of (rcos(theta)-1000sin(theta))
+            x1 = int(x0 + 1000*(-b))
+         
+            # y1 stores the rounded off value of (rsin(theta)+1000cos(theta))
+            y1 = int(y0 + 1000*(a))
 
-        # x2 stores the rounded off value of (rcos(theta)+1000sin(theta))
-        x2 = int(x0 - 1000*(-b))
-     
-        # y2 stores the rounded off value of (rsin(theta)-1000cos(theta))
-        y2 = int(y0 - 1000*(a))
+            # x2 stores the rounded off value of (rcos(theta)+1000sin(theta))
+            x2 = int(x0 - 1000*(-b))
+         
+            # y2 stores the rounded off value of (rsin(theta)-1000cos(theta))
+            y2 = int(y0 - 1000*(a))
 
-        line = np.array([(x1, y1), (x2, y2)])
+            line = np.array([(x1, y1), (x2, y2)])
 
-        tl = np.array([(0, 0), (width, 0)])
+            tl = np.array([(0, 0), (width, 0)])
 
-        ll = np.array([(0, 0), (0, height)])
+            ll = np.array([(0, 0), (0, height)])
 
-        bl = np.array([(0, height), (width, height)])
+            bl = np.array([(0, height), (width, height)])
 
-        rl = np.array([(width, 0), (width, height)])
+            rl = np.array([(width, 0), (width, height)])
 
-        s0 = None
+            s0 = None
 
-        f0 = None
+            f0 = None
 
-        sl = intersection(line, ll) if abs(theta) > 0.01 and abs(theta - np.pi) > 0.01 else (-1, -1)
+            sl = intersection(line, ll) if abs(theta) > 0.01 and abs(theta - np.pi) > 0.01 else (-1, -1)
 
-        st = intersection(line, tl) if abs(theta - np.pi / 2) > 0.01 else (-1, -1)
+            st = intersection(line, tl) if abs(theta - np.pi / 2) > 0.01 else (-1, -1)
 
-        fb = intersection(line, bl) if abs(theta - np.pi / 2) > 0.01 else (-1, -1)
+            fb = intersection(line, bl) if abs(theta - np.pi / 2) > 0.01 else (-1, -1)
 
-        fr = intersection(line, rl) if abs(theta) > 0.01 and abs(theta - np.pi) > 0.01 else (-1, -1)
+            fr = intersection(line, rl) if abs(theta) > 0.01 and abs(theta - np.pi) > 0.01 else (-1, -1)
 
-        if (theta < np.pi / 2):
-            s0 = sl if 0 < sl[1] and sl[1] < height else fb
-            f0 = fr if 0 < fr[1] and fr[1] < height else st
-        else:
-            s0 = sl if 0 < sl[1] and sl[1] < height else st
-            f0 = fr if 0 < fr[1] and fr[1] < height else fb
+            if (theta < np.pi / 2):
+                s0 = sl if 0 < sl[1] and sl[1] < height else fb
+                f0 = fr if 0 < fr[1] and fr[1] < height else st
+            else:
+                s0 = sl if 0 < sl[1] and sl[1] < height else st
+                f0 = fr if 0 < fr[1] and fr[1] < height else fb
 
 
 
-        shift = np.abs(np.array([b,a]))
-#    state = np.array([x0,y0])
-#    lineStart = np.array([x0,y0])
-#    maxStart = np.array([x0,y0])
-#    maxEnd = np.array([x0,y0])
-#    shift = np.abs(np.array([b,a]))
-#    length = 0
-#    maxLength = 0
-#    online = False
-#    while(state[0] < re.shape[1] and state[1] < re.shape[0]):
-#        if(online):
-#            if(dialated[int(state[1]), int(state[0])] < 100):
-#                length += np.sqrt(np.sum(shift * shift))
-#            else:
-#                online = False
-#                if(length > maxLength):
-#                    maxLength = length;
-#                    maxStart[0] = lineStart[0]
-#                    maxStart[1] = lineStart[1]
-#                    maxEnd[0] = state[0]
-#                    maxEnd[1] = state[1]
-#        else:
-#            if(dialated[int(state[1]), int(state[0])] < 100):
-#                length = 0
-#                online = True
-#                lineStart[0] = state[0]
-#                lineStart[1] = state[1]
-#        state += shift;
+            shift = np.abs(np.array([b,a]))
+         
+            boundaries += [((s0, f0), theta)]
+        return boundaries
 
-     
-        boundaries += [((s0, f0), theta)]
-    return boundaries
-
-def removeDupNonPerpLines(boundaries, height):
-    maxDist = height / 20 
-    reducedBound = []
-    for i, b in enumerate(boundaries):
-        ((s0, f0), th0) = b
-        dupl = False
-        for ((s1, f1), th1) in reducedBound:
-            if ((abs(th0 - th1) < 0.1 or abs(np.pi - abs(th0 - th1)) < 0.1) and (min(euDist(s0, s1), euDist(f0, f1)) < maxDist)):
-                dupl = True
-                break
-        if not dupl:
-            reducedBound.append(b)
-    i = 0
-    while i < len(reducedBound):
-        perpCount = 0
-        ((s0, f0), th0) = b = reducedBound.pop(0)
-        for ((s1, f1), th1) in reducedBound:
-            if abs(np.pi/2 - abs(th0 - th1)) < 0.001:
-                if perpCount == 0:
-                    perpCount += 1
-                else:
-                    reducedBound.append(b)
+    def removeDupNonPerpLines(boundaries, height):
+        maxDist = height / 20 
+        reducedBound = []
+        for i, b in enumerate(boundaries):
+            ((s0, f0), th0) = b
+            dupl = False
+            for ((s1, f1), th1) in reducedBound:
+                if ((abs(th0 - th1) < 0.1 or abs(np.pi - abs(th0 - th1)) < 0.1) and (min(euDist(s0, s1), euDist(f0, f1)) < maxDist)):
+                    dupl = True
                     break
-        i += 1
-    return reducedBound
+            if not dupl:
+                reducedBound.append(b)
+        i = 0
+        while i < len(reducedBound):
+            perpCount = 0
+            ((s0, f0), th0) = b = reducedBound.pop(0)
+            for ((s1, f1), th1) in reducedBound:
+                if abs(np.pi/2 - abs(th0 - th1)) < 0.001:
+                    if perpCount == 0:
+                        perpCount += 1
+                    else:
+                        reducedBound.append(b)
+                        break
+            i += 1
+        return reducedBound
 
-def findLongestSolid(img, boundaries):
-    dialated = img.copy()
+    def findLongestSolid(img, boundaries):
 
-    height = max(img.shape[1], img.shape[0])
+        newLines = []
+        dialated = img.copy()
 
-    kernel = np.ones((5, 5), np.uint8)
+        height = max(img.shape[1], img.shape[0])
 
-    dialated = cv2.erode(dialated, kernel, iterations=2)
+        kernel = np.ones((5, 5), np.uint8)
 
+        dialated = cv2.erode(dialated, kernel, iterations = 4)
 
-    mask1 = np.zeros_like(img)
+        mask1 = np.zeros_like(img)
 
-    newBounds = []
+        i = 0
 
-    i = 0
+        while i < len(boundaries):
+            (l1, th0) = b = boundaries.pop(0)
 
-    while i < len(boundaries):
-        (l1, th0) = b = boundaries.pop(0)
+            maxSolid = 0
 
-        maxSolid = 0
+            intersections = []
 
-        p1 = None
-        p2 = None
-        p3 = None
+            for (l2, th1) in boundaries:
+                if abs(np.pi/2 - abs(th0 - th1)) < 0.001:
+                    intersections.append(np.int64(intersection(l1, l2)))
 
-        for (l2, th1) in boundaries:
-            if abs(np.pi/2 - abs(th0 - th1)) < 0.001:
-                if np.any(p1 == None):
-                    p1 = np.int64(intersection(l1, l2))
-                elif np.any(p2 == None):
-                    p2 = np.int64(intersection(l1, l2))
-                    mask1.fill(0)
-                    cv2.line(mask1, p1, p2, (255),5)
-                    mean = cv2.mean(dialated, mask = mask1)[0]
-                    if mean > 240:
-                        p2 = None
+            intersections.sort(key = lambda x: euDist(x, l1[0]))
+
+            k = 1
+            left = intersections[0]
+            maxLine = ()
+            while k < len(intersections):
+                mask1.fill(0)
+                right = intersections[k]
+                cv2.line(mask1, left, right, (255), 3)
+                mean = cv2.mean(dialated, mask = mask1)[0]
+                if mean < 15:
+                    length = euDist(left, right)
+                    if length > maxSolid:
+                        maxLine = (left, right)
+                        maxSolid = length
                 else:
-                    p3 = intersection(l1, l2)
-                    p31 = euDist(p3, p1)
-                    p32 = euDist(p3, p2)
-                    tmp = p1
-                    if max(p31, p32) > euDist(p1, p2):
-                        if p32 > p31:
-                            tmp = p2
-                        mask1.fill(0)
-                        cv2.line(mask1, tmp, p3, (255),5)
-                        mean = cv2.mean(dialated, mask = mask1)[0]
-                        if mean < 127:
-                            p1 = tmp
-                            p2 = p3
-        if np.any(p1 != None) and np.any(p2 != None) and euDist(p1, p2) > height / 3:
-            newBounds.append(((p1, p1), th0))
-        boundaries.append(b)
-        i += 1
-    return newBounds
+                    left = intersections[k]
 
-boundaries = findLines(re, width, height)
+                k += 1
 
-boundaries = removeDupNonPerpLines(boundaries, max(width, height))
-
-boundaries = findLongestSolid(th4, boundaries)
-
-for ((x1, y1), (x2, y2)), shift in boundaries:
-    cv2.line(col,(int(x1),int(y1)),(int(x2),int(y2)),(255,0,0),5)
-
-width = int(col.shape[1]/2)
-height = int(col.shape[0]/2)
+            if maxSolid > height / 3:
+                newLines.append((maxLine, th0))
 
 
-col = cv2.resize(col, (width, height))
-dialated = cv2.resize(dialated, (width, height))
-
-cv2.imshow("sheet", col)
-
-cv2.waitKey(100000)
-
-quit()
-
-
-reducedBound = []#[boundaries.pop()]
-while len(boundaries) > 0:
-    reducedBound.append(boundaries.pop(0))
-    (s0, f0), g0 = reducedBound[-1]
-    for i in range(len(boundaries)):
-        (s1, f1), g1 = b = boundaries.pop(0)
-        if not ((np.sqrt(np.sum((s1 - s0) * (s1 - s0))) < height / 10 and np.sqrt(np.sum((f1 - f0) * (f1 - f0))) < height / 10) or np.sqrt(np.sum((s1 - f1) * (s1 - f1))) < height / 3):
             boundaries.append(b)
+            i += 1
+        return newLines
+
+    def findCorners(box):
+        corners = []
+        for i in range(len(box)):
+            (a, sh0) = rb = box.pop(0)
+            (s0, f0) = a
+            for ((s1, f1), sh1) in box:
+                if  min(euDist(s0, s1), euDist(s0, f1)) < 0.0001:
+                    corners.append(tuple(s0))
+                elif min(euDist(f0, s1), euDist(f0, f1)) < 0.0001:
+                    corners.append(tuple(f0))
+        return corners
+
+    boundaries = findLines(re, width, height)
+
+    boundaries = removeDupNonPerpLines(boundaries, max(width, height))
+
+    boundaries = findLongestSolid(th4, boundaries)
+
+    corners = findCorners(boundaries)
+
+    corners.sort()
 
 
-box = []
-maxDist = height / 20 
-for i in range(len(reducedBound)):
-    ((s0, f0), sh0) = rb = reducedBound.pop(i)
-    for ((s1, f1), sh1) in reducedBound:
-        if (np.sum(np.round(1000 * np.abs(sh0 - sh1[::-1]))) == 0 and (min(np.sqrt(np.sum((s1 - f1) * (s1 - f1))), np.sqrt(np.sum((f0 - s0) * (f0 - s0))), np.sqrt(np.sum((s1 - s0) * (s1 - s0))), np.sqrt(np.sum((f1 - s0) * (f1 - s0)))) < maxDist)):
-            box.append(rb)
-    reducedBound.insert(i, rb)
+    th4 = th4[corners[0][1]: corners[1][1], corners[0][0]: corners[2][0]]
+    col = col[corners[0][1]: corners[1][1], corners[0][0]: corners[2][0]]
 
+    th4 = cv2.resize(th4, (1300, 1750))
+    col = cv2.resize(col, (1300, 1750))
 
-corners = []
-for i in range(len(box)):
-    (a, sh0) = rb = box.pop(0)
-    (s0, f0) = a
-    for (b, sh1) in box:
-        (s1, f1) = b
-        if (np.sum(np.round(1000 * np.abs(sh0 - sh1[::-1]))) == 0 and (min(euDist(s0, s1), euDist(s0, f1), euDist(f0, s1), euDist(f0, f1)) < maxDist)):
-            corners.append(intersection(a, b))
-
-corners.sort()
-
-
-th4 = th4[corners[0][1]: corners[1][1], corners[0][0]: corners[2][0]]
-col = col[corners[0][1]: corners[1][1], corners[0][0]: corners[2][0]]
-
-th4 = cv2.resize(th4, (1300, 1750))
-col = cv2.resize(col, (1300, 1750))
-
-circles = cv2.HoughCircles(th4,cv2.HOUGH_GRADIENT,1,8, param1=30,param2=30,minRadius=8,maxRadius=22)
+    circles = cv2.HoughCircles(th4,cv2.HOUGH_GRADIENT,1,8, param1=30,param2=30,minRadius=8,maxRadius=22)
 #circles = cv2.HoughCircles(re,cv2.HOUGH_GRADIENT_ALT,1.5,10, param1=300,param2=0.8,minRadius=6,maxRadius=10)
 
 
-circles = list(np.int64(np.around(circles))[0,:])
+    circles = list(np.int64(np.around(circles))[0,:])
 
-circles.sort(key = lambda x : x[0])
+    circles.sort(key = lambda x : x[0])
 
 
-circRows = []
+    circRows = []
 
-colidx = 0;
-idx = 1
-circRows.append([[circles[0]]])
+    colidx = 0;
+    idx = 1
+    circRows.append([[circles[0]]])
 
-while idx < len(circles):
-    t, m = circles[idx - 1: idx + 1]
-    if abs(t[0] - m[0]) > 180:
-        circRows.append([[m]])
-    elif abs(t[0] - m[0]) < 20:
-        circRows[-1][-1].append(m)
-    else:
-        circRows[-1].append([m])
-    idx += 1
-    #cv2.circle(col,(i[0],i[1]),i[2],(0,255,0),4)
+    while idx < len(circles):
+        t, m = circles[idx - 1: idx + 1]
+        if abs(t[0] - m[0]) > 180:
+            circRows.append([[m]])
+        elif abs(t[0] - m[0]) < 20:
+            circRows[-1][-1].append(m)
+        else:
+            circRows[-1].append([m])
+        idx += 1
+        #cv2.circle(col,(i[0],i[1]),i[2],(0,255,0),4)
 
-if checkFlip(circRows[0]):
-    th4 = flip(circRows, th4)
-    col = cv2.rotate(col, cv2.ROTATE_180)
     if checkFlip(circRows[0]):
-        print("Make another scan")
+        th4 = flip(circRows, th4)
+        col = cv2.rotate(col, cv2.ROTATE_180)
+        if checkFlip(circRows[0]):
+            print("Make another scan")
+            return
 
-tasks = splitTask(circRows[0])
+    tasks = splitTask(circRows[0])
 
-studentNumberCols = findAllCirclesSn(circRows[0])
-
-allCirc1 = np.transpose(findAllCircles(circRows[1]), axes = (1, 0, 2))
-allCirc2 = np.transpose(findAllCircles(circRows[2]), axes = (1, 0, 2))
-
-
-
-dialated = th4.copy()
-
-kernel = np.ones((3, 3), np.uint8)
- 
-dialated = cv2.dilate(dialated, kernel, iterations=3)
-dialated = cv2.erode(dialated, kernel, iterations=8)
-dialated = cv2.dilate(dialated, kernel, iterations=4)
-
-mask1 = np.zeros_like(th4)
-
-sNo = []
+    studentNumberCols = findAllCirclesSn(circRows[0])
 
 
-for column in studentNumberCols:
-    noLetters = 0
-    for j, cir in enumerate(column):
-        cv2.circle(col,(cir[0],cir[1]),cir[2],(0,255,0),4)
-        mask1.fill(0)
-        cv2.circle(mask1,(cir[0],cir[1]),cir[2],(255),-1)
-        mean = cv2.mean(dialated, mask = mask1)[0]
-        if mean < 127:
-            sNo.append(j)
-            noLetters += 1
-    if noLetters != 1:
-        print('Invalid Student Number')
-    # draw the outer circle
-    # print("circle: ", i[0], ", ", i[1] , "r = ", i[2])
+    dialated = th4.copy()
 
-sNo[2] = chr(97 + sNo[2])
-print(sNo)
+    kernel = np.ones((3, 3), np.uint8)
+     
+    dialated = cv2.dilate(dialated, kernel, iterations=3)
+    dialated = cv2.erode(dialated, kernel, iterations=8)
+    dialated = cv2.dilate(dialated, kernel, iterations=4)
 
-for column in tasks:
-    for i in column:
-        cv2.circle(col,(i[0],i[1]),i[2],(0,0,255),4)
+    mask1 = np.zeros_like(th4)
 
-for row in allCirc1:
-    for i in row:
-        cv2.circle(col,(i[0],i[1]),i[2],(255,0,255),4)
-        mask1.fill(0)
-        cv2.circle(mask1,(i[0],i[1]),i[2],(255),-1)
-        mean = cv2.mean(dialated, mask = mask1)
+    sNo = []
 
-for row in allCirc2:
-    for i in row:
-        cv2.circle(col,(i[0],i[1]),i[2],(255,0,255),4)
+    def mark(allCirc, dialated):
+        choices = []
+        for row in allCirc:
+            choices.append(np.array([False, False, False, False, False]))
+            for i, circ in enumerate(row):
+                mask1.fill(0)
+                cv2.circle(mask1,(circ[0], circ[1]), circ[2],(255),-1)
+                mean = cv2.mean(dialated, mask = mask1)[0]
+                if mean < 60:
+                    choices[-1][i] = True
+        return choices
 
-width = int(col.shape[1]/2)
-height = int(col.shape[0]/2)
+    choices = []
+    for group in circRows[1:]:
+        allCirc = np.transpose(findAllCircles(group), axes = (1, 0, 2))
+        choices.append(mark(allCirc, dialated))
+
+    for column in studentNumberCols:
+        noLetters = 0
+        for j, cir in enumerate(column):
+            cv2.circle(col,(cir[0],cir[1]),cir[2],(0,255,0),4)
+            mask1.fill(0)
+            cv2.circle(mask1,(cir[0],cir[1]),cir[2],(255),-1)
+            mean = cv2.mean(dialated, mask = mask1)[0]
+            if mean < 127:
+                sNo.append(j)
+                noLetters += 1
+        if noLetters != 1:
+            print('Invalid Student Number')
+            return
+        # draw the outer circle
+        # print("circle: ", i[0], ", ", i[1] , "r = ", i[2])
+
+    sNo[2] = chr(97 + sNo[2])
+    ssNo = ""
+
+    symbols = np.array(['A', 'B', 'C', 'D', 'E'])
+
+    for c in sNo:
+        ssNo += str(c)
+
+    questionNo = 0
+
+    for c in choices:
+        for row in c:
+            questionNo += 1
+            outFile.write(ssNo + "," + str(questionNo) + "," + "".join(symbols[row]) + "\n")
 
 
-col = cv2.resize(col, (width, height))
-dialated = cv2.resize(dialated, (width, height))
+    for column in tasks:
+        for i in column:
+            cv2.circle(col,(i[0],i[1]),i[2],(0,0,255),4)
 
-cv2.imshow("sheet", col)
+    width = int(col.shape[1]/2)
+    height = int(col.shape[0]/2)
 
-cv2.waitKey(100000)
+
+    col = cv2.resize(col, (width, height))
+    dialated = cv2.resize(dialated, (width, height))
+
+    cv2.imshow("sheet", col)
+
+    cv2.waitKey(100000)
+
+outFile = open("ouput.csv", "w")
+
+pages = convert_from_path('2018.pdf', 500)
+
+page = cv2.cvtColor(np.array(pages[0]), cv2.COLOR_RGB2GRAY)
+
+markPage(page, outFile)
+
+outFile.close()
