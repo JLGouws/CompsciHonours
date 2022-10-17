@@ -209,7 +209,7 @@ def markPage(page, outFile):
 #        cv2.line(col,(x1,y1),(x2,y2),(255,0,0),5)
 #
 
-        lines = cv2.HoughLines(edges, rho, theta, 300)
+        lines = cv2.HoughLines(edges, rho, theta, threshold)
 
         boundaries = []
          
@@ -264,43 +264,47 @@ def markPage(page, outFile):
 
             fr = intersection(line, rl) if abs(theta) > 0.01 and abs(theta - np.pi) > 0.01 else (-1, -1)
 
-            if (theta < np.pi / 2):
-                s0 = sl if 0 < sl[1] and sl[1] < height else fb
-                f0 = fr if 0 < fr[1] and fr[1] < height else st
-            else:
-                s0 = sl if 0 < sl[1] and sl[1] < height else st
-                f0 = fr if 0 < fr[1] and fr[1] < height else fb
+            points = [sl, st, fb, fr]
+
+            for i in range(4):
+                p = points.pop(0)
+                if 0 <= p[0] and p[0] <= width and 0 <= p[1] and p[1] <= height:
+                    points.append(p)
+
+            s0, f0 = points
+
+#            if (theta < np.pi / 2):
+#                s0 = sl if 0 <= sl[1] and sl[1] <= height else fb
+#                f0 = fr if 0 <= fr[1] and fr[1] <= height else st
+#            else:
+#                s0 = sl if 0 <= sl[1] and sl[1] <= height else st
+#                f0 = fr if 0 <= fr[1] and fr[1] <= height else fb
 
 
 
-            shift = np.abs(np.array([b,a]))
-         
             boundaries += [((s0, f0), theta)]
         return boundaries
 
     def removeDupNonPerpLines(boundaries, height):
-        maxDist = height / 20 
+        maxDist = height / 20
         reducedBound = []
         for i, b in enumerate(boundaries):
             ((s0, f0), th0) = b
             dupl = False
             for ((s1, f1), th1) in reducedBound:
-                if ((abs(th0 - th1) < 0.1 or abs(np.pi - abs(th0 - th1)) < 0.1) and (min(euDist(s0, s1), euDist(f0, f1)) < maxDist)):
+                if ((abs(th0 - th1) < 0.05 or abs(np.pi - abs(th0 - th1)) < 0.05) and (min(euDist(s0, s1), euDist(s0, f1), euDist(f0, s1), euDist(f0, f1)) < maxDist)):
                     dupl = True
                     break
             if not dupl:
                 reducedBound.append(b)
         i = 0
-        while i < len(reducedBound):
-            perpCount = 0
+        lim = len(reducedBound)
+        while i < lim:
             ((s0, f0), th0) = b = reducedBound.pop(0)
             for ((s1, f1), th1) in reducedBound:
-                if abs(np.pi/2 - abs(th0 - th1)) < 0.001:
-                    if perpCount == 0:
-                        perpCount += 1
-                    else:
-                        reducedBound.append(b)
-                        break
+                if abs(np.pi/2 - abs(th0 - th1)) < 0.05:
+                    reducedBound.append(b)
+                    break
             i += 1
         return reducedBound
 
@@ -327,7 +331,7 @@ def markPage(page, outFile):
             intersections = []
 
             for (l2, th1) in boundaries:
-                if abs(np.pi/2 - abs(th0 - th1)) < 0.001:
+                if abs(np.pi/2 - abs(th0 - th1)) < 0.05:
                     intersections.append(np.int64(intersection(l1, l2)))
 
             intersections.sort(key = lambda x: euDist(x, l1[0]))
@@ -360,23 +364,15 @@ def markPage(page, outFile):
 
     def findCorners(box):
         corners = []
-        maxLen = 0.
-        maxLenTh = 0.
         for i in range(len(box)):
             (a, sh0) = rb = box.pop(0)
             (s0, f0) = a
             for ((s1, f1), sh1) in box:
                 if  min(euDist(s0, s1), euDist(s0, f1)) < 0.0001:
                     corners.append(tuple(s0))
-                    if euDist(s0, f0) > maxLen:
-                        maxLen = euDist(s0, f0)
-                        maxLenTh = sh0
                 elif min(euDist(f0, s1), euDist(f0, f1)) < 0.0001:
                     corners.append(tuple(f0))
-                    if euDist(s0, f0) > maxLen:
-                        maxLen = euDist(s0, f0)
-                        maxLenTh = sh0
-        return corners, maxLenTh
+        return corners
 
     def findTaskNo(tasks, dialated):
         mask1 = np.zeros_like(dialated)
@@ -407,16 +403,18 @@ def markPage(page, outFile):
         topCount = 0
         for col in tasks:
             col.sort(key = lambda x : x[1])
-            if abs(col[0][1] - 840) < 40:
+            if abs(col[0][1] - 860) < 40:
                 avgY += col[0][1]
                 topCount += 1
         if topCount != 0:
             avgY /= topCount
         else:
-            avgY = 840
+            avgY = 860
+
+        print(avgY)
 
         for q, col in enumerate(tasks):
-            if abs(col[0][1] - 840) > 40:
+            if abs(col[0][1] - avgY) > 40:
                 tmp = np.array(col)
                 avgX = np.average(tmp, axis = 0)[0]
                 col.insert(0, np.array([avgX, avgY, 19], dtype = np.int64))
@@ -436,11 +434,10 @@ def markPage(page, outFile):
 
     boundaries = removeDupNonPerpLines(boundaries, max(width, height))
 
+
     boundaries = findLongestSolid(th4, boundaries)
 
-    corners, theta = findCorners(boundaries)
-
-    print(theta)
+    corners = findCorners(boundaries)
 
     corners.sort()
 
@@ -450,6 +447,18 @@ def markPage(page, outFile):
 
     th4 = cv2.resize(th4, (1300, 1750))
     col = cv2.resize(col, (1300, 1750))
+#
+#    width = int(col.shape[1]/2)
+#    height = int(col.shape[0]/2)
+#
+#    col = cv2.resize(col, (width, height))
+#    dialated = cv2.resize(dialated, (width, height))
+#
+#    cv2.imshow("sheet", col)
+#
+#    cv2.waitKey(100000)
+#
+#    quit()
 
     circles = cv2.HoughCircles(th4,cv2.HOUGH_GRADIENT,1,8, param1=30,param2=30,minRadius=8,maxRadius=22)
 #circles = cv2.HoughCircles(re,cv2.HOUGH_GRADIENT_ALT,1.5,10, param1=300,param2=0.8,minRadius=6,maxRadius=10)
@@ -475,7 +484,6 @@ def markPage(page, outFile):
         else:
             circRows[-1].append([m])
         idx += 1
-        #cv2.circle(col,(i[0],i[1]),i[2],(0,255,0),4)
 
     if checkFlip(circRows[0]):
         th4 = flip(circRows, th4)
@@ -483,8 +491,10 @@ def markPage(page, outFile):
         if checkFlip(circRows[0]):
             print("Make another scan")
             return
-
+    for c in circRows[0]:
+        print(c)
     tasks = splitTask(circRows[0])
+
 
     tasks = fillTasks(tasks)
 
@@ -511,7 +521,7 @@ def markPage(page, outFile):
                 mask1.fill(0)
                 cv2.circle(mask1,(circ[0], circ[1]), circ[2],(255),-1)
                 mean = cv2.mean(dialated, mask = mask1)[0]
-                if mean < 60:
+                if mean < 125:
                     choices[-1][i] = True
         return choices
 
@@ -546,28 +556,28 @@ def markPage(page, outFile):
     
     tNo = findTaskNo(tasks, dialated)
 
+    stNo = ""
+    ssNo = ""
+
     if tNo == None:
-        print('Task Number')
-        return
+        print('Task Number Invalid')
+    else:
+        for c in tNo:
+            stNo += str(c)
+        
 
     sNo = findSNo(studentNumberCols, dialated)
 
     if sNo == None:
         print('Invalid Student Number')
-        return
-
-    stNo = ""
-    ssNo = ""
-
-    for c in tNo:
-        stNo += str(c)
-
-    for c in sNo:
-        ssNo += str(c)
+    else:
+        for c in sNo:
+            ssNo += str(c)
 
     questionNo = 0
 
     symbols = np.array(['A', 'B', 'C', 'D', 'E'])
+
 
     for c in choices:
         for row in c:
@@ -578,6 +588,12 @@ def markPage(page, outFile):
     for column in tasks:
         for i in column:
             cv2.circle(col,(i[0],i[1]),i[2],(0,0,255),4)
+
+    for group in circRows[1:]:
+        allCirc = np.transpose(findAllCircles(group, 5, 30), axes = (1, 0, 2))
+        for r in allCirc:
+            for i in r:
+                cv2.circle(col,(i[0],i[1]),i[2],(255,0,0),4)
 
     width = int(col.shape[1]/2)
     height = int(col.shape[0]/2)
@@ -596,7 +612,7 @@ outFile = open("ouput.csv", "w")
 
 pages = convert_from_path('2018.pdf', 500)
 
-page = cv2.cvtColor(np.array(pages[0]), cv2.COLOR_RGB2GRAY)
+page = cv2.cvtColor(np.array(pages[-1]), cv2.COLOR_RGB2GRAY)
 
 markPage(page, outFile)
 

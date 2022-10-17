@@ -209,7 +209,7 @@ def markPage(page, outFile):
 #        cv2.line(col,(x1,y1),(x2,y2),(255,0,0),5)
 #
 
-        lines = cv2.HoughLines(edges, rho, theta, 300)
+        lines = cv2.HoughLines(edges, rho, theta, threshold)
 
         boundaries = []
          
@@ -264,43 +264,47 @@ def markPage(page, outFile):
 
             fr = intersection(line, rl) if abs(theta) > 0.01 and abs(theta - np.pi) > 0.01 else (-1, -1)
 
-            if (theta < np.pi / 2):
-                s0 = sl if 0 < sl[1] and sl[1] < height else fb
-                f0 = fr if 0 < fr[1] and fr[1] < height else st
-            else:
-                s0 = sl if 0 < sl[1] and sl[1] < height else st
-                f0 = fr if 0 < fr[1] and fr[1] < height else fb
+            points = [sl, st, fb, fr]
+
+            for i in range(4):
+                p = points.pop(0)
+                if 0 <= p[0] and p[0] <= width and 0 <= p[1] and p[1] <= height:
+                    points.append(p)
+
+            s0, f0 = points
+
+#            if (theta < np.pi / 2):
+#                s0 = sl if 0 <= sl[1] and sl[1] <= height else fb
+#                f0 = fr if 0 <= fr[1] and fr[1] <= height else st
+#            else:
+#                s0 = sl if 0 <= sl[1] and sl[1] <= height else st
+#                f0 = fr if 0 <= fr[1] and fr[1] <= height else fb
 
 
 
-            shift = np.abs(np.array([b,a]))
-         
             boundaries += [((s0, f0), theta)]
         return boundaries
 
     def removeDupNonPerpLines(boundaries, height):
-        maxDist = height / 20 
+        maxDist = height / 20
         reducedBound = []
         for i, b in enumerate(boundaries):
             ((s0, f0), th0) = b
             dupl = False
             for ((s1, f1), th1) in reducedBound:
-                if ((abs(th0 - th1) < 0.1 or abs(np.pi - abs(th0 - th1)) < 0.1) and (min(euDist(s0, s1), euDist(f0, f1)) < maxDist)):
+                if ((abs(th0 - th1) < 0.05 or abs(np.pi - abs(th0 - th1)) < 0.05) and (min(euDist(s0, s1), euDist(s0, f1), euDist(f0, s1), euDist(f0, f1)) < maxDist)):
                     dupl = True
                     break
             if not dupl:
                 reducedBound.append(b)
         i = 0
-        while i < len(reducedBound):
-            perpCount = 0
+        lim = len(reducedBound)
+        while i < lim:
             ((s0, f0), th0) = b = reducedBound.pop(0)
             for ((s1, f1), th1) in reducedBound:
-                if abs(np.pi/2 - abs(th0 - th1)) < 0.001:
-                    if perpCount == 0:
-                        perpCount += 1
-                    else:
-                        reducedBound.append(b)
-                        break
+                if abs(np.pi/2 - abs(th0 - th1)) < 0.05:
+                    reducedBound.append(b)
+                    break
             i += 1
         return reducedBound
 
@@ -327,7 +331,7 @@ def markPage(page, outFile):
             intersections = []
 
             for (l2, th1) in boundaries:
-                if abs(np.pi/2 - abs(th0 - th1)) < 0.001:
+                if abs(np.pi/2 - abs(th0 - th1)) < 0.05:
                     intersections.append(np.int64(intersection(l1, l2)))
 
             intersections.sort(key = lambda x: euDist(x, l1[0]))
@@ -407,16 +411,17 @@ def markPage(page, outFile):
         topCount = 0
         for col in tasks:
             col.sort(key = lambda x : x[1])
-            if abs(col[0][1] - 840) < 40:
+            if abs(col[0][1] - 860) < 40:
                 avgY += col[0][1]
                 topCount += 1
         if topCount != 0:
             avgY /= topCount
         else:
-            avgY = 840
+            avgY = 860
+
 
         for q, col in enumerate(tasks):
-            if abs(col[0][1] - 840) > 40:
+            if abs(col[0][1] - avgY) > 40:
                 tmp = np.array(col)
                 avgX = np.average(tmp, axis = 0)[0]
                 col.insert(0, np.array([avgX, avgY, 19], dtype = np.int64))
@@ -436,13 +441,32 @@ def markPage(page, outFile):
 
     boundaries = removeDupNonPerpLines(boundaries, max(width, height))
 
+
     boundaries = findLongestSolid(th4, boundaries)
 
-    corners, theta = findCorners(boundaries)
+    def rotate_image(image, angle, point):
+      rot_mat = cv2.getRotationMatrix2D(tuple([int(point[0]), int(point[1])]), angle, 1.0)
+      result = cv2.warpAffine(image, rot_mat, image.shape[1::-1], flags=cv2.INTER_LINEAR)
+      return result
 
-    print(theta)
+    corners, boxAngle = findCorners(boundaries)
+    print(boxAngle)
 
     corners.sort()
+
+    print(corners[1])
+
+    rotatedImage = rotate_image(th4, 180 * (np.pi - boxAngle) / np.pi, tuple(corners[1]))
+    width = int(rotatedImage.shape[1]/2)
+    height = int(rotatedImage.shape[0]/2)
+
+    rotatedImage = cv2.resize(rotatedImage, (width, height))
+
+    cv2.imshow("sheet", rotatedImage)
+
+    cv2.waitKey(100000)
+
+    quit()
 
 
     th4 = th4[corners[0][1]: corners[1][1], corners[0][0]: corners[2][0]]
@@ -450,6 +474,18 @@ def markPage(page, outFile):
 
     th4 = cv2.resize(th4, (1300, 1750))
     col = cv2.resize(col, (1300, 1750))
+
+#    width = int(col.shape[1]/2)
+#    height = int(col.shape[0]/2)
+#
+#    col = cv2.resize(col, (width, height))
+#    dialated = cv2.resize(dialated, (width, height))
+#
+#    cv2.imshow("sheet", col)
+#
+#    cv2.waitKey(100000)
+#
+#    quit()
 
     circles = cv2.HoughCircles(th4,cv2.HOUGH_GRADIENT,1,8, param1=30,param2=30,minRadius=8,maxRadius=22)
 #circles = cv2.HoughCircles(re,cv2.HOUGH_GRADIENT_ALT,1.5,10, param1=300,param2=0.8,minRadius=6,maxRadius=10)
@@ -546,24 +582,23 @@ def markPage(page, outFile):
     
     tNo = findTaskNo(tasks, dialated)
 
+    stNo = ""
+    ssNo = ""
+
     if tNo == None:
-        print('Task Number')
-        return
+        print('Task Number Invalid')
+    else:
+        for c in tNo:
+            stNo += str(c)
+        
 
     sNo = findSNo(studentNumberCols, dialated)
 
     if sNo == None:
         print('Invalid Student Number')
-        return
-
-    stNo = ""
-    ssNo = ""
-
-    for c in tNo:
-        stNo += str(c)
-
-    for c in sNo:
-        ssNo += str(c)
+    else:
+        for c in sNo:
+            ssNo += str(c)
 
     questionNo = 0
 
@@ -575,28 +610,28 @@ def markPage(page, outFile):
             outFile.write(ssNo + "," + stNo + "," + str(questionNo) + "," + "".join(symbols[row]) + "\n")
 
 
-    for column in tasks:
-        for i in column:
-            cv2.circle(col,(i[0],i[1]),i[2],(0,0,255),4)
-
-    width = int(col.shape[1]/2)
-    height = int(col.shape[0]/2)
-
-
-    col = cv2.resize(col, (width, height))
-    dialated = cv2.resize(dialated, (width, height))
-
-    cv2.imshow("sheet", col)
-
-    cv2.waitKey(100000)
+#    for column in tasks:
+#        for i in column:
+#            cv2.circle(col,(i[0],i[1]),i[2],(0,0,255),4)
+#
+#    width = int(col.shape[1]/2)
+#    height = int(col.shape[0]/2)
+#
+#
+#    col = cv2.resize(col, (width, height))
+#    dialated = cv2.resize(dialated, (width, height))
+#
+#    cv2.imshow("sheet", col)
+#
+#    cv2.waitKey(100000)
 
     return True
 
 outFile = open("ouput.csv", "w")
 
-pages = convert_from_path('2018.pdf', 500)
+pages = convert_from_path('2016.pdf', 500)
 
-page = cv2.cvtColor(np.array(pages[0]), cv2.COLOR_RGB2GRAY)
+page = cv2.cvtColor(np.array(pages[2]), cv2.COLOR_RGB2GRAY)
 
 markPage(page, outFile)
 
