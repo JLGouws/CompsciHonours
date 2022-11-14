@@ -2,8 +2,10 @@ import numpy as np
 
 import cv2
 
+import itertools
+
 from pdf2image import convert_from_path
-pages = convert_from_path('2018.pdf', 500)
+pages = convert_from_path('2016.pdf', 500)
 
 def fixHoles(column, idx):
     l = 1;
@@ -31,7 +33,6 @@ def flip(circRows, img):
         for idx in range(len(g)):
             col = np.array(g[idx])
             flipped = np.zeros_like(col)
-            print(flipped.shape)
             flipped[:, 0] = 1300
             flipped[:, 1] = 1750
             g[idx] = list(np.abs(flipped - col)[::-1])
@@ -49,7 +50,6 @@ def splitTask(admin):
         runTop = colm[0][1] if runTop == -1 else (colm[0][1] + runTop) / 2
         if idx > 3 and len(colm) > 10 and abs(colm[-1][1] - colm[0][1]) > 200:
             sidx = taskSplitIdx(colm)
-            print(sidx)
             if sidx != -1:
                 tasks.append(colm[sidx:])
                 admin[idx] = colm[:sidx]
@@ -58,7 +58,101 @@ def splitTask(admin):
         idx += 1
     return tasks
 
-page = cv2.cvtColor(np.array(pages[6]), cv2.COLOR_RGB2GRAY)
+def circEq(a, b):
+    return np.all(a == b)
+
+def fixMissing(allCirc):
+    colAvg = np.zeros(5)
+    rowAvg = np.zeros(30)
+    colCount = np.zeros(5)
+    rowCount = np.zeros(30)
+    zero = np.array([0, 0, 0])
+    for i in range(5):
+        for j in range(30):
+            if not(circEq(allCirc[i, j], zero)):
+                colAvg[i] += allCirc[i, j, 0]
+                colCount[i] += 1
+                rowAvg[j] += allCirc[i, j, 1]
+                rowCount[j] += 1
+
+    colAvg /= colCount
+    rowAvg /= rowCount
+
+    for i in range(5):
+        for j in range(30):
+            if circEq(allCirc[i, j], zero):
+                allCirc[i, j] = np.array([colAvg[i], rowAvg[j], 18], dtype = np.int64)
+
+def fillNormal(allCirc, circRows, circCols):
+    depth = [0, 0, 0, 0, 0]
+    for i, row in enumerate(circRows):
+        for a in row:
+            for j, col in enumerate(circCols):
+                if depth[j] == len(col):
+                    continue
+                b = col[depth[j]]
+                if circEq(a, b):
+                    depth[j] += 1
+                    allCirc[j, i] = a
+
+def findAllCircles(circles):
+    allCirc = np.zeros((5, 30, 3), dtype = np.int64)
+    circCols = circles.copy()
+    circles = list(itertools.chain(*circles))
+    circles.sort(key = lambda x : x[1])
+    circRows = []
+    idx = 1
+    circRows.append([circles[0]])
+
+    for col in circCols:
+        col.sort(key = lambda x : x[1])
+
+    while idx < len(circles):
+        t, m = circles[idx - 1: idx + 1]
+        if abs(t[1] - m[1]) < 20:
+            circRows[-1].append(m)
+        else:
+            circRows[-1].sort(key = lambda x : x[0])
+            circRows.append([m])
+        idx += 1
+    circRows[-1].sort(key = lambda x : x[0])
+
+    if len(circRows) == 30 and len(circCols) == 5:
+        fillNormal(allCirc, circRows, circCols)
+    fixMissing(allCirc)
+    return allCirc
+
+def findAllCirclesSn(circles):
+    avgY = 0
+    topCount = 0
+    for col in circles:
+        col.sort(key = lambda x : x[1])
+        if abs(col[0][1] - 280) < 40:
+            avgY += col[0][1]
+            topCount += 1
+    if topCount != 0:
+        avgY /= topCount
+    else:
+        avgY = 280
+
+    for q, col in enumerate(circles):
+        if abs(col[0][1] - 280) > 40:
+            tmp = np.array(col)
+            avgX = np.average(tmp, axis = 0)[0]
+            col.insert(0, np.array([avgX, avgY, 19], dtype = np.int64))
+        idx = 1
+        while idx < len(col):
+            t, b = col[idx - 1: idx + 1]
+            if 70 < abs(b[1] - t[1]) and abs(b[1] - t[1]) < 100:
+                col.insert(idx, np.int64((t + b) / 2))
+                idx += 1
+            elif (idx == 8 and len(col) == 9 and q != 2) or (idx == 24 and len(col) == 25 and q == 2):
+                col.insert(idx, np.array([(t[0] + b[0]) / 2, 2 * b[1] - t[1], (t[2] + b[2]) / 2], dtype = np.int64))
+
+            idx += 1
+    return circles 
+
+page = cv2.cvtColor(np.array(pages[2]), cv2.COLOR_RGB2GRAY)
 
 #th3 = cv2.adaptiveThreshold(page, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 13, -2)
 blur = cv2.GaussianBlur(page,(15,15),0)
@@ -255,30 +349,72 @@ while idx < len(circles):
     #cv2.circle(col,(i[0],i[1]),i[2],(0,255,0),4)
 
 if checkFlip(circRows[0]):
-    print("Flipping image")
     th4 = flip(circRows, th4)
     col = cv2.rotate(col, cv2.ROTATE_180)
+    if checkFlip(circRows[0]):
+        print("Make another scan")
 
 tasks = splitTask(circRows[0])
 
-for column in circRows[0]:
-    print(len(column))
-    for i in column:
-        cv2.circle(col,(i[0],i[1]),i[2],(0,255,0),4)
+studentNumberCols = findAllCirclesSn(circRows[0])
+
+allCirc1 = np.transpose(findAllCircles(circRows[1]), axes = (1, 0, 2))
+allCirc2 = np.transpose(findAllCircles(circRows[2]), axes = (1, 0, 2))
+
+
+
+dialated = th4.copy()
+
+kernel = np.ones((3, 3), np.uint8)
+ 
+dialated = cv2.dilate(dialated, kernel, iterations=3)
+dialated = cv2.erode(dialated, kernel, iterations=8)
+dialated = cv2.dilate(dialated, kernel, iterations=4)
+
+mask1 = np.zeros_like(th4)
+
+sNo = []
+
+
+for column in studentNumberCols:
+    noLetters = 0
+    for j, cir in enumerate(column):
+        cv2.circle(col,(cir[0],cir[1]),cir[2],(0,255,0),4)
+        mask1.fill(0)
+        cv2.circle(mask1,(cir[0],cir[1]),cir[2],(255),-1)
+        mean = cv2.mean(dialated, mask = mask1)[0]
+        if mean < 127:
+            sNo.append(j)
+            noLetters += 1
+    if noLetters != 1:
+        print('Invalid Student Number')
     # draw the outer circle
     # print("circle: ", i[0], ", ", i[1] , "r = ", i[2])
+
+sNo[2] = chr(97 + sNo[2])
+print(sNo)
 
 for column in tasks:
     for i in column:
         cv2.circle(col,(i[0],i[1]),i[2],(0,0,255),4)
 
+for row in allCirc1:
+    for i in row:
+        cv2.circle(col,(i[0],i[1]),i[2],(255,0,255),4)
+        mask1.fill(0)
+        cv2.circle(mask1,(i[0],i[1]),i[2],(255),-1)
+        mean = cv2.mean(dialated, mask = mask1)
+
+for row in allCirc2:
+    for i in row:
+        cv2.circle(col,(i[0],i[1]),i[2],(255,0,255),4)
+
 width = int(col.shape[1]/2)
 height = int(col.shape[0]/2)
 
 
-cv2.line(col,(0,770),(1300,770),(255,0,0),5)
-
 col = cv2.resize(col, (width, height))
+dialated = cv2.resize(dialated, (width, height))
 
 cv2.imshow("sheet", col)
 
